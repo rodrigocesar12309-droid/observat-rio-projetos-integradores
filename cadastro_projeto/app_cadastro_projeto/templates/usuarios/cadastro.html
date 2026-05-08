@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - Observatório de Projetos</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #eef2f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .card {
+            background: white;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
+            width: 100%;
+            max-width: 440px;
+            box-sizing: border-box;
+        }
+        .logo-container {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        .logo-icon {
+            background-color: #5830f0;
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 22px;
+            margin-bottom: 15px;
+        }
+        .title {
+            text-align: center;
+            color: #0c2340;
+            margin: 0 0 5px 0;
+            font-size: 20px;
+            font-weight: 700;
+        }
+        .subtitle {
+            text-align: center;
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 25px;
+        }
+        .form-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+        
+        /* Grid de Seleção de Perfis (Os 4 botões solicitados) */
+        .tipo-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        .tipo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-tipo {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            color: #4a5568;
+            transition: all 0.2s ease;
+        }
+        
+        /* Cores de ativação customizadas para combinar com o "acesso rápido" da Home */
+        .btn-tipo[data-tipo="aluno"].active { border-color: #5830f0; background-color: #f0ecff; color: #5830f0; }
+        .btn-tipo[data-tipo="professor"].active { border-color: #00b074; background-color: #ebfaf2; color: #00b074; }
+        .btn-tipo[data-tipo="administracao"].active { border-color: #9f7aea; background-color: #f7f3ff; color: #9f7aea; }
+        .btn-tipo[data-tipo="empresa"].active { border-color: #ff9f43; background-color: #fff9f3; color: #ff9f43; }
+
+        .btn-submit {
+            width: 100%;
+            padding: 14px;
+            background-color: #5830f0;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 15px;
+            transition: background 0.2s;
+            margin-top: 10px;
+        }
+        .btn-submit:hover {
+            background-color: #431ecc;
+        }
+        .voltar-link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #718096;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .voltar-link:hover {
+            color: #5830f0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="logo-container">
+        <div class="logo-icon">📝</div>
+        <h2 class="title">Faça seu Cadastro</h2>
+        <div class="subtitle">Insira as suas informações abaixo</div>
+    </div>
+    
+    <form method="POST">
+        {% csrf_token %}
+        
+        {{ form.tipo_usuario }}
+
+        <div class="tipo-label">Escolha seu perfil:</div>
+        <div class="tipo-container">
+            <button type="button" class="btn-tipo active" data-tipo="aluno" onclick="selecionarTipo('aluno', this)">Aluno</button>
+            <button type="button" class="btn-tipo" data-tipo="professor" onclick="selecionarTipo('professor', this)">Professor</button>
+            <button type="button" class="btn-tipo" data-tipo="administracao" onclick="selecionarTipo('administracao', this)">Administração</button>
+            <button type="button" class="btn-tipo" data-tipo="empresa" onclick="selecionarTipo('empresa', this)">Empresa</button>
+        </div>
+
+        <div class="form-group">
+            <label for="id_nome_completo">Nome Completo</label>
+            {{ form.nome_completo }}
+        </div>
+
+        <div class="form-group" id="campo-matricula">
+            <label for="id_matricula">Matrícula</label>
+            {{ form.matricula }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_email">E-mail</label>
+            {{ form.email }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_telefone">Telefone</label>
+            {{ form.telefone }}
+        </div>
+
+        <div class="form-group">
+            <label for="id_password">Senha</label>
+            {{ form.password }}
+        </div>
+
+        <button type="submit" class="btn-submit">Finalizar Cadastro</button>
+        
+        <a href="{% url 'home' %}" class="voltar-link">Já tem uma conta? Voltar ao login</a>
+    </form>
+</div>
+
+<script>
+    function selecionarTipo(tipo, elemento) {
+        // Altera o valor no input oculto do formulário Django
+        document.getElementById('id_tipo_usuario').value = tipo;
+        
+        // Remove estado ativo de todos os botões
+        const botoes = document.querySelectorAll('.btn-tipo');
+        botoes.forEach(btn => btn.classList.remove('active'));
+        
+        // Adiciona classe ativa no botão clicado
+        elemento.classList.add('active');
+
+        // Esconde dinamicamente a matrícula para Empresa ou Administração se desejar
+        const campoMatricula = document.getElementById('campo-matricula');
+        if (tipo === 'empresa') {
+            campoMatricula.style.display = 'none';
+        } else {
+            campoMatricula.style.display = 'flex';
+        }
+    }
+</script>
+
+</body>
+</html>
