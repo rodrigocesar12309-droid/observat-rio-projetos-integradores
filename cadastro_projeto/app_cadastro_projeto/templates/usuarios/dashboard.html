@@ -19,8 +19,8 @@
         .btn-logout:hover { color: #e53e3e; }
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .tabs { display: flex; gap: 25px; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px; }
-        .tab { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: #718096; text-decoration: none; border-bottom: 2px solid transparent; }
-        .tab.active { color: #5830f0; border-color: #5830f0; }
+        .tab { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: #718096; text-decoration: none; border-bottom: 2px solid transparent; cursor: pointer; background: none; border-left: none; border-right: none; border-top: none; }
+        .tab.active { color: #5830f0; border-bottom: 2px solid #5830f0; }
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .dashboard-header h2 { font-size: 24px; color: #0c2340; margin: 0 0 8px 0; }
         .dashboard-header p { font-size: 14px; color: #718096; margin: 0; }
@@ -35,7 +35,7 @@
         .conceito-bom { color: #3182ce; }
         .conceito-suficiente { color: #dd6b20; }
         .conceito-insuficiente { color: #e53e3e; }
-        .project-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: start; }
+        .project-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
         .project-info { max-width: 100%; }
         .project-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .project-title { font-size: 18px; font-weight: 700; color: #2d3748; margin: 0; }
@@ -53,8 +53,6 @@
         .btn-action:hover { background-color: #edf2f7; }
         .btn-action.primary { background-color: #f0ecff; color: #5830f0; border-color: #d6bcfa; }
         .btn-action.danger { background-color: #fff5f5; color: #e53e3e; border-color: #fed7d7; }
-
-        /* Empty state */
         .empty-state { text-align: center; padding: 60px 20px; color: #a0aec0; }
         .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
         .empty-state p { font-size: 16px; margin-bottom: 20px; }
@@ -66,17 +64,48 @@
         .modal h3 { font-size: 20px; color: #0c2340; margin: 0 0 20px 0; }
         .modal-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         .modal-group label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
-        .modal-group input, .modal-group textarea, .modal-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
+        .modal-group input, .modal-group textarea, .modal-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; width: 100%; box-sizing: border-box; }
         .modal-group textarea { resize: vertical; min-height: 80px; }
         .modal-group input:focus, .modal-group textarea:focus { border-color: #5830f0; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
         .btn-cancelar { background: none; border: 1px solid #e2e8f0; color: #718096; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-salvar { background-color: #5830f0; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-salvar:hover { background-color: #431ecc; }
-
-        /* Mensagens */
         .mensagem-erro { background:#fff5f5; border:1px solid #fc8181; color:#c53030; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
         .mensagem-sucesso { background:#f0fff4; border:1px solid #68d391; color:#276749; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
+
+        /* Seção oculta */
+        .section { display: none; }
+        .section.active { display: block; }
+
+        /* ── Portfólio ── */
+        .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .portfolio-header h2 { font-size: 24px; color: #0c2340; margin: 0 0 8px 0; }
+        .portfolio-header p { font-size: 14px; color: #718096; margin: 0; }
+        .btn-editar-curriculo { background-color: #5830f0; color: white; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-editar-curriculo:hover { background-color: #431ecc; }
+
+        .curriculo-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin-bottom: 20px; }
+        .curriculo-section-title { font-size: 13px; font-weight: 700; color: #a0aec0; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
+        .curriculo-nome { font-size: 22px; font-weight: 700; color: #0c2340; margin: 0 0 6px 0; }
+        .curriculo-cargo { font-size: 15px; color: #5830f0; font-weight: 600; margin: 0 0 12px 0; }
+        .curriculo-contatos { display: flex; gap: 20px; flex-wrap: wrap; font-size: 13px; color: #718096; margin-bottom: 8px; }
+        .curriculo-contatos span { display: flex; align-items: center; gap: 5px; }
+        .curriculo-bio { font-size: 14px; color: #4a5568; line-height: 1.7; margin-top: 16px; }
+
+        .habilidades-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+        .habilidade-tag { background-color: #f0ecff; color: #5830f0; font-size: 12px; font-weight: 600; padding: 5px 12px; border-radius: 20px; }
+
+        .experiencia-item { margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px solid #f0f0f0; }
+        .experiencia-item:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        .experiencia-cargo { font-size: 15px; font-weight: 700; color: #2d3748; margin: 0 0 3px 0; }
+        .experiencia-empresa { font-size: 13px; color: #5830f0; font-weight: 600; margin: 0 0 3px 0; }
+        .experiencia-periodo { font-size: 12px; color: #a0aec0; margin: 0 0 6px 0; }
+        .experiencia-desc { font-size: 13px; color: #718096; line-height: 1.5; margin: 0; }
+
+        .empty-curriculo { text-align: center; padding: 60px 20px; color: #a0aec0; }
+        .empty-curriculo .icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-curriculo p { font-size: 16px; }
     </style>
 </head>
 <body>
@@ -111,101 +140,166 @@
     {% endif %}
 
     <div class="tabs">
-        <a href="#" class="tab active">Meus Projetos</a>
-        <a href="#" class="tab">Portfólio</a>
+        <button class="tab active" onclick="mostrarAba('projetos', this)">Meus Projetos</button>
+        <button class="tab" onclick="mostrarAba('portfolio', this)">Portfólio</button>
     </div>
 
-    <div class="dashboard-header">
-        <div>
-            <h2>Meus Projetos</h2>
-            <p>Gerencie e acompanhe seus projetos integradores</p>
-        </div>
-        <button class="btn-novo-projeto" onclick="abrirModal()">
-            <span>+</span> Novo Projeto
-        </button>
-    </div>
+    <!-- ═══════════════════════════════════ -->
+    <!-- ABA: MEUS PROJETOS                  -->
+    <!-- ═══════════════════════════════════ -->
+    <div id="aba-projetos" class="section active">
 
-    <!-- Métricas dinâmicas -->
-    <div class="metrics-grid">
-        <div class="metric-card">
-            <div class="metric-title">Total de Projetos</div>
-            <div class="metric-value">{{ total }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-title">Aprovados</div>
-            <div class="metric-value green">{{ aprovados }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-title">Em Avaliação</div>
-            <div class="metric-value">{{ em_avaliacao }}</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-title">Média do Conceito</div>
-            <div class="metric-value
-                {% if media_conceito == 'Excelente' %}conceito-excelente
-                {% elif media_conceito == 'Bom' %}conceito-bom
-                {% elif media_conceito == 'Suficiente' %}conceito-suficiente
-                {% else %}conceito-insuficiente{% endif %}">
-                {{ media_conceito }}
+        <div class="dashboard-header">
+            <div>
+                <h2>Meus Projetos</h2>
+                <p>Gerencie e acompanhe seus projetos integradores</p>
             </div>
+            <button class="btn-novo-projeto" onclick="abrirModal('modalProjeto')">
+                <span>+</span> Novo Projeto
+            </button>
         </div>
-    </div>
 
-    <!-- Lista de projetos dinâmica -->
-    {% if projetos %}
-        {% for projeto in projetos %}
-        <div class="project-card">
-            <div class="project-info">
-                <div class="project-title-row">
-                    <h3 class="project-title">{{ projeto.titulo }}</h3>
-                    {% if projeto.status == 'aprovado' %}
-                        <span class="badge-aprovado">✓ Aprovado</span>
-                    {% elif projeto.status == 'em_avaliacao' %}
-                        <span class="badge-avaliacao">⏳ Em Avaliação</span>
-                    {% else %}
-                        <span class="badge-reprovado">✗ Reprovado</span>
-                    {% endif %}
-                </div>
-                <p class="project-description">{{ projeto.descricao }}</p>
-                {% if projeto.get_tags_lista %}
-                <div class="tags-row">
-                    {% for tag in projeto.get_tags_lista %}
-                        <span class="tag">{{ tag }}</span>
-                    {% endfor %}
-                </div>
-                {% endif %}
-                <div class="meta-row">
-                    {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
-                    {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
-                    {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }} (Conceito {{ projeto.get_conceito }})</span></span>{% endif %}
-                </div>
-                <div class="project-actions">
-                    {% if projeto.link_repositorio %}
-                        <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>
-                    {% endif %}
-                    {% if projeto.link_demo %}
-                        <a href="{{ projeto.link_demo }}" target="_blank" class="btn-action">Demo</a>
-                    {% endif %}
-                    <a href="{% url 'editar_projeto' projeto.id %}" class="btn-action primary">✏️ Editar</a>
-                    <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover este projeto?')">
-                        {% csrf_token %}
-                        <button type="submit" class="btn-action danger">🗑️ Remover</button>
-                    </form>
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-title">Total de Projetos</div>
+                <div class="metric-value">{{ total }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Aprovados</div>
+                <div class="metric-value green">{{ aprovados }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Em Avaliação</div>
+                <div class="metric-value">{{ em_avaliacao }}</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-title">Média do Conceito</div>
+                <div class="metric-value
+                    {% if media_conceito == 'Excelente' %}conceito-excelente
+                    {% elif media_conceito == 'Bom' %}conceito-bom
+                    {% elif media_conceito == 'Suficiente' %}conceito-suficiente
+                    {% else %}conceito-insuficiente{% endif %}">
+                    {{ media_conceito }}
                 </div>
             </div>
         </div>
-        {% endfor %}
-    {% else %}
-        <div class="empty-state">
-            <div class="icon">📂</div>
-            <p>Você ainda não tem projetos. Clique em <strong>+ Novo Projeto</strong> para começar!</p>
-        </div>
-    {% endif %}
 
+        {% if projetos %}
+            {% for projeto in projetos %}
+            <div class="project-card">
+                <div class="project-info">
+                    <div class="project-title-row">
+                        <h3 class="project-title">{{ projeto.titulo }}</h3>
+                        {% if projeto.status == 'aprovado' %}
+                            <span class="badge-aprovado">✓ Aprovado</span>
+                        {% elif projeto.status == 'em_avaliacao' %}
+                            <span class="badge-avaliacao">⏳ Em Avaliação</span>
+                        {% else %}
+                            <span class="badge-reprovado">✗ Reprovado</span>
+                        {% endif %}
+                    </div>
+                    <p class="project-description">{{ projeto.descricao }}</p>
+                    {% if projeto.get_tags_lista %}
+                    <div class="tags-row">
+                        {% for tag in projeto.get_tags_lista %}
+                            <span class="tag">{{ tag }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="meta-row">
+                        {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
+                        {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
+                        {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }} (Conceito {{ projeto.get_conceito }})</span></span>{% endif %}
+                    </div>
+                    <div class="project-actions">
+                        {% if projeto.link_repositorio %}
+                            <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>
+                        {% endif %}
+                        {% if projeto.link_demo %}
+                            <a href="{{ projeto.link_demo }}" target="_blank" class="btn-action">Demo</a>
+                        {% endif %}
+                        <a href="{% url 'editar_projeto' projeto.id %}" class="btn-action primary">✏️ Editar</a>
+                        <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover este projeto?')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-action danger">🗑️ Remover</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% else %}
+            <div class="empty-state">
+                <div class="icon">📂</div>
+                <p>Você ainda não tem projetos. Clique em <strong>+ Novo Projeto</strong> para começar!</p>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <!-- ═══════════════════════════════════ -->
+    <!-- ABA: PORTFÓLIO / CURRÍCULO          -->
+    <!-- ═══════════════════════════════════ -->
+    <div id="aba-portfolio" class="section">
+
+        <div class="portfolio-header">
+            <div>
+                <h2>Portfólio Profissional</h2>
+                <p>Seu currículo e apresentação profissional</p>
+            </div>
+            <button class="btn-editar-curriculo" onclick="abrirModal('modalCurriculo')">
+                ✏️ Editar Currículo
+            </button>
+        </div>
+
+        <div id="curriculo-preview">
+            <!-- Preenchido via JS após salvar -->
+            <div class="empty-curriculo" id="curriculo-vazio">
+                <div class="icon">📄</div>
+                <p>Você ainda não preencheu seu currículo.<br>Clique em <strong>Editar Currículo</strong> para começar!</p>
+            </div>
+
+            <div id="curriculo-conteudo" style="display:none;">
+                <!-- Dados Pessoais -->
+                <div class="curriculo-card">
+                    <div class="curriculo-section-title">👤 Dados Pessoais</div>
+                    <p class="curriculo-nome" id="cv-nome"></p>
+                    <p class="curriculo-cargo" id="cv-cargo"></p>
+                    <div class="curriculo-contatos">
+                        <span id="cv-email-exibir"></span>
+                        <span id="cv-telefone-exibir"></span>
+                        <span id="cv-linkedin-exibir"></span>
+                        <span id="cv-github-exibir"></span>
+                    </div>
+                    <p class="curriculo-bio" id="cv-bio"></p>
+                </div>
+
+                <!-- Habilidades -->
+                <div class="curriculo-card">
+                    <div class="curriculo-section-title">🛠️ Habilidades</div>
+                    <div class="habilidades-grid" id="cv-habilidades"></div>
+                </div>
+
+                <!-- Experiência -->
+                <div class="curriculo-card" id="cv-experiencia-card">
+                    <div class="curriculo-section-title">💼 Experiência Profissional</div>
+                    <div id="cv-experiencias"></div>
+                </div>
+
+                <!-- Formação -->
+                <div class="curriculo-card">
+                    <div class="curriculo-section-title">🎓 Formação Acadêmica</div>
+                    <div id="cv-formacao"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 
-<!-- Modal Novo Projeto -->
-<div class="modal-overlay" id="modalOverlay">
+<!-- ═══════════════════════════════════ -->
+<!-- MODAL: NOVO PROJETO                 -->
+<!-- ═══════════════════════════════════ -->
+<div class="modal-overlay" id="modalProjeto">
     <div class="modal">
         <h3>➕ Novo Projeto</h3>
         <form method="POST" action="{% url 'criar_projeto' %}">
@@ -239,22 +333,185 @@
                 <input type="url" name="link_demo" placeholder="https://...">
             </div>
             <div class="modal-actions">
-                <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button type="button" class="btn-cancelar" onclick="fecharModal('modalProjeto')">Cancelar</button>
                 <button type="submit" class="btn-salvar">Salvar Projeto</button>
             </div>
         </form>
     </div>
 </div>
 
+<!-- ═══════════════════════════════════ -->
+<!-- MODAL: CURRÍCULO                    -->
+<!-- ═══════════════════════════════════ -->
+<div class="modal-overlay" id="modalCurriculo">
+    <div class="modal">
+        <h3>📄 Currículo Profissional</h3>
+
+        <div class="modal-group">
+            <label>Nome Completo *</label>
+            <input type="text" id="input-nome" placeholder="Seu nome completo">
+        </div>
+        <div class="modal-group">
+            <label>Cargo / Título Profissional</label>
+            <input type="text" id="input-cargo" placeholder="Ex: Desenvolvedor Full Stack">
+        </div>
+        <div class="modal-group">
+            <label>E-mail de contato</label>
+            <input type="email" id="input-email" placeholder="seu@email.com" value="{{ usuario.email }}">
+        </div>
+        <div class="modal-group">
+            <label>Telefone</label>
+            <input type="text" id="input-telefone" placeholder="(81) 99999-9999" value="{{ perfil.telefone|default:'' }}">
+        </div>
+        <div class="modal-group">
+            <label>LinkedIn</label>
+            <input type="url" id="input-linkedin" placeholder="https://linkedin.com/in/...">
+        </div>
+        <div class="modal-group">
+            <label>GitHub</label>
+            <input type="url" id="input-github" placeholder="https://github.com/...">
+        </div>
+        <div class="modal-group">
+            <label>Resumo Profissional</label>
+            <textarea id="input-bio" placeholder="Fale um pouco sobre você, suas experiências e objetivos..."></textarea>
+        </div>
+        <div class="modal-group">
+            <label>Habilidades (separe por vírgula)</label>
+            <input type="text" id="input-habilidades" placeholder="Ex: Python, Django, React, SQL">
+        </div>
+        <div class="modal-group">
+            <label>Experiência Profissional</label>
+            <textarea id="input-experiencia" placeholder="Ex: Desenvolvedor Júnior | Empresa XYZ | 2024-2025 | Desenvolvimento de APIs REST com Django"></textarea>
+        </div>
+        <div class="modal-group">
+            <label>Formação Acadêmica</label>
+            <textarea id="input-formacao" placeholder="Ex: Análise e Desenvolvimento de Sistemas | SENAC | 2024-2026"></textarea>
+        </div>
+
+        <div class="modal-actions">
+            <button type="button" class="btn-cancelar" onclick="fecharModal('modalCurriculo')">Cancelar</button>
+            <button type="button" class="btn-salvar" onclick="salvarCurriculo()">💾 Salvar Currículo</button>
+        </div>
+    </div>
+</div>
+
 <script>
-    function abrirModal() {
-        document.getElementById('modalOverlay').classList.add('active');
+    // ── Abas ──
+    function mostrarAba(aba, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('aba-' + aba).classList.add('active');
+        el.classList.add('active');
     }
-    function fecharModal() {
-        document.getElementById('modalOverlay').classList.remove('active');
+
+    // ── Modais ──
+    function abrirModal(id) {
+        document.getElementById(id).classList.add('active');
     }
-    document.getElementById('modalOverlay').addEventListener('click', function(e) {
-        if (e.target === this) fecharModal();
+    function fecharModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+        overlay.addEventListener('click', function(e) {
+            if (e.target === this) fecharModal(this.id);
+        });
+    });
+
+    // ── Currículo ──
+    function salvarCurriculo() {
+        const nome = document.getElementById('input-nome').value.trim();
+        if (!nome) { alert('Por favor, preencha o nome completo.'); return; }
+
+        // Salva no localStorage para persistir
+        const dados = {
+            nome,
+            cargo: document.getElementById('input-cargo').value,
+            email: document.getElementById('input-email').value,
+            telefone: document.getElementById('input-telefone').value,
+            linkedin: document.getElementById('input-linkedin').value,
+            github: document.getElementById('input-github').value,
+            bio: document.getElementById('input-bio').value,
+            habilidades: document.getElementById('input-habilidades').value,
+            experiencia: document.getElementById('input-experiencia').value,
+            formacao: document.getElementById('input-formacao').value,
+        };
+        localStorage.setItem('curriculo_{{ usuario.id }}', JSON.stringify(dados));
+        renderizarCurriculo(dados);
+        fecharModal('modalCurriculo');
+    }
+
+    function renderizarCurriculo(d) {
+        document.getElementById('curriculo-vazio').style.display = 'none';
+        document.getElementById('curriculo-conteudo').style.display = 'block';
+
+        document.getElementById('cv-nome').textContent = d.nome;
+        document.getElementById('cv-cargo').textContent = d.cargo;
+        document.getElementById('cv-bio').textContent = d.bio;
+
+        document.getElementById('cv-email-exibir').textContent = d.email ? '✉ ' + d.email : '';
+        document.getElementById('cv-telefone-exibir').textContent = d.telefone ? '📞 ' + d.telefone : '';
+        document.getElementById('cv-linkedin-exibir').innerHTML = d.linkedin ? `🔗 <a href="${d.linkedin}" target="_blank">LinkedIn</a>` : '';
+        document.getElementById('cv-github-exibir').innerHTML = d.github ? `💻 <a href="${d.github}" target="_blank">GitHub</a>` : '';
+
+        // Habilidades
+        const habEl = document.getElementById('cv-habilidades');
+        habEl.innerHTML = '';
+        if (d.habilidades) {
+            d.habilidades.split(',').forEach(h => {
+                if (h.trim()) habEl.innerHTML += `<span class="habilidade-tag">${h.trim()}</span>`;
+            });
+        }
+
+        // Experiência
+        const expEl = document.getElementById('cv-experiencias');
+        expEl.innerHTML = '';
+        if (d.experiencia) {
+            d.experiencia.split('\n').forEach(linha => {
+                if (!linha.trim()) return;
+                const partes = linha.split('|').map(p => p.trim());
+                expEl.innerHTML += `
+                    <div class="experiencia-item">
+                        <p class="experiencia-cargo">${partes[0] || ''}</p>
+                        <p class="experiencia-empresa">${partes[1] || ''}</p>
+                        <p class="experiencia-periodo">${partes[2] || ''}</p>
+                        <p class="experiencia-desc">${partes[3] || ''}</p>
+                    </div>`;
+            });
+        }
+
+        // Formação
+        const formEl = document.getElementById('cv-formacao');
+        formEl.innerHTML = '';
+        if (d.formacao) {
+            d.formacao.split('\n').forEach(linha => {
+                if (!linha.trim()) return;
+                const partes = linha.split('|').map(p => p.trim());
+                formEl.innerHTML += `
+                    <div class="experiencia-item">
+                        <p class="experiencia-cargo">${partes[0] || ''}</p>
+                        <p class="experiencia-empresa">${partes[1] || ''}</p>
+                        <p class="experiencia-periodo">${partes[2] || ''}</p>
+                    </div>`;
+            });
+        }
+
+        // Preenche o modal com os dados salvos para edição
+        document.getElementById('input-nome').value = d.nome;
+        document.getElementById('input-cargo').value = d.cargo;
+        document.getElementById('input-email').value = d.email;
+        document.getElementById('input-telefone').value = d.telefone;
+        document.getElementById('input-linkedin').value = d.linkedin;
+        document.getElementById('input-github').value = d.github;
+        document.getElementById('input-bio').value = d.bio;
+        document.getElementById('input-habilidades').value = d.habilidades;
+        document.getElementById('input-experiencia').value = d.experiencia;
+        document.getElementById('input-formacao').value = d.formacao;
+    }
+
+    // Carrega currículo salvo ao abrir a página
+    window.addEventListener('load', () => {
+        const salvo = localStorage.getItem('curriculo_{{ usuario.id }}');
+        if (salvo) renderizarCurriculo(JSON.parse(salvo));
     });
 </script>
 
