@@ -4,7 +4,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from .forms import CadastroForm, AtualizarPerfilForm
-from .models import PerfilUsuario, LogAtividade, ProjetoUsuario
+from .models import PerfilUsuario, ProjetoUsuario, LogAtividade
 
 
 def obter_conceito(nota):
@@ -13,6 +13,10 @@ def obter_conceito(nota):
     elif nota >= 5.0: return "Suficiente"
     else: return "Insuficiente"
 
+
+# ─────────────────────────────────────────
+# AUTH
+# ─────────────────────────────────────────
 
 def home(request):
     if request.user.is_authenticated:
@@ -33,6 +37,10 @@ def fazer_logout(request):
     logout(request)
     return redirect('home')
 
+
+# ─────────────────────────────────────────
+# CREATE - Cadastro
+# ─────────────────────────────────────────
 
 def cadastrar_usuario(request):
     if request.method == 'POST':
@@ -63,7 +71,7 @@ def cadastrar_usuario(request):
 
 
 # ─────────────────────────────────────────
-# DASHBOARD
+# READ - Dashboard
 # ─────────────────────────────────────────
 
 @login_required(login_url='home')
@@ -98,27 +106,18 @@ def dashboard(request):
 @login_required(login_url='home')
 def criar_projeto(request):
     if request.method == 'POST':
-        titulo = request.POST.get('titulo')
-        descricao = request.POST.get('descricao')
-        categoria = request.POST.get('categoria', '')
-        semestre = request.POST.get('semestre', '')
-        tags = request.POST.get('tags', '')
-        link_repositorio = request.POST.get('link_repositorio', '') or None
-        link_demo = request.POST.get('link_demo', '') or None
-
         ProjetoUsuario.objects.create(
             usuario=request.user,
-            titulo=titulo,
-            descricao=descricao,
-            categoria=categoria,
-            semestre=semestre,
-            tags=tags,
-            link_repositorio=link_repositorio,
-            link_demo=link_demo,
+            titulo=request.POST.get('titulo'),
+            descricao=request.POST.get('descricao'),
+            categoria=request.POST.get('categoria', ''),
+            semestre=request.POST.get('semestre', ''),
+            tags=request.POST.get('tags', ''),
+            link_repositorio=request.POST.get('link_repositorio') or None,
+            link_demo=request.POST.get('link_demo') or None,
         )
-        LogAtividade.registrar(request.user, 'create', f'Projeto "{titulo}" criado.')
+        LogAtividade.registrar(request.user, 'create', f'Projeto criado.')
         messages.success(request, 'Projeto criado com sucesso!')
-        return redirect('dashboard')
     return redirect('dashboard')
 
 
@@ -144,10 +143,9 @@ def editar_projeto(request, projeto_id):
 def deletar_projeto(request, projeto_id):
     projeto = get_object_or_404(ProjetoUsuario, id=projeto_id, usuario=request.user)
     if request.method == 'POST':
-        nome = projeto.titulo
         projeto.ativo = False
         projeto.save()
-        LogAtividade.registrar(request.user, 'delete', f'Projeto "{nome}" removido.')
+        LogAtividade.registrar(request.user, 'delete', f'Projeto "{projeto.titulo}" removido.')
         messages.success(request, 'Projeto removido.')
     return redirect('dashboard')
 
