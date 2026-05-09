@@ -2,6 +2,10 @@ from django.urls import path
 from . import views
 
 urlpatterns = [
-    path('', views.home, name='home'), # Sua página inicial com o login
-    path('cadastro/', views.cadastrar_usuario, name='cadastro'), # Nova página de cadastro
+    path('', views.home, name='home'),
+    path('cadastro/', views.cadastrar_usuario, name='cadastro'),
+    path('dashboard/', views.dashboard, name='dashboard'),
+    path('logout/', views.fazer_logout, name='logout'),
+    path('perfil/editar/', views.editar_perfil, name='editar_perfil'),
+    path('perfil/desativar/', views.desativar_conta, name='desativar_conta'),
 ]

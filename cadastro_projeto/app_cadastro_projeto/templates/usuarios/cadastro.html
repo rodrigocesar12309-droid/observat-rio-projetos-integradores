@@ -65,8 +65,6 @@
             color: #4a5568;
             margin-bottom: 6px;
         }
-        
-        /* Grid de Seleção de Perfis (Os 4 botões solicitados) */
         .tipo-label {
             font-size: 13px;
             font-weight: 600;
@@ -90,8 +88,6 @@
             color: #4a5568;
             transition: all 0.2s ease;
         }
-        
-        /* Cores de ativação customizadas para combinar com o "acesso rápido" da Home */
         .btn-tipo[data-tipo="aluno"].active { border-color: #5830f0; background-color: #f0ecff; color: #5830f0; }
         .btn-tipo[data-tipo="professor"].active { border-color: #00b074; background-color: #ebfaf2; color: #00b074; }
         .btn-tipo[data-tipo="administracao"].active { border-color: #9f7aea; background-color: #f7f3ff; color: #9f7aea; }
@@ -125,6 +121,30 @@
         .voltar-link:hover {
             color: #5830f0;
         }
+
+        /* Estilos das mensagens */
+        .mensagem-erro {
+            background-color: #fff5f5;
+            border: 1px solid #fc8181;
+            color: #c53030;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+        .mensagem-sucesso {
+            background-color: #f0fff4;
+            border: 1px solid #68d391;
+            color: #276749;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -135,6 +155,17 @@
         <h2 class="title">Faça seu Cadastro</h2>
         <div class="subtitle">Insira as suas informações abaixo</div>
     </div>
+
+    <!-- Mensagens de erro ou sucesso -->
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="mensagem-erro">⚠️ {{ message }}</div>
+            {% else %}
+                <div class="mensagem-sucesso">✅ {{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
     
     <form method="POST">
         {% csrf_token %}
@@ -182,17 +213,13 @@
 
 <script>
     function selecionarTipo(tipo, elemento) {
-        // Altera o valor no input oculto do formulário Django
         document.getElementById('id_tipo_usuario').value = tipo;
         
-        // Remove estado ativo de todos os botões
         const botoes = document.querySelectorAll('.btn-tipo');
         botoes.forEach(btn => btn.classList.remove('active'));
         
-        // Adiciona classe ativa no botão clicado
         elemento.classList.add('active');
 
-        // Esconde dinamicamente a matrícula para Empresa ou Administração se desejar
         const campoMatricula = document.getElementById('campo-matricula');
         if (tipo === 'empresa') {
             campoMatricula.style.display = 'none';

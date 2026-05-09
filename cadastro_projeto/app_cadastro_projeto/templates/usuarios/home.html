@@ -1,215 +1,69 @@
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Login - Observatório de Projetos</title>
-
   <style>
-    *{
-      margin:0;
-      padding:0;
-      box-sizing:border-box;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+    *{ margin:0; padding:0; box-sizing:border-box; font-family: Arial, Helvetica, sans-serif; }
+    body{ background:#e9edf7; height:100vh; display:flex; align-items:center; justify-content:center; }
+    .login-box{ width:450px; background:#fff; border-radius:18px; padding:32px; box-shadow:0 10px 25px rgba(0,0,0,0.08); }
+    .icon{ width:64px; height:64px; background:#4f3df0; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 24px; color:white; font-size:28px; }
+    h1{ text-align:center; font-size:24px; margin-bottom:10px; color:#111827; }
+    .subtitle{ text-align:center; color:#6b7280; margin-bottom:35px; font-size:15px; }
+    .form-group{ margin-bottom:24px; }
+    label{ display:block; margin-bottom:10px; font-weight:600; color:#374151; font-size:14px; }
+    .input-box{ position:relative; }
+    .input-box span{ position:absolute; left:14px; top:50%; transform:translateY(-50%); color:#9ca3af; font-size:18px; }
+    input{ width:100%; height:50px; border:1px solid #d1d5db; border-radius:12px; padding-left:45px; font-size:16px; outline:none; }
+    input:focus{ border-color:#4f46e5; }
+    .btn-login{ width:100%; height:50px; border:none; border-radius:12px; background:#4f3df0; color:white; font-size:18px; font-weight:bold; cursor:pointer; transition:0.3s; }
+    .btn-login:hover{ background:#4338ca; }
+    .btn-cadastro{ width:100%; height:50px; border:none; border-radius:12px; background:#10b981; color:white; font-size:18px; font-weight:bold; cursor:pointer; transition:0.3s; margin-top:12px; display:block; text-align:center; line-height:50px; text-decoration:none; }
+    .btn-cadastro:hover{ background:#059669; }
+    hr{ border:none; border-top:1px solid #e5e7eb; margin:30px 0; }
+    .demo-text{ color:#4b5563; font-size:14px; margin-bottom:16px; }
+    .quick-access{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+    .quick-btn{ height:38px; border:none; border-radius:8px; font-weight:600; cursor:pointer; font-size:16px; }
+    .aluno{ background:#eef2ff; color:#2563eb; }
+    .professor{ background:#ecfdf5; color:#059669; }
+    .coordenador{ background:#f3e8ff; color:#7c3aed; }
+    .empresa{ background:#fff7ed; color:#ea580c; }
 
-    body{
-      background:#e9edf7;
-      height:100vh;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-    }
-
-    .login-box{
-      width:450px;
-      background:#fff;
-      border-radius:18px;
-      padding:32px;
-      box-shadow:0 10px 25px rgba(0,0,0,0.08);
-    }
-
-    .icon{
-      width:64px;
-      height:64px;
-      background:#4f3df0;
-      border-radius:50%;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      margin:0 auto 24px;
-      color:white;
-      font-size:28px;
-    }
-
-    h1{
-      text-align:center;
-      font-size:24px;
-      margin-bottom:10px;
-      color:#111827;
-    }
-
-    .subtitle{
-      text-align:center;
-      color:#6b7280;
-      margin-bottom:35px;
-      font-size:15px;
-    }
-
-    .form-group{
-      margin-bottom:24px;
-    }
-
-    label{
-      display:block;
-      margin-bottom:10px;
-      font-weight:600;
-      color:#374151;
-      font-size:14px;
-    }
-
-    .input-box{
-      position:relative;
-    }
-
-    .input-box span{
-      position:absolute;
-      left:14px;
-      top:50%;
-      transform:translateY(-50%);
-      color:#9ca3af;
-      font-size:18px;
-    }
-
-    input{
-      width:100%;
-      height:50px;
-      border:1px solid #d1d5db;
-      border-radius:12px;
-      padding-left:45px;
-      font-size:16px;
-      outline:none;
-    }
-
-    input:focus{
-      border-color:#4f46e5;
-    }
-
-    .btn-login{
-      width:100%;
-      height:50px;
-      border:none;
-      border-radius:12px;
-      background:#4f3df0;
-      color:white;
-      font-size:18px;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
-    }
-
-    .btn-login:hover{
-      background:#4338ca;
-    }
-
-    .btn-cadastro{
-      width:100%;
-      height:50px;
-      border:none;
-      border-radius:12px;
-      background:#10b981;
-      color:white;
-      font-size:18px;
-      font-weight:bold;
-      cursor:pointer;
-      transition:0.3s;
-      margin-top:12px;
-    }
-
-    .btn-cadastro:hover{
-      background:#059669;
-    }
-
-    hr{
-      border:none;
-      border-top:1px solid #e5e7eb;
-      margin:30px 0;
-    }
-
-    .demo-text{
-      color:#4b5563;
-      font-size:14px;
-      margin-bottom:16px;
-    }
-
-    .quick-access{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-
-    .quick-btn{
-      height:38px;
-      border:none;
-      border-radius:8px;
-      font-weight:600;
-      cursor:pointer;
-      font-size:16px;
-    }
-
-    .aluno{
-      background:#eef2ff;
-      color:#2563eb;
-    }
-
-    .professor{
-      background:#ecfdf5;
-      color:#059669;
-    }
-
-    .coordenador{
-      background:#f3e8ff;
-      color:#7c3aed;
-    }
-
-    .empresa{
-      background:#fff7ed;
-      color:#ea580c;
-    }
-
-    .message{
-      margin-top:20px;
-      text-align:center;
-      font-weight:bold;
-      display:none;
-    }
-
-    .success{
-      color:green;
-    }
-
-    .error{
-      color:red;
-    }
+    /* Mensagens Django */
+    .mensagem-erro{ background:#fff5f5; border:1px solid #fc8181; color:#c53030; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:600; margin-bottom:16px; text-align:center; }
+    .mensagem-sucesso{ background:#f0fff4; border:1px solid #68d391; color:#276749; padding:12px 16px; border-radius:8px; font-size:14px; font-weight:600; margin-bottom:16px; text-align:center; }
   </style>
 </head>
 
 <body>
-
   <div class="login-box">
 
     <div class="icon">🎓</div>
-
     <h1>Observatório de Projetos</h1>
     <p class="subtitle">Sistema de Gestão de Projetos Integradores</p>
 
-    <form id="loginForm">
+    <!-- ✅ Mensagens do Django -->
+    {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'error' %}
+          <div class="mensagem-erro">⚠️ {{ message }}</div>
+        {% else %}
+          <div class="mensagem-sucesso">✅ {{ message }}</div>
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- ✅ Form conectado ao Django -->
+    <form method="POST">
+      {% csrf_token %}
 
       <div class="form-group">
         <label>Email</label>
         <div class="input-box">
           <span>✉</span>
-          <input type="email" id="email" placeholder="seu@email.com" required>
+          <input type="text" name="username" placeholder="seu@email.com" required>
         </div>
       </div>
 
@@ -217,70 +71,26 @@
         <label>Senha</label>
         <div class="input-box">
           <span>🔒</span>
-          <input type="password" id="senha" placeholder="••••••" required>
+          <input type="password" name="password" placeholder="••••••" required>
         </div>
       </div>
 
       <button type="submit" class="btn-login">Entrar</button>
 
-      <!-- 🔹 Botão de cadastro -->
-      <a href="/cadastro/" style="text-decoration:none;">
-        <button type="button" class="btn-cadastro">Cadastre-se</button>
-      </a>
+      <a href="{% url 'cadastro' %}" class="btn-cadastro">Cadastre-se</a>
 
     </form>
-
-    <div id="message" class="message"></div>
 
     <hr>
 
     <p class="demo-text">Acesso rápido (demo):</p>
-
     <div class="quick-access">
-      <button class="quick-btn aluno" onclick="loginDemo('aluno')">Aluno</button>
-      <button class="quick-btn professor" onclick="loginDemo('professor')">Professor</button>
-      <button class="quick-btn coordenador" onclick="loginDemo('coordenador')">Coordenador</button>
-      <button class="quick-btn empresa" onclick="loginDemo('empresa')">Empresa</button>
+      <button class="quick-btn aluno">Aluno</button>
+      <button class="quick-btn professor">Professor</button>
+      <button class="quick-btn coordenador">Coordenador</button>
+      <button class="quick-btn empresa">Empresa</button>
     </div>
 
   </div>
-
-  <script>
-    const usuarios = [
-      { email: "aluno@email.com", senha: "123456", tipo: "Aluno" },
-      { email: "professor@email.com", senha: "123456", tipo: "Professor" },
-      { email: "coord@email.com", senha: "123456", tipo: "Coordenador" }
-    ];
-
-    const form = document.getElementById("loginForm");
-    const message = document.getElementById("message");
-
-    form.addEventListener("submit", function(event){
-      event.preventDefault();
-      const email = document.getElementById("email").value;
-      const senha = document.getElementById("senha").value;
-
-      const usuarioEncontrado = usuarios.find(usuario => usuario.email === email && usuario.senha === senha);
-
-      if(usuarioEncontrado){
-        message.style.display = "block";
-        message.className = "message success";
-        message.innerHTML = `Login realizado com sucesso! Bem-vindo ${usuarioEncontrado.tipo}`;
-        setTimeout(() => { window.location.href = "dashboard.html"; }, 2000);
-      }else{
-        message.style.display = "block";
-        message.className = "message error";
-        message.innerHTML = "Email ou senha inválidos.";
-      }
-    });
-
-    function loginDemo(tipo){
-      message.style.display = "block";
-      message.className = "message success";
-      message.innerHTML = `Entrando como ${tipo}...`;
-      setTimeout(() => { window.location.href = "dashboard.html"; }, 1500);
-    }
-  </script>
-
 </body>
 </html>
