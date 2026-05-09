@@ -170,3 +170,40 @@ class LogAtividade(models.Model):
             acao=acao,
             descricao=descricao,
         )
+class ProjetoUsuario(models.Model):
+    STATUS_CHOICES = [
+        ('em_avaliacao', 'Em Avaliação'),
+        ('aprovado', 'Aprovado'),
+        ('reprovado', 'Reprovado'),
+    ]
+
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projetos_usuario')
+    titulo = models.CharField(max_length=200)
+    descricao = models.TextField()
+    categoria = models.CharField(max_length=100, blank=True)
+    semestre = models.CharField(max_length=20, blank=True)
+    nota = models.FloatField(blank=True, null=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='em_avaliacao')
+    tags = models.CharField(max_length=200, blank=True, help_text='Separe por vírgula. Ex: React,Node.js')
+    link_repositorio = models.URLField(blank=True, null=True)
+    link_demo = models.URLField(blank=True, null=True)
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True, null=True)
+    atualizado_em = models.DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        ordering = ['-criado_em']
+
+    def __str__(self):
+        return f"{self.titulo} - {self.usuario.first_name}"
+
+    def get_tags_lista(self):
+        return [t.strip() for t in self.tags.split(',') if t.strip()]
+
+    def get_conceito(self):
+        if self.nota is None:
+            return '-'
+        if self.nota >= 9.0: return 'Excelente'
+        elif self.nota >= 7.0: return 'Bom'
+        elif self.nota >= 5.0: return 'Suficiente'
+        else: return 'Insuficiente'

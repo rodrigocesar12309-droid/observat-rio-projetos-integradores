@@ -5,375 +5,258 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Projetos - Observatório de Projetos</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f7fafc;
-            margin: 0;
-            padding: 0;
-        }
-        /* Navbar */
-        .navbar {
-            background-color: white;
-            border-bottom: 1px solid #e2e8f0;
-            padding: 15px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .brand {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .brand-icon {
-            background-color: #5830f0;
-            color: white;
-            width: 35px;
-            height: 35px;
-            border-radius: 8px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 18px;
-        }
-        .brand-text h1 {
-            font-size: 16px;
-            color: #0c2340;
-            margin: 0;
-            font-weight: 700;
-        }
-        .brand-text span {
-            font-size: 12px;
-            color: #718096;
-        }
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-        .user-info {
-            text-align: right;
-        }
-        .user-name {
-            font-size: 14px;
-            font-weight: 600;
-            color: #2d3748;
-            margin: 0;
-        }
-        .user-role {
-            font-size: 11px;
-            color: #718096;
-            margin: 0;
-        }
-        .btn-logout {
-            background: none;
-            border: none;
-            color: #a0aec0;
-            cursor: pointer;
-            font-size: 20px;
-            padding: 5px;
-            transition: color 0.2s;
-            text-decoration: none;
-        }
-        .btn-logout:hover {
-            color: #e53e3e;
-        }
-
-        /* Container Principal */
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        /* Sub-navigation Tabs */
-        .tabs {
-            display: flex;
-            gap: 25px;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 30px;
-        }
-        .tab {
-            padding-bottom: 12px;
-            font-size: 15px;
-            font-weight: 600;
-            color: #718096;
-            text-decoration: none;
-            border-bottom: 2px solid transparent;
-        }
-        .tab.active {
-            color: #5830f0;
-            border-color: #5830f0;
-        }
-
-        /* Cabeçalho da Dashboard */
-        .dashboard-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-        .dashboard-header h2 {
-            font-size: 24px;
-            color: #0c2340;
-            margin: 0 0 8px 0;
-        }
-        .dashboard-header p {
-            font-size: 14px;
-            color: #718096;
-            margin: 0;
-        }
-        .btn-novo-projeto {
-            background-color: #5830f0;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 12px 20px;
-            font-weight: 600;
-            font-size: 14px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        /* Cards Metricas Grid */
-        .metrics-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-        .metric-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .metric-title {
-            font-size: 13px;
-            color: #718096;
-            font-weight: 500;
-            margin-bottom: 10px;
-        }
-        .metric-value {
-            font-size: 24px; /* Ajustado para comportar palavras maiores */
-            font-weight: 700;
-            color: #2d3748;
-            white-space: nowrap;
-        }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7fafc; margin: 0; padding: 0; }
+        .navbar { background-color: white; border-bottom: 1px solid #e2e8f0; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
+        .brand { display: flex; align-items: center; gap: 10px; }
+        .brand-icon { background-color: #5830f0; color: white; width: 35px; height: 35px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 18px; }
+        .brand-text h1 { font-size: 16px; color: #0c2340; margin: 0; font-weight: 700; }
+        .brand-text span { font-size: 12px; color: #718096; }
+        .user-menu { display: flex; align-items: center; gap: 12px; }
+        .user-info { text-align: right; }
+        .user-name { font-size: 14px; font-weight: 600; color: #2d3748; margin: 0; }
+        .user-role { font-size: 11px; color: #718096; margin: 0; }
+        .btn-logout { background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 20px; padding: 5px; text-decoration: none; }
+        .btn-logout:hover { color: #e53e3e; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+        .tabs { display: flex; gap: 25px; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px; }
+        .tab { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: #718096; text-decoration: none; border-bottom: 2px solid transparent; }
+        .tab.active { color: #5830f0; border-color: #5830f0; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        .dashboard-header h2 { font-size: 24px; color: #0c2340; margin: 0 0 8px 0; }
+        .dashboard-header p { font-size: 14px; color: #718096; margin: 0; }
+        .btn-novo-projeto { background-color: #5830f0; color: white; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-novo-projeto:hover { background-color: #431ecc; }
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
+        .metric-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
+        .metric-title { font-size: 13px; color: #718096; font-weight: 500; margin-bottom: 10px; }
+        .metric-value { font-size: 24px; font-weight: 700; color: #2d3748; }
         .metric-value.green { color: #48bb78; }
-        
-        /* Cores exclusivas para destacar cada conceito no card */
         .conceito-excelente { color: #5830f0; }
         .conceito-bom { color: #3182ce; }
         .conceito-suficiente { color: #dd6b20; }
         .conceito-insuficiente { color: #e53e3e; }
+        .project-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: start; }
+        .project-info { max-width: 100%; }
+        .project-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+        .project-title { font-size: 18px; font-weight: 700; color: #2d3748; margin: 0; }
+        .badge-aprovado { background-color: #f0fff4; color: #38a169; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid #c6f6d5; }
+        .badge-avaliacao { background-color: #fffbeb; color: #d69e2e; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid #fefcbf; }
+        .badge-reprovado { background-color: #fff5f5; color: #e53e3e; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid #fed7d7; }
+        .project-description { font-size: 14px; color: #718096; line-height: 1.5; margin-bottom: 15px; }
+        .tags-row { display: flex; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .tag { background-color: #edf2f7; color: #4a5568; font-size: 12px; padding: 4px 10px; border-radius: 6px; }
+        .meta-row { font-size: 12px; color: #a0aec0; margin-bottom: 5px; }
+        .meta-row span { margin-right: 15px; }
+        .meta-row .nota { color: #5830f0; font-weight: 600; }
+        .project-actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-action { background-color: #f7fafc; border: 1px solid #e2e8f0; color: #4a5568; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+        .btn-action:hover { background-color: #edf2f7; }
+        .btn-action.primary { background-color: #f0ecff; color: #5830f0; border-color: #d6bcfa; }
+        .btn-action.danger { background-color: #fff5f5; color: #e53e3e; border-color: #fed7d7; }
 
-        /* Lista de Projetos */
-        .project-card {
-            background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-        }
-        .project-info {
-            max-width: 75%;
-        }
-        .project-title-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 10px;
-        }
-        .project-title {
-            font-size: 18px;
-            font-weight: 700;
-            color: #2d3748;
-            margin: 0;
-        }
-        .badge-aprovado {
-            background-color: #f0fff4;
-            color: #38a169;
-            font-size: 11px;
-            font-weight: 600;
-            padding: 4px 10px;
-            border-radius: 20px;
-            border: 1px solid #c6f6d5;
-        }
-        .project-description {
-            font-size: 14px;
-            color: #718096;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-        .tags-row {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-        .tag {
-            background-color: #edf2f7;
-            color: #4a5568;
-            font-size: 12px;
-            padding: 4px 10px;
-            border-radius: 6px;
-        }
-        .meta-row {
-            font-size: 12px;
-            color: #a0aec0;
-        }
-        .meta-row span {
-            margin-right: 15px;
-        }
-        .meta-row .nota {
-            color: #5830f0;
-            font-weight: 600;
-        }
-        .project-actions {
-            margin-top: 20px;
-            display: flex;
-            gap: 10px;
-        }
-        .btn-action {
-            background-color: #f7fafc;
-            border: 1px solid #e2e8f0;
-            color: #4a5568;
-            padding: 8px 14px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-        }
-        .btn-action.primary {
-            background-color: #f0ecff;
-            color: #5830f0;
-            border-color: #d6bcfa;
-        }
-        .project-img {
-            width: 120px;
-            height: 90px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
+        /* Empty state */
+        .empty-state { text-align: center; padding: 60px 20px; color: #a0aec0; }
+        .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
+        .empty-state p { font-size: 16px; margin-bottom: 20px; }
+
+        /* Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: white; border-radius: 16px; padding: 35px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
+        .modal h3 { font-size: 20px; color: #0c2340; margin: 0 0 20px 0; }
+        .modal-group { margin-bottom: 16px; display: flex; flex-direction: column; }
+        .modal-group label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
+        .modal-group input, .modal-group textarea, .modal-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; }
+        .modal-group textarea { resize: vertical; min-height: 80px; }
+        .modal-group input:focus, .modal-group textarea:focus { border-color: #5830f0; }
+        .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn-cancelar { background: none; border: 1px solid #e2e8f0; color: #718096; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-salvar { background-color: #5830f0; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+        .btn-salvar:hover { background-color: #431ecc; }
+
+        /* Mensagens */
+        .mensagem-erro { background:#fff5f5; border:1px solid #fc8181; color:#c53030; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
+        .mensagem-sucesso { background:#f0fff4; border:1px solid #68d391; color:#276749; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
     </style>
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="brand">
-            <div class="brand-icon">🎓</div>
-            <div class="brand-text">
-                <h1>Observatório de Projetos</h1>
-                <span>Aluno</span>
-            </div>
+<nav class="navbar">
+    <div class="brand">
+        <div class="brand-icon">🎓</div>
+        <div class="brand-text">
+            <h1>Observatório de Projetos</h1>
+            <span>{{ perfil.get_tipo_usuario_display|default:"Aluno" }}</span>
         </div>
-        <div class="user-menu">
-            <div class="user-info">
-                <p class="user-name">{{ usuario.first_name|default:"Usuário" }}</p>
-                <p class="user-role">{{ usuario.email }}</p>
-            </div>
-            <a href="{% url 'logout' %}" class="btn-logout" title="Sair do sistema">➔</a>
-        </div>
-    </nav>
-
-    <div class="container">
-        <div class="tabs">
-            <a href="#" class="tab active">Meus Projetos</a>
-            <a href="#" class="tab">Portfólio</a>
-        </div>
-
-        <div class="dashboard-header">
-            <div>
-                <h2>Meus Projetos</h2>
-                <p>Gerencie e acompanhe seus projetos integradores</p>
-            </div>
-            <button class="btn-novo-projeto"><span>+</span> Novo Projeto</button>
-        </div>
-
-        <div class="metrics-grid">
-            <div class="metric-card">
-                <div class="metric-title">Total de Projetos</div>
-                <div class="metric-value">2</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-title">Aprovados</div>
-                <div class="metric-value green">2</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-title">Em Avaliação</div>
-                <div class="metric-value">0</div>
-            </div>
-            <div class="metric-card">
-                <div class="metric-title">Média do Conceito</div>
-                <div class="metric-value 
-                    {% if media_conceito == 'Excelente' %}conceito-excelente
-                    {% elif media_conceito == 'Bom' %}conceito-bom
-                    {% elif media_conceito == 'Suficiente' %}conceito-suficiente
-                    {% else %}conceito-insuficiente{% endif %}">
-                    {{ media_conceito }}
-                </div>
-            </div>
-        </div>
-
-        <div class="project-card">
-            <div class="project-info">
-                <div class="project-title-row">
-                    <h3 class="project-title">Sistema de Gestão Acadêmica com IA</h3>
-                    <span class="badge-aprovado">✓ Aprovado</span>
-                </div>
-                <p class="project-description">Plataforma web que utiliza inteligência artificial para auxiliar na gestão de matrículas, horários e performance acadêmica. O sistema analisa padrões de aprovação e sugere otimizações.</p>
-                <div class="tags-row">
-                    <span class="tag">React</span>
-                    <span class="tag">Node.js</span>
-                    <span class="tag">TensorFlow</span>
-                    <span class="tag">PostgreSQL</span>
-                </div>
-                <div class="meta-row">
-                    <span>Categoria: Inteligência Artificial</span>
-                    <span>Semestre: 2026.1</span>
-                    <span>Nota: <span class="nota">9.5 (Conceito Excelente)</span></span>
-                </div>
-                <div class="project-actions">
-                    <button class="btn-action">Repositorio</button>
-                    <button class="btn-action">Demo</button>
-                    <button class="btn-action primary">Ver Avaliações (1)</button>
-                </div>
-            </div>
-            <img src="https://images.unsplash.com/photo-1531403009284-440f080d1e12?auto=format&fit=crop&w=150&q=80" alt="Projeto" class="project-img">
-        </div>
-
-        <div class="project-card">
-            <div class="project-info">
-                <div class="project-title-row">
-                    <h3 class="project-title">Sistema de Telemedicina</h3>
-                    <span class="badge-aprovado">✓ Aprovado</span>
-                </div>
-                <p class="project-description">Plataforma completa para consultas médicas online com agendamento, videochamada e prescrição digital.</p>
-                <div class="tags-row">
-                    <span class="tag">React</span>
-                    <span class="tag">WebRTC</span>
-                    <span class="tag">Node.js</span>
-                    <span class="tag">MongoDB</span>
-                </div>
-                <div class="meta-row">
-                    <span>Categoria: Saúde</span>
-                    <span>Semestre: 2025.2</span>
-                    <span>Nota: <span class="nota">9.0 (Conceito Excelente)</span></span>
-                </div>
-                <div class="project-actions">
-                    <button class="btn-action">Repositorio</button>
-                </div>
-            </div>
-            <img src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=150&q=80" alt="Projeto" class="project-img">
-        </div>
-
     </div>
+    <div class="user-menu">
+        <div class="user-info">
+            <p class="user-name">{{ usuario.first_name|default:"Usuário" }}</p>
+            <p class="user-role">{{ usuario.email }}</p>
+        </div>
+        <a href="{% url 'logout' %}" class="btn-logout" title="Sair">➔</a>
+    </div>
+</nav>
+
+<div class="container">
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'error' %}
+                <div class="mensagem-erro">⚠️ {{ message }}</div>
+            {% else %}
+                <div class="mensagem-sucesso">✅ {{ message }}</div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div class="tabs">
+        <a href="#" class="tab active">Meus Projetos</a>
+        <a href="#" class="tab">Portfólio</a>
+    </div>
+
+    <div class="dashboard-header">
+        <div>
+            <h2>Meus Projetos</h2>
+            <p>Gerencie e acompanhe seus projetos integradores</p>
+        </div>
+        <button class="btn-novo-projeto" onclick="abrirModal()">
+            <span>+</span> Novo Projeto
+        </button>
+    </div>
+
+    <!-- Métricas dinâmicas -->
+    <div class="metrics-grid">
+        <div class="metric-card">
+            <div class="metric-title">Total de Projetos</div>
+            <div class="metric-value">{{ total }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Aprovados</div>
+            <div class="metric-value green">{{ aprovados }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Em Avaliação</div>
+            <div class="metric-value">{{ em_avaliacao }}</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-title">Média do Conceito</div>
+            <div class="metric-value
+                {% if media_conceito == 'Excelente' %}conceito-excelente
+                {% elif media_conceito == 'Bom' %}conceito-bom
+                {% elif media_conceito == 'Suficiente' %}conceito-suficiente
+                {% else %}conceito-insuficiente{% endif %}">
+                {{ media_conceito }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista de projetos dinâmica -->
+    {% if projetos %}
+        {% for projeto in projetos %}
+        <div class="project-card">
+            <div class="project-info">
+                <div class="project-title-row">
+                    <h3 class="project-title">{{ projeto.titulo }}</h3>
+                    {% if projeto.status == 'aprovado' %}
+                        <span class="badge-aprovado">✓ Aprovado</span>
+                    {% elif projeto.status == 'em_avaliacao' %}
+                        <span class="badge-avaliacao">⏳ Em Avaliação</span>
+                    {% else %}
+                        <span class="badge-reprovado">✗ Reprovado</span>
+                    {% endif %}
+                </div>
+                <p class="project-description">{{ projeto.descricao }}</p>
+                {% if projeto.get_tags_lista %}
+                <div class="tags-row">
+                    {% for tag in projeto.get_tags_lista %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="meta-row">
+                    {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
+                    {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
+                    {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }} (Conceito {{ projeto.get_conceito }})</span></span>{% endif %}
+                </div>
+                <div class="project-actions">
+                    {% if projeto.link_repositorio %}
+                        <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>
+                    {% endif %}
+                    {% if projeto.link_demo %}
+                        <a href="{{ projeto.link_demo }}" target="_blank" class="btn-action">Demo</a>
+                    {% endif %}
+                    <a href="{% url 'editar_projeto' projeto.id %}" class="btn-action primary">✏️ Editar</a>
+                    <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover este projeto?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-action danger">🗑️ Remover</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="icon">📂</div>
+            <p>Você ainda não tem projetos. Clique em <strong>+ Novo Projeto</strong> para começar!</p>
+        </div>
+    {% endif %}
+
+</div>
+
+<!-- Modal Novo Projeto -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal">
+        <h3>➕ Novo Projeto</h3>
+        <form method="POST" action="{% url 'criar_projeto' %}">
+            {% csrf_token %}
+            <div class="modal-group">
+                <label>Título *</label>
+                <input type="text" name="titulo" placeholder="Nome do projeto" required>
+            </div>
+            <div class="modal-group">
+                <label>Descrição *</label>
+                <textarea name="descricao" placeholder="Descreva o projeto..." required></textarea>
+            </div>
+            <div class="modal-group">
+                <label>Categoria</label>
+                <input type="text" name="categoria" placeholder="Ex: Inteligência Artificial, Saúde...">
+            </div>
+            <div class="modal-group">
+                <label>Semestre</label>
+                <input type="text" name="semestre" placeholder="Ex: 2026.1">
+            </div>
+            <div class="modal-group">
+                <label>Tags (separe por vírgula)</label>
+                <input type="text" name="tags" placeholder="Ex: React, Node.js, Python">
+            </div>
+            <div class="modal-group">
+                <label>Link do Repositório</label>
+                <input type="url" name="link_repositorio" placeholder="https://github.com/...">
+            </div>
+            <div class="modal-group">
+                <label>Link da Demo</label>
+                <input type="url" name="link_demo" placeholder="https://...">
+            </div>
+            <div class="modal-actions">
+                <button type="button" class="btn-cancelar" onclick="fecharModal()">Cancelar</button>
+                <button type="submit" class="btn-salvar">Salvar Projeto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function abrirModal() {
+        document.getElementById('modalOverlay').classList.add('active');
+    }
+    function fecharModal() {
+        document.getElementById('modalOverlay').classList.remove('active');
+    }
+    document.getElementById('modalOverlay').addEventListener('click', function(e) {
+        if (e.target === this) fecharModal();
+    });
+</script>
 
 </body>
 </html>
