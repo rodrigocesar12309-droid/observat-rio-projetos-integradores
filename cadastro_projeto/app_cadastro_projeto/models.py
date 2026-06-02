@@ -1,4 +1,3 @@
-# app_cadastro_projeto/models.py
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils import timezone
@@ -30,7 +29,6 @@ class PerfilUsuario(models.Model):
     def __str__(self):
         return f"{self.user.first_name} ({self.get_tipo_usuario_display()})"
 
-    # ✅ CREATE - Método de classe para criar perfil junto com o usuário
     @classmethod
     def criar(cls, user, tipo_usuario='aluno', matricula=None, telefone=None):
         perfil = cls.objects.create(
@@ -41,7 +39,6 @@ class PerfilUsuario(models.Model):
         )
         return perfil
 
-    # ✅ READ - Buscar perfil por usuário
     @classmethod
     def buscar_por_usuario(cls, user):
         try:
@@ -49,12 +46,10 @@ class PerfilUsuario(models.Model):
         except cls.DoesNotExist:
             return None
 
-    # ✅ READ - Listar todos os perfis ativos por tipo
     @classmethod
     def listar_por_tipo(cls, tipo):
         return cls.objects.filter(tipo_usuario=tipo, ativo=True)
 
-    # ✅ UPDATE - Atualizar dados do perfil
     def atualizar(self, **kwargs):
         for campo, valor in kwargs.items():
             if hasattr(self, campo):
@@ -62,14 +57,17 @@ class PerfilUsuario(models.Model):
         self.save()
         return self
 
-    # ✅ DELETE - Soft delete (desativa sem apagar do banco)
     def desativar(self):
         self.ativo = False
         self.save()
 
-    # ✅ DELETE - Hard delete (apaga do banco de verdade)
     def deletar(self):
-        self.user.delete()  # Apaga o usuário e o perfil em cascata
+        self.user.delete()
+
+    # ✅ Propriedade para checar se é admin facilmente
+    @property
+    def is_admin(self):
+        return self.tipo_usuario == 'administracao'
 
 
 class Projeto(models.Model):
@@ -99,7 +97,6 @@ class Projeto(models.Model):
     def __str__(self):
         return f"{self.titulo} ({self.get_status_display()})"
 
-    # ✅ CREATE
     @classmethod
     def criar(cls, titulo, descricao, criado_por, data_inicio=None, data_fim=None):
         return cls.objects.create(
@@ -110,7 +107,6 @@ class Projeto(models.Model):
             data_fim=data_fim,
         )
 
-    # ✅ READ
     @classmethod
     def buscar_por_id(cls, projeto_id):
         try:
@@ -122,7 +118,6 @@ class Projeto(models.Model):
     def listar_ativos(cls):
         return cls.objects.filter(ativo=True)
 
-    # ✅ UPDATE
     def atualizar(self, **kwargs):
         for campo, valor in kwargs.items():
             if hasattr(self, campo):
@@ -130,12 +125,10 @@ class Projeto(models.Model):
         self.save()
         return self
 
-    # ✅ DELETE - Soft delete
     def desativar(self):
         self.ativo = False
         self.save()
 
-    # ✅ DELETE - Hard delete
     def deletar(self):
         self.delete()
 
@@ -162,7 +155,6 @@ class LogAtividade(models.Model):
     def __str__(self):
         return f"{self.usuario} - {self.get_acao_display()} em {self.data.strftime('%d/%m/%Y %H:%M')}"
 
-    # ✅ CREATE - Registrar uma ação
     @classmethod
     def registrar(cls, usuario, acao, descricao):
         return cls.objects.create(
@@ -170,6 +162,8 @@ class LogAtividade(models.Model):
             acao=acao,
             descricao=descricao,
         )
+
+
 class ProjetoUsuario(models.Model):
     STATUS_CHOICES = [
         ('em_avaliacao', 'Em Avaliação'),
