@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Projetos - Observatório de Projetos</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7fafc; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7fafc; }
+        
         .navbar { background-color: white; border-bottom: 1px solid #e2e8f0; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; }
         .brand { display: flex; align-items: center; gap: 10px; }
         .brand-icon { background-color: #5830f0; color: white; width: 35px; height: 35px; border-radius: 8px; display: flex; justify-content: center; align-items: center; font-size: 18px; }
@@ -15,17 +17,20 @@
         .user-info { text-align: right; }
         .user-name { font-size: 14px; font-weight: 600; color: #2d3748; margin: 0; }
         .user-role { font-size: 11px; color: #718096; margin: 0; }
-        .btn-logout { background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 20px; padding: 5px; text-decoration: none; }
+        .btn-logout { background: none; border: none; color: #a0aec0; cursor: pointer; font-size: 20px; padding: 5px; }
         .btn-logout:hover { color: #e53e3e; }
+        
         .container { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
         .tabs { display: flex; gap: 25px; border-bottom: 1px solid #e2e8f0; margin-bottom: 30px; }
-        .tab { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: #718096; text-decoration: none; border-bottom: 2px solid transparent; cursor: pointer; background: none; border-left: none; border-right: none; border-top: none; }
+        .tab { padding-bottom: 12px; font-size: 15px; font-weight: 600; color: #718096; border: none; background: none; cursor: pointer; border-bottom: 2px solid transparent; }
         .tab.active { color: #5830f0; border-bottom: 2px solid #5830f0; }
+        
         .dashboard-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .dashboard-header h2 { font-size: 24px; color: #0c2340; margin: 0 0 8px 0; }
         .dashboard-header p { font-size: 14px; color: #718096; margin: 0; }
         .btn-novo-projeto { background-color: #5830f0; color: white; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
         .btn-novo-projeto:hover { background-color: #431ecc; }
+        
         .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; }
         .metric-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 20px; }
         .metric-title { font-size: 13px; color: #718096; font-weight: 500; margin-bottom: 10px; }
@@ -35,8 +40,8 @@
         .conceito-bom { color: #3182ce; }
         .conceito-suficiente { color: #dd6b20; }
         .conceito-insuficiente { color: #e53e3e; }
+        
         .project-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 25px; margin-bottom: 20px; }
-        .project-info { max-width: 100%; }
         .project-title-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
         .project-title { font-size: 18px; font-weight: 700; color: #2d3748; margin: 0; }
         .badge-aprovado { background-color: #f0fff4; color: #38a169; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 20px; border: 1px solid #c6f6d5; }
@@ -49,7 +54,7 @@
         .meta-row span { margin-right: 15px; }
         .meta-row .nota { color: #5830f0; font-weight: 600; }
         .project-actions { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
-        .btn-action { background-color: #f7fafc; border: 1px solid #e2e8f0; color: #4a5568; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; }
+        .btn-action { background-color: #f7fafc; border: 1px solid #e2e8f0; color: #4a5568; padding: 8px 14px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; }
         .btn-action:hover { background-color: #edf2f7; }
         .btn-action.primary { background-color: #f0ecff; color: #5830f0; border-color: #d6bcfa; }
         .btn-action.danger { background-color: #fff5f5; color: #e53e3e; border-color: #fed7d7; }
@@ -57,32 +62,29 @@
         .empty-state .icon { font-size: 48px; margin-bottom: 16px; }
         .empty-state p { font-size: 16px; margin-bottom: 20px; }
 
-        /* Modal */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; }
         .modal-overlay.active { display: flex; }
         .modal { background: white; border-radius: 16px; padding: 35px; width: 100%; max-width: 540px; max-height: 90vh; overflow-y: auto; }
         .modal h3 { font-size: 20px; color: #0c2340; margin: 0 0 20px 0; }
         .modal-group { margin-bottom: 16px; display: flex; flex-direction: column; }
         .modal-group label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
-        .modal-group input, .modal-group textarea, .modal-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; width: 100%; box-sizing: border-box; }
+        .modal-group input, .modal-group textarea, .modal-group select { padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; font-family: inherit; width: 100%; }
         .modal-group textarea { resize: vertical; min-height: 80px; }
         .modal-group input:focus, .modal-group textarea:focus { border-color: #5830f0; }
         .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
         .btn-cancelar { background: none; border: 1px solid #e2e8f0; color: #718096; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-salvar { background-color: #5830f0; color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-salvar:hover { background-color: #431ecc; }
-        .mensagem-erro { background:#fff5f5; border:1px solid #fc8181; color:#c53030; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
-        .mensagem-sucesso { background:#f0fff4; border:1px solid #68d391; color:#276749; padding:12px 16px; border-radius:8px; font-size:13px; font-weight:600; margin-bottom:16px; text-align:center; }
+        .mensagem-erro { background: #fff5f5; border: 1px solid #fc8181; color: #c53030; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; }
+        .mensagem-sucesso { background: #f0fff4; border: 1px solid #68d391; color: #276749; padding: 12px 16px; border-radius: 8px; font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; }
 
-        /* Seção oculta */
         .section { display: none; }
         .section.active { display: block; }
 
-        /* ── Portfólio ── */
         .portfolio-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
         .portfolio-header h2 { font-size: 24px; color: #0c2340; margin: 0 0 8px 0; }
         .portfolio-header p { font-size: 14px; color: #718096; margin: 0; }
-        .btn-editar-curriculo { background-color: #5830f0; color: white; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+        .btn-editar-curriculo { background-color: #5830f0; color: white; border: none; border-radius: 8px; padding: 12px 20px; font-weight: 600; font-size: 14px; cursor: pointer; }
         .btn-editar-curriculo:hover { background-color: #431ecc; }
 
         .curriculo-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 30px; margin-bottom: 20px; }
@@ -106,6 +108,11 @@
         .empty-curriculo { text-align: center; padding: 60px 20px; color: #a0aec0; }
         .empty-curriculo .icon { font-size: 48px; margin-bottom: 16px; }
         .empty-curriculo p { font-size: 16px; }
+
+        @media (max-width: 768px) {
+            .metrics-grid { grid-template-columns: repeat(2, 1fr); }
+            .dashboard-header { flex-direction: column; align-items: flex-start; gap: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -144,9 +151,7 @@
         <button class="tab" onclick="mostrarAba('portfolio', this)">Portfólio</button>
     </div>
 
-    <!-- ═══════════════════════════════════ -->
-    <!-- ABA: MEUS PROJETOS                  -->
-    <!-- ═══════════════════════════════════ -->
+    <!-- ABA: MEUS PROJETOS -->
     <div id="aba-projetos" class="section active">
 
         <div class="dashboard-header">
@@ -174,11 +179,7 @@
             </div>
             <div class="metric-card">
                 <div class="metric-title">Média do Conceito</div>
-                <div class="metric-value
-                    {% if media_conceito == 'Excelente' %}conceito-excelente
-                    {% elif media_conceito == 'Bom' %}conceito-bom
-                    {% elif media_conceito == 'Suficiente' %}conceito-suficiente
-                    {% else %}conceito-insuficiente{% endif %}">
+                <div class="metric-value {% if media_conceito == 'Excelente' %}conceito-excelente{% elif media_conceito == 'Bom' %}conceito-bom{% elif media_conceito == 'Suficiente' %}conceito-suficiente{% else %}conceito-insuficiente{% endif %}">
                     {{ media_conceito }}
                 </div>
             </div>
@@ -187,43 +188,41 @@
         {% if projetos %}
             {% for projeto in projetos %}
             <div class="project-card">
-                <div class="project-info">
-                    <div class="project-title-row">
-                        <h3 class="project-title">{{ projeto.titulo }}</h3>
-                        {% if projeto.status == 'aprovado' %}
-                            <span class="badge-aprovado">✓ Aprovado</span>
-                        {% elif projeto.status == 'em_avaliacao' %}
-                            <span class="badge-avaliacao">⏳ Em Avaliação</span>
-                        {% else %}
-                            <span class="badge-reprovado">✗ Reprovado</span>
-                        {% endif %}
-                    </div>
-                    <p class="project-description">{{ projeto.descricao }}</p>
-                    {% if projeto.get_tags_lista %}
-                    <div class="tags-row">
-                        {% for tag in projeto.get_tags_lista %}
-                            <span class="tag">{{ tag }}</span>
-                        {% endfor %}
-                    </div>
+                <div class="project-title-row">
+                    <h3 class="project-title">{{ projeto.titulo }}</h3>
+                    {% if projeto.status == 'aprovado' %}
+                        <span class="badge-aprovado">✓ Aprovado</span>
+                    {% elif projeto.status == 'em_avaliacao' %}
+                        <span class="badge-avaliacao">⏳ Em Avaliação</span>
+                    {% else %}
+                        <span class="badge-reprovado">✗ Reprovado</span>
                     {% endif %}
-                    <div class="meta-row">
-                        {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
-                        {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
-                        {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }} (Conceito {{ projeto.get_conceito }})</span></span>{% endif %}
-                    </div>
-                    <div class="project-actions">
-                        {% if projeto.link_repositorio %}
-                            <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>
-                        {% endif %}
-                        {% if projeto.link_demo %}
-                            <a href="{{ projeto.link_demo }}" target="_blank" class="btn-action">Demo</a>
-                        {% endif %}
-                        <a href="{% url 'editar_projeto' projeto.id %}" class="btn-action primary">✏️ Editar</a>
-                        <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover este projeto?')">
-                            {% csrf_token %}
-                            <button type="submit" class="btn-action danger">🗑️ Remover</button>
-                        </form>
-                    </div>
+                </div>
+                <p class="project-description">{{ projeto.descricao }}</p>
+                {% if projeto.get_tags_lista %}
+                <div class="tags-row">
+                    {% for tag in projeto.get_tags_lista %}
+                        <span class="tag">{{ tag }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+                <div class="meta-row">
+                    {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
+                    {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
+                    {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }}</span></span>{% endif %}
+                </div>
+                <div class="project-actions">
+                    {% if projeto.link_repositorio %}
+                        <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>
+                    {% endif %}
+                    {% if projeto.link_demo %}
+                        <a href="{{ projeto.link_demo }}" target="_blank" class="btn-action">Demo</a>
+                    {% endif %}
+                    <a href="{% url 'editar_projeto' projeto.id %}" class="btn-action primary">✏️ Editar</a>
+                    <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover este projeto?')">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-action danger">🗑️ Remover</button>
+                    </form>
                 </div>
             </div>
             {% endfor %}
@@ -236,9 +235,7 @@
 
     </div>
 
-    <!-- ═══════════════════════════════════ -->
-    <!-- ABA: PORTFÓLIO / CURRÍCULO          -->
-    <!-- ═══════════════════════════════════ -->
+    <!-- ABA: PORTFÓLIO -->
     <div id="aba-portfolio" class="section">
 
         <div class="portfolio-header">
@@ -252,14 +249,12 @@
         </div>
 
         <div id="curriculo-preview">
-            <!-- Preenchido via JS após salvar -->
             <div class="empty-curriculo" id="curriculo-vazio">
                 <div class="icon">📄</div>
                 <p>Você ainda não preencheu seu currículo.<br>Clique em <strong>Editar Currículo</strong> para começar!</p>
             </div>
 
             <div id="curriculo-conteudo" style="display:none;">
-                <!-- Dados Pessoais -->
                 <div class="curriculo-card">
                     <div class="curriculo-section-title">👤 Dados Pessoais</div>
                     <p class="curriculo-nome" id="cv-nome"></p>
@@ -273,19 +268,16 @@
                     <p class="curriculo-bio" id="cv-bio"></p>
                 </div>
 
-                <!-- Habilidades -->
                 <div class="curriculo-card">
                     <div class="curriculo-section-title">🛠️ Habilidades</div>
                     <div class="habilidades-grid" id="cv-habilidades"></div>
                 </div>
 
-                <!-- Experiência -->
                 <div class="curriculo-card" id="cv-experiencia-card">
                     <div class="curriculo-section-title">💼 Experiência Profissional</div>
                     <div id="cv-experiencias"></div>
                 </div>
 
-                <!-- Formação -->
                 <div class="curriculo-card">
                     <div class="curriculo-section-title">🎓 Formação Acadêmica</div>
                     <div id="cv-formacao"></div>
@@ -296,9 +288,7 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════ -->
-<!-- MODAL: NOVO PROJETO                 -->
-<!-- ═══════════════════════════════════ -->
+<!-- MODAL: NOVO PROJETO -->
 <div class="modal-overlay" id="modalProjeto">
     <div class="modal">
         <h3>➕ Novo Projeto</h3>
@@ -340,9 +330,7 @@
     </div>
 </div>
 
-<!-- ═══════════════════════════════════ -->
-<!-- MODAL: CURRÍCULO                    -->
-<!-- ═══════════════════════════════════ -->
+<!-- MODAL: CURRÍCULO -->
 <div class="modal-overlay" id="modalCurriculo">
     <div class="modal">
         <h3>📄 Currículo Profissional</h3>
@@ -396,7 +384,6 @@
 </div>
 
 <script>
-    // ── Abas ──
     function mostrarAba(aba, el) {
         document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -404,25 +391,27 @@
         el.classList.add('active');
     }
 
-    // ── Modais ──
     function abrirModal(id) {
         document.getElementById(id).classList.add('active');
     }
+
     function fecharModal(id) {
         document.getElementById(id).classList.remove('active');
     }
+
     document.querySelectorAll('.modal-overlay').forEach(overlay => {
         overlay.addEventListener('click', function(e) {
             if (e.target === this) fecharModal(this.id);
         });
     });
 
-    // ── Currículo ──
     function salvarCurriculo() {
         const nome = document.getElementById('input-nome').value.trim();
-        if (!nome) { alert('Por favor, preencha o nome completo.'); return; }
+        if (!nome) {
+            alert('Por favor, preencha o nome completo.');
+            return;
+        }
 
-        // Salva no localStorage para persistir
         const dados = {
             nome,
             cargo: document.getElementById('input-cargo').value,
@@ -453,7 +442,6 @@
         document.getElementById('cv-linkedin-exibir').innerHTML = d.linkedin ? `🔗 <a href="${d.linkedin}" target="_blank">LinkedIn</a>` : '';
         document.getElementById('cv-github-exibir').innerHTML = d.github ? `💻 <a href="${d.github}" target="_blank">GitHub</a>` : '';
 
-        // Habilidades
         const habEl = document.getElementById('cv-habilidades');
         habEl.innerHTML = '';
         if (d.habilidades) {
@@ -462,7 +450,6 @@
             });
         }
 
-        // Experiência
         const expEl = document.getElementById('cv-experiencias');
         expEl.innerHTML = '';
         if (d.experiencia) {
@@ -479,7 +466,6 @@
             });
         }
 
-        // Formação
         const formEl = document.getElementById('cv-formacao');
         formEl.innerHTML = '';
         if (d.formacao) {
@@ -495,7 +481,6 @@
             });
         }
 
-        // Preenche o modal com os dados salvos para edição
         document.getElementById('input-nome').value = d.nome;
         document.getElementById('input-cargo').value = d.cargo;
         document.getElementById('input-email').value = d.email;
@@ -508,7 +493,6 @@
         document.getElementById('input-formacao').value = d.formacao;
     }
 
-    // Carrega currículo salvo ao abrir a página
     window.addEventListener('load', () => {
         const salvo = localStorage.getItem('curriculo_{{ usuario.id }}');
         if (salvo) renderizarCurriculo(JSON.parse(salvo));

@@ -1,16 +1,14 @@
-"""
-WSGI config for cadastro_projeto project.
-
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/6.0/howto/deployment/wsgi/
-"""
-
 import os
+import sys
+
+# 1. Caminho da pasta principal do seu projeto (onde fica o manage.py)
+path = '/home/cesarsilva5/observat-rio-projetos-integradores'
+if path not in sys.path:
+    sys.path.append(path)
+
+# 2. Configuração do ambiente do Django
+# (Aqui dizemos ao Python onde encontrar o seu arquivo settings.py)
+os.environ['DJANGO_SETTINGS_MODULE'] = 'projeto_cadastro.settings'
 
 from django.core.wsgi import get_wsgi_application
-
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cadastro_projeto.settings')
-
 application = get_wsgi_application()
