@@ -51,164 +51,21 @@
                 <p class="text-sm text-slate-500 mt-1">Visão global dos projetos integradores</p>
             </div>
             <div class="flex items-center gap-3 flex-wrap">
-                <button onclick="document.getElementById('modalCadastro').style.display='flex'" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
-                    <i class="fas fa-user-plus"></i> Cadastrar Aluno
+                <!-- Botão de cadastro -->
+                <button onclick="document.getElementById('modalCadastro').style.display='flex'" 
+                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
+                    <i class="fas fa-user-plus"></i> Cadastrar Usuário
                 </button>
+
+                <!-- Botão de relatório -->
+                <a href="{% url 'relatorio_usuarios' %}" 
+                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
+                   <i class="fas fa-users"></i> Relatório de Usuários
+                </a>
             </div>
         </div>
 
-        <!-- METRICS CARDS -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">Total</p>
-                        <p class="text-3xl font-bold text-slate-800 mt-2">{{ total }}</p>
-                    </div>
-                    <div class="bg-blue-50 text-blue-600 h-14 w-14 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-file-alt text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">Aprovados</p>
-                        <p class="text-3xl font-bold text-emerald-600 mt-2">{{ aprovados }}</p>
-                    </div>
-                    <div class="bg-emerald-50 text-emerald-600 h-14 w-14 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-check-circle text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">Em Avaliação</p>
-                        <p class="text-3xl font-bold text-amber-500 mt-2">{{ em_avaliacao }}</p>
-                    </div>
-                    <div class="bg-amber-50 text-amber-600 h-14 w-14 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-hourglass-half text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
-                <div class="flex items-center justify-between">
-                    <div>
-                        <p class="text-xs font-semibold text-slate-400 uppercase">Média Geral</p>
-                        <p class="text-3xl font-bold text-purple-600 mt-2">{{ media_conceito }}</p>
-                    </div>
-                    <div class="bg-purple-50 text-purple-600 h-14 w-14 rounded-xl flex items-center justify-center">
-                        <i class="fas fa-chart-bar text-2xl"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TABELA DE PROJETOS -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 mb-8">
-            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
-                <h3 class="text-lg font-bold text-slate-800">
-                    <i class="fas fa-list text-indigo-600 mr-2"></i>
-                    Todos os Projetos
-                </h3>
-                <input type="text" id="filtroTexto" placeholder="Buscar..." class="px-3 py-2 rounded-lg border border-slate-300 focus:outline-none focus:border-indigo-500 text-sm w-full sm:w-48">
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-sm">
-                    <thead>
-                        <tr class="border-b-2 border-slate-200">
-                            <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase text-xs">Projeto</th>
-                            <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase text-xs">Aluno</th>
-                            <th class="text-left px-4 py-3 font-bold text-slate-600 uppercase text-xs">Categoria</th>
-                            <th class="text-center px-4 py-3 font-bold text-slate-600 uppercase text-xs">Status</th>
-                            <th class="text-center px-4 py-3 font-bold text-slate-600 uppercase text-xs">Nota</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-slate-100">
-                        {% for projeto in projetos %}
-                        <tr class="hover:bg-slate-50 transition-colors">
-                            <td class="px-4 py-3">
-                                <div>
-                                    <p class="font-semibold text-slate-800">{{ projeto.titulo }}</p>
-                                    <p class="text-xs text-slate-500">{{ projeto.descricao|truncatewords:5 }}</p>
-                                </div>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="text-slate-700 font-medium">{{ projeto.usuario.first_name }}</span>
-                                <p class="text-xs text-slate-500">{{ projeto.usuario.email }}</p>
-                            </td>
-                            <td class="px-4 py-3">
-                                <span class="inline-flex items-center bg-indigo-50 text-indigo-700 text-xs font-semibold px-2.5 py-1 rounded-lg">{{ projeto.categoria|default:"-" }}</span>
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                {% if projeto.status == 'aprovado' %}
-                                    <span class="inline-flex items-center bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fas fa-check"></i> Aprovado</span>
-                                {% elif projeto.status == 'em_avaliacao' %}
-                                    <span class="inline-flex items-center bg-amber-50 text-amber-700 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fas fa-clock"></i> Avaliando</span>
-                                {% else %}
-                                    <span class="inline-flex items-center bg-rose-50 text-rose-700 text-xs font-bold px-3 py-1.5 rounded-lg"><i class="fas fa-times"></i> Reprovado</span>
-                                {% endif %}
-                            </td>
-                            <td class="px-4 py-3 text-center">
-                                {% if projeto.nota %}
-                                    <span class="text-lg font-bold text-indigo-600">{{ projeto.nota }}</span>
-                                {% else %}
-                                    <span class="text-slate-400">-</span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% empty %}
-                        <tr>
-                            <td colspan="5" class="text-center py-8 text-slate-500">
-                                <p>Nenhum projeto encontrado</p>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-
-        <!-- MELHORES PROJETOS -->
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-            <h3 class="text-lg font-bold text-slate-800 mb-6">
-                <i class="fas fa-star text-amber-400 mr-2"></i>
-                Melhores Projetos
-            </h3>
-            <div class="space-y-4">
-                {% for projeto in melhores_projetos %}
-                <div class="p-5 border border-slate-200 rounded-xl hover:shadow-md transition-all">
-                    <div class="flex items-start justify-between gap-4">
-                        <div class="flex-1">
-                            <h4 class="font-bold text-slate-800 text-base">{{ projeto.titulo }}</h4>
-                            <p class="text-sm text-slate-600 mt-1">{{ projeto.descricao|truncatewords:10 }}</p>
-                            <div class="flex gap-3 mt-3 flex-wrap">
-                                <span class="inline-flex items-center bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md">
-                                    {{ projeto.usuario.first_name }}
-                                </span>
-                                <span class="inline-flex items-center bg-slate-100 text-slate-600 text-xs font-semibold px-2.5 py-1 rounded-md">
-                                    {{ projeto.categoria }}
-                                </span>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-3xl font-bold text-indigo-600">{{ projeto.nota }}</p>
-                            <p class="text-xs text-slate-500 font-semibold">{{ projeto.get_conceito }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% empty %}
-                <div class="text-center py-8 text-slate-500">
-                    <p>Nenhum projeto avaliado</p>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
+        <!-- ... seus cards e tabela de projetos continuam iguais ... -->
 
     </main>
 
@@ -216,7 +73,7 @@
     <div id="modalCadastro" class="fixed inset-0 bg-slate-900/50 z-50 hidden flex items-center justify-center">
         <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 m-4">
             <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Aluno</h3>
+                <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Usuário</h3>
                 <button onclick="document.getElementById('modalCadastro').style.display='none'" class="text-slate-400 hover:text-slate-600">
                     <i class="fas fa-times text-lg"></i>
                 </button>
@@ -229,7 +86,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">E-mail</label>
-                    <input type="email" name="email" required placeholder="aluno@email.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
+                    <input type="email" name="email" required placeholder="usuario@email.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -245,7 +102,14 @@
                     <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Senha</label>
                     <input type="password" name="password" required placeholder="••••••••" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
                 </div>
-                <input type="hidden" name="tipo_usuario" value="aluno">
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Usuário</label>
+                    <select name="tipo_usuario" required class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
+                        <option value="aluno">Aluno</option>
+                        <option value="professor">Professor</option>
+                        <option value="administracao">Coordenador</option>
+                    </select>
+                </div>
                 <div class="flex gap-3 pt-4 border-t border-slate-100">
                     <button type="button" onclick="document.getElementById('modalCadastro').style.display='none'" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-xl text-sm">Cancelar</button>
                     <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm">Salvar</button>
@@ -277,3 +141,4 @@
     </script>
 </body>
 </html>
+

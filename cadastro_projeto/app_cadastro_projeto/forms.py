@@ -2,12 +2,18 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import PerfilUsuario
 
+# Opções de tipo de usuário
+TIPOS_USUARIO = [
+    ('aluno', 'Aluno'),
+    ('professor', 'Professor'),
+    ('administracao', 'Coordenador'),
+]
 
 class CadastroForm(forms.ModelForm):
     nome_completo = forms.CharField(
         max_length=150,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Digite seu nome completo',
+            'placeholder': 'Digite o nome completo',
             'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s;'
         })
     )
@@ -15,20 +21,24 @@ class CadastroForm(forms.ModelForm):
         max_length=50,
         required=False,
         widget=forms.TextInput(attrs={
-            'placeholder': 'Sua matrícula (se houver)',
+            'placeholder': 'Matrícula (se houver)',
             'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
         })
     )
     telefone = forms.CharField(
         max_length=20,
+        required=False,
         widget=forms.TextInput(attrs={
             'placeholder': '(81) 99999-9999',
             'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
         })
     )
-    tipo_usuario = forms.CharField(
-        widget=forms.HiddenInput(),
-        initial='aluno'
+    tipo_usuario = forms.ChoiceField(
+        choices=TIPOS_USUARIO,
+        label='Tipo de Usuário',
+        widget=forms.Select(attrs={
+            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
+        })
     )
 
     class Meta:
@@ -85,7 +95,6 @@ class AtualizarPerfilForm(forms.ModelForm):
         model = PerfilUsuario
         fields = ['tipo_usuario', 'matricula', 'telefone']
 
-    # Injeta o nome_completo do User no form ao carregar
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.user:
