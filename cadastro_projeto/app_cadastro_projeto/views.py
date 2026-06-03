@@ -247,6 +247,34 @@ def relatorio_usuarios(request):
 
     usuarios = PerfilUsuario.objects.select_related('user').all()
     return render(request, 'usuarios/relatorio_usuarios.html', {'usuarios': usuarios})
+# ─────────────────────────────────────────
+# EDITAR USUARIO
+# ─────────────────────────────────────────
+@login_required(login_url='home')
+def editar_usuario(request, usuario_id):
+    perfil_coord = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil_coord or perfil_coord.tipo_usuario != 'administracao':
+        messages.error(request, 'Acesso negado: apenas coordenadores podem editar usuários.')
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=usuario_id)
+    perfil = get_object_or_404(PerfilUsuario, user=usuario)
+
+    if request.method == 'POST':
+        form = AtualizarPerfilForm(request.POST, instance=perfil)
+        if form.is_valid():
+            form.save()
+            usuario.first_name = form.cleaned_data.get('nome_completo', usuario.first_name)
+            usuario.save()
+            LogAtividade.registrar(request.user, 'update', f'Coordenador editou {usuario.email}.')
+            messages.success(request, f'Usuário {usuario.email} atualizado com sucesso!')
+            return redirect('relatorio_usuarios')
+    else:
+        form = AtualizarPerfilForm(instance=perfil)
+
+    return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
+
+
 
 # ─────────────────────────────────────────
 # API REST

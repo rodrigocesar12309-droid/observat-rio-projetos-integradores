@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Usuário</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50 text-slate-700 min-h-screen p-6">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm max-w-lg mx-auto p-6">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Editar Usuário</h2>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <div class="flex gap-3 pt-4 border-t border-slate-100">
+                <a href="{% url 'relatorio_usuarios' %}" 
+                   class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-xl text-sm text-center">
+                   Cancelar
+                </a>
+                <button type="submit" 
+                        class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">
+                    Salvar
+                </button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
