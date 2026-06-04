@@ -3,6 +3,12 @@ from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+from django.db.models import Count, Avg
+from django.db.models.functions import TruncMonth
+from django.utils import timezone
+import json
+import datetime
+
 from .forms import CadastroForm, AtualizarPerfilForm
 from .models import PerfilUsuario, ProjetoUsuario, LogAtividade
 from rest_framework.decorators import api_view, permission_classes
@@ -89,7 +95,7 @@ def cadastrar_usuario(request):
 def gerenciar_usuarios(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
     if not perfil or perfil.tipo_usuario != 'administracao':
-        messages.error(request, 'Acesso negado: apenas coordenadores podem gerenciar usuários.')
+        messages.error(request, 'Acesso negado.')
         return redirect('dashboard')
 
     usuarios = PerfilUsuario.objects.select_related('user').all()
@@ -112,6 +118,117 @@ def desativar_usuario(request, usuario_id):
 
 
 # ─────────────────────────────────────────
+# HELPERS — dados para gráficos
+# ─────────────────────────────────────────
+
+def _dados_evolucao_mensal(meses=12):
+    """
+    Retorna labels e séries de projetos criados por mês
+    nos últimos `meses` meses, separados por status.
+    """
+    hoje = timezone.now().date()
+    inicio = hoje.replace(day=1) - datetime.timedelta(days=30 * (meses - 1))
+
+    qs = (
+        ProjetoUsuario.objects
+        .filter(criado_em__date__gte=inicio)
+        .annotate(mes=TruncMonth('criado_em'))
+        .values('mes', 'status')
+        .annotate(total=Count('id'))
+        .order_by('mes')
+    )
+
+    # monta mapa {mes: {status: count}}
+    mapa = {}
+    cursor = inicio.replace(day=1)
+    while cursor <= hoje.replace(day=1):
+        mapa[cursor] = {'em_avaliacao': 0, 'aprovado': 0, 'reprovado': 0}
+        # avança um mês
+        if cursor.month == 12:
+            cursor = cursor.replace(year=cursor.year + 1, month=1)
+        else:
+            cursor = cursor.replace(month=cursor.month + 1)
+
+    for row in qs:
+        chave = row['mes'].date().replace(day=1)
+        if chave in mapa:
+            mapa[chave][row['status']] = row['total']
+
+    meses_ord = sorted(mapa.keys())
+    MESES_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
+    labels      = [f"{MESES_PT[m.month-1]}/{str(m.year)[2:]}" for m in meses_ord]
+    submetidos  = [mapa[m]['em_avaliacao'] + mapa[m]['aprovado'] + mapa[m].get('reprovado', 0) for m in meses_ord]
+    aprovados   = [mapa[m]['aprovado']   for m in meses_ord]
+    reprovados  = [mapa[m].get('reprovado', 0) for m in meses_ord]
+
+    return {'labels': labels, 'submetidos': submetidos, 'aprovados': aprovados, 'reprovados': reprovados}
+
+
+def _dados_status():
+    """Contagem de projetos por status para o doughnut."""
+    qs = (
+        ProjetoUsuario.objects
+        .filter(ativo=True)
+        .values('status')
+        .annotate(total=Count('id'))
+    )
+    mapa = {r['status']: r['total'] for r in qs}
+    return [
+        mapa.get('em_avaliacao', 0),
+        mapa.get('aprovado', 0),
+        mapa.get('reprovado', 0),
+    ]
+
+
+def _dados_por_categoria():
+    """Top 6 categorias com mais projetos."""
+    qs = (
+        ProjetoUsuario.objects
+        .filter(ativo=True)
+        .exclude(categoria='')
+        .values('categoria')
+        .annotate(total=Count('id'))
+        .order_by('-total')[:6]
+    )
+    labels = [r['categoria'] for r in qs]
+    valores = [r['total'] for r in qs]
+    return {'labels': labels, 'valores': valores}
+
+
+def _dados_por_semestre():
+    """Projetos agrupados por semestre."""
+    qs = (
+        ProjetoUsuario.objects
+        .filter(ativo=True)
+        .exclude(semestre='')
+        .values('semestre')
+        .annotate(total=Count('id'))
+        .order_by('semestre')[:6]
+    )
+    labels = [r['semestre'] for r in qs]
+    valores = [r['total'] for r in qs]
+    return {'labels': labels, 'valores': valores}
+
+
+def _dados_radar():
+    """Médias para o radar: notas globais e por conceito."""
+    qs = ProjetoUsuario.objects.filter(ativo=True, nota__isnull=False)
+    total = qs.count() or 1
+
+    excelente  = qs.filter(nota__gte=9.0).count()
+    bom        = qs.filter(nota__gte=7.0, nota__lt=9.0).count()
+    suficiente = qs.filter(nota__gte=5.0, nota__lt=7.0).count()
+    insuf      = qs.filter(nota__lt=5.0).count()
+    media      = qs.aggregate(m=Avg('nota'))['m'] or 0
+    aprovados  = qs.filter(nota__gte=7.0).count()
+
+    # normaliza para escala 10
+    def pct(v): return round((v / total) * 10, 1)
+
+    return [pct(excelente), pct(bom), pct(suficiente), round(media, 1), pct(aprovados), pct(total - insuf)]
+
+
+# ─────────────────────────────────────────
 # DASHBOARD
 # ─────────────────────────────────────────
 
@@ -120,36 +237,79 @@ def dashboard(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
 
     if perfil and perfil.tipo_usuario == 'administracao':
-        projetos = ProjetoUsuario.objects.filter(ativo=True)
+        projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
         form_cadastro = CadastroForm()
-        template_alvo = 'usuarios/dashboard_admin.html'
+
+        # ── KPIs ──
+        total_projetos   = projetos.count()
+        total_alunos     = PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count()
+        em_avaliacao     = projetos.filter(status='em_avaliacao').count()
+        aprovados_count  = projetos.filter(status='aprovado').count()
+
+        notas = list(projetos.exclude(nota__isnull=True).values_list('nota', flat=True))
+        media_num = sum(notas) / len(notas) if notas else 0
+        conceito_final = obter_conceito(media_num) if notas else '-'
+
+        # ── Dados para gráficos (JSON seguro) ──
+        evolucao_12m = _dados_evolucao_mensal(12)
+        evolucao_6m  = _dados_evolucao_mensal(6)
+        evolucao_3m  = _dados_evolucao_mensal(3)
+
+        graf_status      = _dados_status()
+        graf_categoria   = _dados_por_categoria()
+        graf_semestre    = _dados_por_semestre()
+        graf_radar       = _dados_radar()
+
+        contexto = {
+            'usuario': request.user,
+            'perfil': perfil,
+            'projetos': projetos.order_by('-criado_em')[:20],
+            'melhores_projetos': melhores_projetos,
+            'form': form_cadastro,
+
+            # KPIs
+            'total_projetos':  total_projetos,
+            'total_alunos':    total_alunos,
+            'em_avaliacao':    em_avaliacao,
+            'aprovados':       aprovados_count,
+            'media_conceito':  conceito_final,
+
+            # Gráficos — passados como JSON para o JS
+            'graf_evolucao_12m': json.dumps(evolucao_12m),
+            'graf_evolucao_6m':  json.dumps(evolucao_6m),
+            'graf_evolucao_3m':  json.dumps(evolucao_3m),
+            'graf_status':       json.dumps(graf_status),
+            'graf_categoria':    json.dumps(graf_categoria),
+            'graf_semestre':     json.dumps(graf_semestre),
+            'graf_radar':        json.dumps(graf_radar),
+            'total_doughnut':    total_projetos,
+        }
+        return render(request, 'usuarios/dashboard_admin.html', contexto)
+
     else:
         projetos = ProjetoUsuario.objects.filter(usuario=request.user, ativo=True)
         melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
-        form_cadastro = None
-        template_alvo = 'usuarios/dashboard.html'
 
-    total = projetos.count()
-    aprovados = projetos.filter(status='aprovado').count()
-    em_avaliacao = projetos.filter(status='em_avaliacao').count()
+        total        = projetos.count()
+        aprovados    = projetos.filter(status='aprovado').count()
+        em_avaliacao = projetos.filter(status='em_avaliacao').count()
+        notas        = [p.nota for p in projetos if p.nota is not None]
+        media_num    = sum(notas) / len(notas) if notas else 0
+        conceito_final = obter_conceito(media_num) if notas else '-'
 
-    notas = [p.nota for p in projetos if p.nota is not None]
-    media_numerica = sum(notas) / len(notas) if notas else 0
-    conceito_final = obter_conceito(media_numerica) if notas else '-'
-
-    contexto = {
-        'usuario': request.user,
-        'perfil': perfil,
-        'projetos': projetos,
-        'melhores_projetos': melhores_projetos,
-        'total': total,
-        'aprovados': aprovados,
-        'em_avaliacao': em_avaliacao,
-        'media_conceito': conceito_final,
-        'form': form_cadastro,
-    }
-    return render(request, template_alvo, contexto)
+        contexto = {
+            'usuario': request.user,
+            'perfil': perfil,
+            'projetos': projetos,
+            'melhores_projetos': melhores_projetos,
+            'total': total,
+            'aprovados': aprovados,
+            'em_avaliacao': em_avaliacao,
+            'media_conceito': conceito_final,
+            'form': None,
+        }
+        return render(request, 'usuarios/dashboard_aluno.html', contexto)
 
 
 # ─────────────────────────────────────────
@@ -234,8 +394,9 @@ def desativar_conta(request):
         return redirect('home')
     return render(request, 'usuarios/desativar_conta.html')
 
+
 # ─────────────────────────────────────────
-# RELATÓRIO USUARIOS
+# RELATÓRIO USUÁRIOS
 # ─────────────────────────────────────────
 
 @login_required(login_url='home')
@@ -247,9 +408,12 @@ def relatorio_usuarios(request):
 
     usuarios = PerfilUsuario.objects.select_related('user').all()
     return render(request, 'usuarios/relatorio_usuarios.html', {'usuarios': usuarios})
+
+
 # ─────────────────────────────────────────
-# EDITAR USUARIO
+# EDITAR USUÁRIO
 # ─────────────────────────────────────────
+
 @login_required(login_url='home')
 def editar_usuario(request, usuario_id):
     perfil_coord = PerfilUsuario.buscar_por_usuario(request.user)
@@ -275,7 +439,6 @@ def editar_usuario(request, usuario_id):
     return render(request, 'usuarios/editar_usuario.html', {'form': form, 'usuario': usuario})
 
 
-
 # ─────────────────────────────────────────
 # API REST
 # ─────────────────────────────────────────
@@ -284,36 +447,21 @@ def editar_usuario(request, usuario_id):
 @permission_classes([IsAuthenticated])
 def api_usuarios(request):
     usuarios = User.objects.all()
-    serializer = UsuarioSerializer(
-        usuarios,
-        many=True
-    )
+    serializer = UsuarioSerializer(usuarios, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def api_projetos(request):
-    projetos = ProjetoUsuario.objects.filter(
-        ativo=True
-    )
-
-    serializer = ProjetoSerializer(
-        projetos,
-        many=True
-    )
-
+    projetos = ProjetoUsuario.objects.filter(ativo=True)
+    serializer = ProjetoSerializer(projetos, many=True)
     return Response(serializer.data)
 
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def api_projeto_detalhe(request, projeto_id):
-    projeto = get_object_or_404(
-        ProjetoUsuario,
-        id=projeto_id
-    )
-
+    projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
     serializer = ProjetoSerializer(projeto)
-
     return Response(serializer.data)
