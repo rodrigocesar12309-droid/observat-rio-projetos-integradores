@@ -1,26 +1,36 @@
-{% extends 'base.html' %}
-{% block content %}
-<h2>Gerenciar Usuários</h2>
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nome</th>
-            <th>E-mail</th>
-            <th>Tipo</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for perfil in usuarios %}
-        <tr>
-            <td>{{ perfil.user.first_name }}</td>
-            <td>{{ perfil.user.email }}</td>
-            <td>{{ perfil.tipo_usuario|title }}</td>
-            <td>{% if perfil.user.is_active %}Ativo{% else %}Inativo{% endif %}</td>
-        </tr>
-        {% empty %}
-        <tr><td colspan="4">Nenhum usuário encontrado.</td></tr>
-        {% endfor %}
-    </tbody>
-</table>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Gerenciar Usuários</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-4">
+        <h2>Gerenciar Usuários</h2>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>E-mail</th>
+                    <th>Tipo</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for perfil in usuarios %}
+                <tr>
+                    <td>{{ perfil.user.first_name }}</td>
+                    <td>{{ perfil.user.email }}</td>
+                    <td>{{ perfil.tipo_usuario|title }}</td>
+                    <td>{% if perfil.user.is_active %}Ativo{% else %}Inativo{% endif %}</td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="4">Nenhum usuário encontrado.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
+

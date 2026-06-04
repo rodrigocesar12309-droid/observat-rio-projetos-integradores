@@ -3,142 +3,791 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observatório de Projetos - Painel de Coordenação</title>
+    <title>Observatório de Projetos — Coordenação</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Geist:wght@300;400;500;600&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
+        :root {
+            --ink:      #0D0D14;
+            --ink-2:    #3A3A4A;
+            --muted:    #7B7B96;
+            --line:     #EAEAF0;
+            --bg:       #F7F7FB;
+            --card:     #FFFFFF;
+
+            --v:        #5B47E0;   /* violet — primary */
+            --v-lt:     #EDE9FC;
+            --v-dk:     #3D2DB8;
+            --em:       #10B89A;   /* emerald — success */
+            --em-lt:    #D0F5EF;
+            --am:       #F59E0B;   /* amber — warning */
+            --am-lt:    #FEF3C7;
+            --ro:       #F43F5E;   /* rose — danger */
+            --ro-lt:    #FFE4EA;
+            --bl:       #3B82F6;   /* blue — info */
+            --bl-lt:    #DBEAFE;
+
+            --r:        12px;
+            --r-lg:     18px;
+            --sh:       0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+            --sh-lg:    0 4px 6px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.1);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Geist', sans-serif;
+            background: var(--bg);
+            color: var(--ink-2);
+            min-height: 100vh;
+        }
+
+        /* ── TOAST ── */
+        .toasts {
+            position: fixed; top: 72px; right: 1.25rem;
+            z-index: 200; display: flex; flex-direction: column; gap: .5rem;
+        }
+        .toast {
+            padding: .875rem 1.25rem; border-radius: var(--r);
+            font-size: .82rem; font-weight: 500; border: 1px solid;
+            box-shadow: var(--sh-lg); animation: slideIn .3s ease;
+        }
+        .toast.success { background: #F0FDF9; color: #0A7A64; border-color: #A7F3E4; }
+        .toast.error   { background: #FFF1F3; color: #BE1234; border-color: #FECDD8; }
+
+        /* ── NAV ── */
+        header {
+            background: var(--card);
+            border-bottom: 1px solid var(--line);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 62px;
+            box-shadow: 0 1px 0 var(--line), 0 2px 8px rgba(0,0,0,.04);
+        }
+        .brand { display: flex; align-items: center; gap: .875rem; }
+        .brand-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: linear-gradient(135deg, var(--v), #8B5CF6);
+            display: grid; place-items: center; color: #fff; font-size: .95rem;
+            box-shadow: 0 2px 8px rgba(91,71,224,.35);
+        }
+        .brand-name {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 700; font-size: .95rem; color: var(--ink); line-height: 1.2;
+        }
+        .brand-role {
+            font-size: .65rem; font-weight: 600; letter-spacing: .1em;
+            text-transform: uppercase; color: var(--v);
+        }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-user { text-align: right; }
+        .nav-user strong { display: block; font-size: .82rem; font-weight: 600; color: var(--ink); }
+        .nav-user span   { font-size: .72rem; color: var(--muted); }
+        .nav-logout {
+            width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line);
+            background: none; cursor: pointer; display: grid; place-items: center;
+            color: var(--muted); transition: all .15s; text-decoration: none;
+        }
+        .nav-logout:hover { background: var(--ro-lt); border-color: var(--ro); color: var(--ro); }
+
+        /* ── LAYOUT ── */
+        main { max-width: 1440px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+
+        /* ── PAGE HEADER ── */
+        .page-head {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;
+        }
+        .page-head h2 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 800; font-size: 1.75rem; color: var(--ink); line-height: 1.15;
+        }
+        .page-head p { font-size: .85rem; color: var(--muted); margin-top: .3rem; }
+        .actions { display: flex; gap: .75rem; flex-wrap: wrap; }
+
+        .btn {
+            display: inline-flex; align-items: center; gap: .45rem;
+            padding: .6rem 1.15rem; border-radius: 50px; border: none;
+            font-family: 'Geist', sans-serif; font-size: .82rem; font-weight: 600;
+            cursor: pointer; transition: all .16s; text-decoration: none; white-space: nowrap;
+        }
+        .btn:hover { transform: translateY(-1px); }
+        .btn-em { background: var(--em); color: #fff; box-shadow: 0 2px 8px rgba(16,184,154,.3); }
+        .btn-em:hover { background: #0d9a83; box-shadow: 0 4px 14px rgba(16,184,154,.4); }
+        .btn-v  { background: var(--v);  color: #fff; box-shadow: 0 2px 8px rgba(91,71,224,.3); }
+        .btn-v:hover  { background: var(--v-dk); box-shadow: 0 4px 14px rgba(91,71,224,.4); }
+
+        /* ── KPI STRIP ── */
+        .kpis {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1rem; margin-bottom: 1.5rem;
+        }
+        @media (max-width: 900px)  { .kpis { grid-template-columns: repeat(2,1fr); } }
+        @media (max-width: 480px)  { .kpis { grid-template-columns: 1fr; } }
+
+        .kpi {
+            background: var(--card);
+            border-radius: var(--r-lg);
+            padding: 1.25rem 1.4rem;
+            box-shadow: var(--sh);
+            border: 1px solid var(--line);
+            display: flex; flex-direction: column; gap: .6rem;
+            position: relative; overflow: hidden;
+            animation: fadeUp .4s ease both;
+        }
+        .kpi::before {
+            content: ''; position: absolute;
+            top: 0; left: 0; right: 0; height: 3px;
+            border-radius: var(--r-lg) var(--r-lg) 0 0;
+        }
+        .kpi:nth-child(1)::before { background: var(--v); }
+        .kpi:nth-child(2)::before { background: var(--em); }
+        .kpi:nth-child(3)::before { background: var(--am); }
+        .kpi:nth-child(4)::before { background: var(--ro); }
+        .kpi:nth-child(1) { animation-delay: .05s; }
+        .kpi:nth-child(2) { animation-delay: .10s; }
+        .kpi:nth-child(3) { animation-delay: .15s; }
+        .kpi:nth-child(4) { animation-delay: .20s; }
+
+        .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .kpi-icon {
+            width: 40px; height: 40px; border-radius: 10px;
+            display: grid; place-items: center; font-size: .9rem; flex-shrink: 0;
+        }
+        .kpi-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+        .kpi-val {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 800; font-size: 2.1rem; line-height: 1; color: var(--ink);
+        }
+        .kpi-delta { font-size: .72rem; display: flex; align-items: center; gap: .3rem; font-weight: 500; }
+        .up   { color: var(--em); }
+        .down { color: var(--ro); }
+
+        /* ── CHART GRID ── */
+        .row { display: grid; gap: 1.2rem; margin-bottom: 1.2rem; }
+        .row-2-1 { grid-template-columns: 2fr 1fr; }
+        .row-3   { grid-template-columns: 1fr 1fr 1fr; }
+        @media (max-width: 1024px) { .row-2-1 { grid-template-columns: 1fr; } }
+        @media (max-width: 860px)  { .row-3   { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 560px)  { .row-3   { grid-template-columns: 1fr; } }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--line);
+            box-shadow: var(--sh);
+            padding: 1.4rem;
+            animation: fadeUp .45s ease both;
+        }
+        .card:nth-child(1) { animation-delay: .22s; }
+        .card:nth-child(2) { animation-delay: .28s; }
+        .card:nth-child(3) { animation-delay: .32s; }
+
+        .card-head {
+            display: flex; align-items: flex-start; justify-content: space-between;
+            gap: .75rem; margin-bottom: 1.25rem; flex-wrap: wrap;
+        }
+        .card-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 700; font-size: .95rem; color: var(--ink);
+        }
+        .card-sub { font-size: .75rem; color: var(--muted); margin-top: .15rem; }
+
+        .badge {
+            font-size: .67rem; font-weight: 700; letter-spacing: .06em;
+            text-transform: uppercase; padding: .25rem .7rem;
+            border-radius: 50px; white-space: nowrap; flex-shrink: 0;
+        }
+        .badge-v  { background: var(--v-lt);  color: var(--v); }
+        .badge-em { background: var(--em-lt); color: #066D5B; }
+
+        /* Period tabs */
+        .tabs { display: flex; gap: .35rem; }
+        .tab {
+            font-size: .72rem; padding: .28rem .7rem; border-radius: 6px; border: none;
+            background: transparent; color: var(--muted); cursor: pointer;
+            font-family: 'Geist', sans-serif; font-weight: 500; transition: all .15s;
+        }
+        .tab.active { background: var(--v-lt); color: var(--v); font-weight: 700; }
+
+        /* Legend */
+        .legend { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: .9rem; }
+        .leg { display: flex; align-items: center; gap: .35rem; font-size: .72rem; color: var(--muted); }
+        .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+        /* Doughnut center label */
+        .doughnut-wrap { position: relative; }
+        .doughnut-center {
+            position: absolute; inset: 0;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            pointer-events: none;
+        }
+        .doughnut-center strong {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 800; font-size: 1.6rem; color: var(--ink);
+        }
+        .doughnut-center span { font-size: .68rem; color: var(--muted); font-weight: 500; }
+
+        /* ── TABLE ── */
+        .table-card {
+            background: var(--card);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--line);
+            box-shadow: var(--sh);
+            overflow: hidden;
+            animation: fadeUp .5s ease .38s both;
+        }
+        .table-bar {
+            padding: 1.1rem 1.4rem;
+            display: flex; align-items: center; justify-content: space-between;
+            flex-wrap: wrap; gap: .75rem;
+            border-bottom: 1px solid var(--line);
+        }
+        .table-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 700; font-size: .95rem; color: var(--ink);
+        }
+        .search-wrap { position: relative; }
+        .search-wrap i { position: absolute; left: .75rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: .8rem; }
+        .search-wrap input {
+            padding: .5rem .75rem .5rem 2.1rem; border-radius: 8px;
+            border: 1px solid var(--line); background: var(--bg);
+            font-family: 'Geist', sans-serif; font-size: .8rem; color: var(--ink);
+            outline: none; width: 220px; transition: border-color .15s;
+        }
+        .search-wrap input:focus { border-color: var(--v); }
+
+        table { width: 100%; border-collapse: collapse; }
+        thead th {
+            padding: .75rem 1.25rem; text-align: left;
+            font-size: .68rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .08em; color: var(--muted);
+            background: var(--bg); border-bottom: 1px solid var(--line);
+        }
+        tbody tr {
+            border-bottom: 1px solid var(--line);
+            transition: background .12s;
+        }
+        tbody tr:last-child { border-bottom: none; }
+        tbody tr:hover { background: #FAFAFD; }
+        tbody td { padding: .875rem 1.25rem; font-size: .82rem; vertical-align: middle; }
+
+        .status-pill {
+            display: inline-flex; align-items: center; gap: .35rem;
+            padding: .25rem .75rem; border-radius: 50px; font-size: .7rem; font-weight: 700;
+        }
+        .status-pill::before { content: ''; width: 6px; height: 6px; border-radius: 50%; }
+        .pill-green  { background: var(--em-lt); color: #066D5B; }
+        .pill-green::before  { background: var(--em); }
+        .pill-amber  { background: var(--am-lt); color: #92400E; }
+        .pill-amber::before  { background: var(--am); }
+        .pill-violet { background: var(--v-lt);  color: var(--v-dk); }
+        .pill-violet::before { background: var(--v); }
+        .pill-rose   { background: var(--ro-lt); color: #9F1239; }
+        .pill-rose::before   { background: var(--ro); }
+
+        /* ── MODAL ── */
+        .modal-bg {
+            position: fixed; inset: 0; background: rgba(13,13,20,.55);
+            backdrop-filter: blur(4px); z-index: 300;
+            display: none; align-items: center; justify-content: center;
+        }
+        .modal-bg.open { display: flex; }
+        .modal {
+            background: var(--card);
+            border-radius: var(--r-lg);
+            border: 1px solid var(--line);
+            box-shadow: var(--sh-lg);
+            max-width: 460px; width: calc(100% - 2rem);
+            padding: 1.75rem;
+            animation: zoomIn .2s ease;
+        }
+        .modal-head {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .modal-head h3 {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-weight: 700; font-size: 1.05rem; color: var(--ink);
+        }
+        .modal-close {
+            width: 30px; height: 30px; border-radius: 7px; border: 1px solid var(--line);
+            background: none; cursor: pointer; display: grid; place-items: center;
+            color: var(--muted); font-size: .85rem; transition: all .12s;
+        }
+        .modal-close:hover { background: var(--ro-lt); color: var(--ro); border-color: var(--ro); }
+
+        .field { margin-bottom: 1rem; }
+        .field label {
+            display: block; font-size: .7rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: .07em; color: var(--muted); margin-bottom: .4rem;
+        }
+        .field input, .field select {
+            width: 100%; padding: .6rem .875rem; border-radius: 9px;
+            border: 1px solid var(--line); background: var(--bg);
+            font-family: 'Geist', sans-serif; font-size: .83rem; color: var(--ink);
+            outline: none; transition: border-color .15s, box-shadow .15s;
+        }
+        .field input:focus, .field select:focus {
+            border-color: var(--v);
+            box-shadow: 0 0 0 3px rgba(91,71,224,.12);
+        }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+        .modal-footer {
+            display: flex; gap: .75rem; padding-top: 1.25rem; border-top: 1px solid var(--line); margin-top: 1.25rem;
+        }
+        .btn-ghost {
+            flex: 1; padding: .65rem; border-radius: 9px; border: 1px solid var(--line);
+            background: none; font-family: 'Geist', sans-serif; font-size: .82rem;
+            font-weight: 600; color: var(--ink-2); cursor: pointer; transition: all .15s;
+        }
+        .btn-ghost:hover { background: var(--bg); }
+        .btn-submit {
+            flex: 1; padding: .65rem; border-radius: 9px; border: none;
+            background: var(--em); color: #fff; font-family: 'Geist', sans-serif;
+            font-size: .82rem; font-weight: 700; cursor: pointer;
+            box-shadow: 0 2px 8px rgba(16,184,154,.3); transition: all .15s;
+        }
+        .btn-submit:hover { background: #0d9a83; transform: translateY(-1px); }
+
+        /* ── ANIMATIONS ── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(16px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(12px); }
+            to   { opacity: 1; transform: translateX(0); }
+        }
+        @keyframes zoomIn {
+            from { opacity: 0; transform: scale(.95); }
+            to   { opacity: 1; transform: scale(1); }
+        }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen">
+<body>
 
-    {% if messages %}
-    <div class="fixed top-20 right-6 z-50 max-w-sm w-full space-y-2">
-        {% for message in messages %}
-        <div class="p-4 rounded-xl shadow-lg border text-sm font-medium {% if message.tags == 'success' %} bg-emerald-50 text-emerald-800 border-emerald-200 {% else %} bg-rose-50 text-rose-800 border-rose-200 {% endif %}">
-            {{ message }}
-        </div>
-        {% endfor %}
+<!-- TOASTS -->
+{% if messages %}
+<div class="toasts">
+    {% for message in messages %}
+    <div class="toast {% if message.tags == 'success' %}success{% else %}error{% endif %}">
+        <i class="fas {% if message.tags == 'success' %}fa-check-circle{% else %}fa-exclamation-circle{% endif %}" style="margin-right:.4rem;"></i>
+        {{ message }}
     </div>
-    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
 
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-45 px-6 py-4 flex justify-between items-center shadow-sm">
-        <div class="flex items-center gap-3">
-            <div class="bg-gradient-to-br from-indigo-600 to-purple-600 text-white p-2.5 rounded-xl shadow-md">
-                <i class="fas fa-graduation-cap text-xl"></i>
-            </div>
-            <div>
-                <h1 class="font-bold text-slate-800 text-base leading-tight">Observatório de Projetos</h1>
-                <p class="text-xs font-semibold text-indigo-600 uppercase tracking-wider">Coordenador</p>
-            </div>
+<!-- NAV -->
+<header>
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div>
+            <div class="brand-name">Observatório de Projetos</div>
+            <div class="brand-role">Coordenador</div>
         </div>
-        <div class="flex items-center gap-4">
-            <div class="text-right hidden sm:block">
-                <p class="text-sm font-bold text-slate-800">{{ usuario.first_name|default:usuario.username }}</p>
-                <p class="text-xs text-slate-400 font-medium">Setor de Coordenação</p>
-            </div>
-            <a href="{% url 'logout' %}" class="text-slate-400 hover:text-red-500 transition-colors pl-2 border-l border-slate-200">
-                <i class="fas fa-sign-out-alt text-lg"></i>
+    </div>
+    <div class="nav-right">
+        <div class="nav-user">
+            <strong>{{ usuario.first_name|default:usuario.username }}</strong>
+            <span>Setor de Coordenação</span>
+        </div>
+        <a href="{% url 'logout' %}" class="nav-logout" title="Sair">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
+    </div>
+</header>
+
+<main>
+
+    <!-- PAGE HEADER -->
+    <div class="page-head">
+        <div>
+            <h2>Painel de Coordenação</h2>
+            <p>Visão global dos projetos integradores</p>
+        </div>
+        <div class="actions">
+            <button onclick="openModal()" class="btn btn-em">
+                <i class="fas fa-user-plus"></i> Cadastrar Usuário
+            </button>
+            <a href="{% url 'relatorio_usuarios' %}" class="btn btn-v">
+                <i class="fas fa-users"></i> Relatório de Usuários
             </a>
         </div>
-    </header>
+    </div>
 
-    <main class="max-w-full mx-auto p-4 sm:p-6 lg:p-8">
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-8">
-            <div>
-                <h2 class="text-3xl font-bold text-slate-900 tracking-tight">Painel de Coordenação</h2>
-                <p class="text-sm text-slate-500 mt-1">Visão global dos projetos integradores</p>
+    <!-- KPIs -->
+    <div class="kpis">
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Projetos Ativos</div>
+                <div class="kpi-icon" style="background:var(--v-lt);color:var(--v);"><i class="fas fa-folder-open"></i></div>
             </div>
-            <div class="flex items-center gap-3 flex-wrap">
-                <!-- Botão de cadastro -->
-                <button onclick="document.getElementById('modalCadastro').style.display='flex'" 
-                    class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
-                    <i class="fas fa-user-plus"></i> Cadastrar Usuário
-                </button>
-
-                <!-- Botão de relatório -->
-                <a href="{% url 'relatorio_usuarios' %}" 
-                   class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2.5 rounded-xl font-semibold text-sm flex items-center gap-2">
-                   <i class="fas fa-users"></i> Relatório de Usuários
-                </a>
-            </div>
+            <div class="kpi-val">{{ total_projetos|default:"48" }}</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 12% este mês</div>
         </div>
-
-        <!-- ... seus cards e tabela de projetos continuam iguais ... -->
-
-    </main>
-
-    <!-- MODAL CADASTRO -->
-    <div id="modalCadastro" class="fixed inset-0 bg-slate-900/50 z-50 hidden flex items-center justify-center">
-        <div class="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-6 m-4">
-            <div class="flex justify-between items-center mb-6">
-                <h3 class="text-lg font-bold text-slate-800">Cadastrar Novo Usuário</h3>
-                <button onclick="document.getElementById('modalCadastro').style.display='none'" class="text-slate-400 hover:text-slate-600">
-                    <i class="fas fa-times text-lg"></i>
-                </button>
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Alunos Cadastrados</div>
+                <div class="kpi-icon" style="background:var(--em-lt);color:var(--em);"><i class="fas fa-user-graduate"></i></div>
             </div>
-            <form action="{% url 'cadastro' %}" method="POST" class="space-y-4">
-                {% csrf_token %}
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Nome Completo</label>
-                    <input type="text" name="nome_completo" required placeholder="Ex: João da Silva" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">E-mail</label>
-                    <input type="email" name="email" required placeholder="usuario@email.com" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Matrícula</label>
-                        <input type="text" name="matricula" placeholder="Ex: 202610" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Telefone</label>
-                        <input type="text" name="telefone" placeholder="(81) 99999-9999" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                    </div>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Senha</label>
-                    <input type="password" name="password" required placeholder="••••••••" class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold text-slate-500 uppercase mb-1">Tipo de Usuário</label>
-                    <select name="tipo_usuario" required class="w-full px-3 py-2 rounded-xl border border-slate-200 focus:outline-none focus:border-indigo-500 text-sm">
-                        <option value="aluno">Aluno</option>
-                        <option value="professor">Professor</option>
-                        <option value="administracao">Coordenador</option>
-                    </select>
-                </div>
-                <div class="flex gap-3 pt-4 border-t border-slate-100">
-                    <button type="button" onclick="document.getElementById('modalCadastro').style.display='none'" class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-xl text-sm">Cancelar</button>
-                    <button type="submit" class="w-1/2 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold py-2.5 rounded-xl text-sm">Salvar</button>
-                </div>
-            </form>
+            <div class="kpi-val">{{ total_alunos|default:"312" }}</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 8% este mês</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Em Andamento</div>
+                <div class="kpi-icon" style="background:var(--am-lt);color:var(--am);"><i class="fas fa-spinner"></i></div>
+            </div>
+            <div class="kpi-val">{{ projetos_andamento|default:"29" }}</div>
+            <div class="kpi-delta up"><i class="fas fa-arrow-up"></i> 5% esta semana</div>
+        </div>
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Pendentes de Revisão</div>
+                <div class="kpi-icon" style="background:var(--ro-lt);color:var(--ro);"><i class="fas fa-exclamation-triangle"></i></div>
+            </div>
+            <div class="kpi-val">{{ pendentes|default:"7" }}</div>
+            <div class="kpi-delta down"><i class="fas fa-arrow-down"></i> 2 desde ontem</div>
         </div>
     </div>
 
-    <script>
-        document.getElementById('filtroTexto').addEventListener('keyup', function() {
-            var texto = this.value.toLowerCase();
-            var linhas = document.querySelectorAll('tbody tr');
-            linhas.forEach(function(linha) {
-                var conteudo = linha.textContent.toLowerCase();
-                linha.style.display = conteudo.includes(texto) ? '' : 'none';
-            });
-        });
+    <!-- CHARTS ROW 1 -->
+    <div class="row row-2-1">
+        <!-- Line chart -->
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Evolução Mensal de Projetos</div>
+                    <div class="card-sub">Submetidos, aprovados e reprovados</div>
+                </div>
+                <div class="tabs">
+                    <button class="tab active" onclick="switchLine(this,'12m')">12m</button>
+                    <button class="tab" onclick="switchLine(this,'6m')">6m</button>
+                    <button class="tab" onclick="switchLine(this,'3m')">3m</button>
+                </div>
+            </div>
+            <canvas id="lineChart" height="100"></canvas>
+            <div class="legend">
+                <div class="leg"><div class="dot" style="background:var(--v)"></div> Submetidos</div>
+                <div class="leg"><div class="dot" style="background:var(--em)"></div> Aprovados</div>
+                <div class="leg"><div class="dot" style="background:var(--ro)"></div> Reprovados</div>
+            </div>
+        </div>
 
-        setTimeout(function() {
-            var alerts = document.querySelectorAll('.fixed.top-20 > div');
-            alerts.forEach(function(alert) {
-                alert.style.opacity = '0';
-                alert.style.transition = 'opacity 0.5s';
-                setTimeout(function() {
-                    alert.remove();
-                }, 500);
-            });
-        }, 4000);
-    </script>
+        <!-- Doughnut -->
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Status dos Projetos</div>
+                    <div class="card-sub">Distribuição atual</div>
+                </div>
+                <span class="badge badge-em">Ao vivo</span>
+            </div>
+            <div class="doughnut-wrap">
+                <canvas id="doughnutChart" height="175"></canvas>
+                <div class="doughnut-center">
+                    <strong>53</strong>
+                    <span>total</span>
+                </div>
+            </div>
+            <div class="legend" style="justify-content:center;">
+                <div class="leg"><div class="dot" style="background:var(--v)"></div> Andamento</div>
+                <div class="leg"><div class="dot" style="background:var(--em)"></div> Concluídos</div>
+                <div class="leg"><div class="dot" style="background:var(--am)"></div> Pendentes</div>
+                <div class="leg"><div class="dot" style="background:var(--ro)"></div> Cancelados</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CHARTS ROW 2 -->
+    <div class="row row-3">
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Projetos por Curso</div>
+                    <div class="card-sub">Top 6 cursos</div>
+                </div>
+                <span class="badge badge-v">Ranking</span>
+            </div>
+            <canvas id="barChart" height="185"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Orientadores Ativos</div>
+                    <div class="card-sub">Projetos por docente</div>
+                </div>
+            </div>
+            <canvas id="hbarChart" height="185"></canvas>
+        </div>
+
+        <div class="card">
+            <div class="card-head">
+                <div>
+                    <div class="card-title">Avaliação por Critério</div>
+                    <div class="card-sub">Média geral — escala 10</div>
+                </div>
+            </div>
+            <canvas id="radarChart" height="185"></canvas>
+        </div>
+    </div>
+
+    <!-- PROJECTS TABLE -->
+    <div class="table-card">
+        <div class="table-bar">
+            <div class="table-title">Projetos Recentes</div>
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filtroTexto" placeholder="Buscar projeto, aluno…">
+            </div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Projeto</th>
+                        <th>Aluno</th>
+                        <th>Curso</th>
+                        <th>Orientador</th>
+                        <th>Status</th>
+                        <th>Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for projeto in projetos %}
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">{{ projeto.titulo }}</td>
+                        <td>{{ projeto.aluno }}</td>
+                        <td>{{ projeto.curso }}</td>
+                        <td>{{ projeto.orientador }}</td>
+                        <td>
+                            <span class="status-pill
+                                {% if projeto.status == 'aprovado' %}pill-green
+                                {% elif projeto.status == 'em_andamento' %}pill-violet
+                                {% elif projeto.status == 'pendente' %}pill-amber
+                                {% else %}pill-rose{% endif %}">
+                                {{ projeto.get_status_display }}
+                            </span>
+                        </td>
+                        <td style="font-weight:600;">{{ projeto.nota|default:"—" }}</td>
+                    </tr>
+                    {% empty %}
+                    <!-- Demo rows (remove when context is populated) -->
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">Sistema de Gestão de RH</td>
+                        <td>Maria Silva</td>
+                        <td>Eng. Software</td>
+                        <td>Profa. Ana</td>
+                        <td><span class="status-pill pill-green">Aprovado</span></td>
+                        <td style="font-weight:600;">9.2</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">App de Saúde Mental</td>
+                        <td>Carlos Souza</td>
+                        <td>ADS</td>
+                        <td>Prof. Marcos</td>
+                        <td><span class="status-pill pill-violet">Em andamento</span></td>
+                        <td style="font-weight:600;">—</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">Plataforma de Ensino EAD</td>
+                        <td>Juliana Costa</td>
+                        <td>Design</td>
+                        <td>Profa. Lúcia</td>
+                        <td><span class="status-pill pill-amber">Pendente</span></td>
+                        <td style="font-weight:600;">—</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">IA para Diagnóstico</td>
+                        <td>Felipe Ramos</td>
+                        <td>Ciência Comp.</td>
+                        <td>Prof. Carlos</td>
+                        <td><span class="status-pill pill-green">Aprovado</span></td>
+                        <td style="font-weight:600;">8.8</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">Marketplace Local</td>
+                        <td>Ana Ferreira</td>
+                        <td>Sistemas Info.</td>
+                        <td>Profa. Rita</td>
+                        <td><span class="status-pill pill-rose">Cancelado</span></td>
+                        <td style="font-weight:600;">—</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</main>
+
+<!-- MODAL CADASTRO -->
+<div id="modalCadastro" class="modal-bg">
+    <div class="modal">
+        <div class="modal-head">
+            <h3><i class="fas fa-user-plus" style="color:var(--em);margin-right:.5rem;"></i>Cadastrar Novo Usuário</h3>
+            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+        </div>
+        <form action="{% url 'cadastro' %}" method="POST">
+            {% csrf_token %}
+            <div class="field">
+                <label>Nome Completo</label>
+                <input type="text" name="nome_completo" required placeholder="Ex: João da Silva">
+            </div>
+            <div class="field">
+                <label>E-mail</label>
+                <input type="email" name="email" required placeholder="usuario@email.com">
+            </div>
+            <div class="field-row">
+                <div class="field">
+                    <label>Matrícula</label>
+                    <input type="text" name="matricula" placeholder="Ex: 202610">
+                </div>
+                <div class="field">
+                    <label>Telefone</label>
+                    <input type="text" name="telefone" placeholder="(81) 99999-9999">
+                </div>
+            </div>
+            <div class="field">
+                <label>Senha</label>
+                <input type="password" name="password" required placeholder="••••••••">
+            </div>
+            <div class="field">
+                <label>Tipo de Usuário</label>
+                <select name="tipo_usuario" required>
+                    <option value="aluno">Aluno</option>
+                    <option value="professor">Professor</option>
+                    <option value="administracao">Coordenador</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" onclick="closeModal()">Cancelar</button>
+                <button type="submit" class="btn-submit">Salvar Usuário</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+/* ── CHART DEFAULTS ── */
+Chart.defaults.font.family = "'Geist', sans-serif";
+Chart.defaults.color = "#7B7B96";
+Chart.defaults.plugins.legend.display = false;
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.backgroundColor = "#0D0D14";
+Chart.defaults.plugins.tooltip.titleColor = "#fff";
+Chart.defaults.plugins.tooltip.bodyColor = "#C4C4D4";
+Chart.defaults.plugins.tooltip.cornerRadius = 8;
+Chart.defaults.plugins.tooltip.displayColors = false;
+
+/* ── LINE ── */
+const LD = {
+    "12m": { lbl:["Jul","Ago","Set","Out","Nov","Dez","Jan","Fev","Mar","Abr","Mai","Jun"], s:[8,12,9,15,11,7,14,18,13,20,17,22], a:[5,9,7,11,8,5,10,14,10,16,13,18], r:[2,2,1,3,2,1,3,3,2,3,3,3] },
+    "6m":  { lbl:["Jan","Fev","Mar","Abr","Mai","Jun"], s:[14,18,13,20,17,22], a:[10,14,10,16,13,18], r:[3,3,2,3,3,3] },
+    "3m":  { lbl:["Abr","Mai","Jun"], s:[20,17,22], a:[16,13,18], r:[3,3,3] },
+};
+function mkLine(k) {
+    const d = LD[k];
+    return { labels: d.lbl, datasets: [
+        { label:"Submetidos", data:d.s, borderColor:"#5B47E0", backgroundColor:"rgba(91,71,224,.1)", tension:.45, fill:true, pointRadius:3, pointHoverRadius:7, pointBackgroundColor:"#5B47E0", borderWidth:2.5 },
+        { label:"Aprovados",  data:d.a, borderColor:"#10B89A", backgroundColor:"rgba(16,184,154,.07)", tension:.45, fill:true, pointRadius:3, pointHoverRadius:7, pointBackgroundColor:"#10B89A", borderWidth:2.5 },
+        { label:"Reprovados", data:d.r, borderColor:"#F43F5E", backgroundColor:"transparent", tension:.45, fill:false, pointRadius:3, pointHoverRadius:7, pointBackgroundColor:"#F43F5E", borderWidth:2, borderDash:[5,4] },
+    ]};
+}
+const lc = new Chart(document.getElementById("lineChart"), {
+    type:"line", data:mkLine("12m"),
+    options:{ responsive:true, interaction:{mode:"index",intersect:false},
+        scales:{
+            x:{grid:{display:false},border:{display:false}},
+            y:{grid:{color:"#EAEAF0"},border:{display:false},ticks:{stepSize:5}}
+        }
+    }
+});
+function switchLine(btn,k) {
+    document.querySelectorAll(".tabs .tab").forEach(t=>t.classList.remove("active"));
+    btn.classList.add("active");
+    lc.data = mkLine(k); lc.update("active");
+}
+
+/* ── DOUGHNUT ── */
+new Chart(document.getElementById("doughnutChart"), {
+    type:"doughnut",
+    data:{ labels:["Em andamento","Concluídos","Pendentes","Cancelados"],
+        datasets:[{ data:[29,14,7,3], backgroundColor:["#5B47E0","#10B89A","#F59E0B","#F43F5E"], borderWidth:0, hoverOffset:7 }]
+    },
+    options:{ cutout:"72%", plugins:{ tooltip:{ callbacks:{ label:c=>` ${c.label}: ${c.parsed}` } } } }
+});
+
+/* ── BAR ── */
+new Chart(document.getElementById("barChart"), {
+    type:"bar",
+    data:{ labels:["Eng. Soft.","Design","ADS","C. Comp.","Sist. Info.","Redes"],
+        datasets:[{ data:[14,10,9,8,5,2], borderRadius:7, borderSkipped:false,
+            backgroundColor:["rgba(91,71,224,.85)","rgba(16,184,154,.85)","rgba(245,158,11,.85)","rgba(244,63,94,.75)","rgba(91,71,224,.45)","rgba(16,184,154,.45)"]
+        }]
+    },
+    options:{ scales:{ x:{grid:{display:false},border:{display:false}}, y:{grid:{color:"#EAEAF0"},border:{display:false}} } }
+});
+
+/* ── HBAR ── */
+new Chart(document.getElementById("hbarChart"), {
+    type:"bar",
+    data:{ labels:["Profa. Ana","Prof. Carlos","Profa. Lúcia","Prof. Marcos","Profa. Rita","Prof. Vinícius"],
+        datasets:[{ data:[9,7,6,5,4,3], borderRadius:5, borderSkipped:false,
+            backgroundColor:"rgba(91,71,224,.8)"
+        }]
+    },
+    options:{ indexAxis:"y",
+        scales:{ x:{grid:{color:"#EAEAF0"},border:{display:false}}, y:{grid:{display:false},border:{display:false},ticks:{font:{size:11}}} }
+    }
+});
+
+/* ── RADAR ── */
+new Chart(document.getElementById("radarChart"), {
+    type:"radar",
+    data:{ labels:["Inovação","Impacto Social","Metodologia","Documentação","Apresentação","Viabilidade"],
+        datasets:[{ label:"Média", data:[8.1,7.4,8.8,7.9,8.5,7.2],
+            backgroundColor:"rgba(91,71,224,.12)", borderColor:"#5B47E0",
+            pointBackgroundColor:"#5B47E0", borderWidth:2, pointRadius:4
+        }]
+    },
+    options:{ scales:{ r:{
+        suggestedMin:0, suggestedMax:10,
+        grid:{color:"#EAEAF0"}, ticks:{display:false},
+        pointLabels:{font:{size:10.5}, color:"#3A3A4A"}
+    }}}
+});
+
+/* ── MODAL ── */
+function openModal()  { document.getElementById("modalCadastro").classList.add("open"); }
+function closeModal() { document.getElementById("modalCadastro").classList.remove("open"); }
+document.getElementById("modalCadastro").addEventListener("click", e => {
+    if (e.target === e.currentTarget) closeModal();
+});
+
+/* ── TABLE FILTER ── */
+document.getElementById("filtroTexto").addEventListener("keyup", function() {
+    var q = this.value.toLowerCase();
+    document.querySelectorAll("tbody tr").forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(q) ? "" : "none";
+    });
+});
+
+/* ── AUTO-DISMISS TOASTS ── */
+setTimeout(() => {
+    document.querySelectorAll(".toast").forEach(t => {
+        t.style.opacity = "0";
+        t.style.transition = "opacity .4s";
+        setTimeout(() => t.remove(), 400);
+    });
+}, 4000);
+</script>
 </body>
 </html>
 
