@@ -16,7 +16,9 @@ urlpatterns = [
     path('usuarios/desativar/<int:usuario_id>/', views.desativar_usuario, name='desativar_usuario'),
 
 
-
+# avaliar projetos(professor)
+    path('avaliacao/', views.painel_avaliacao, name='painel_avaliacao'),
+    path('avaliacao/projeto/<int:projeto_id>/', views.avaliar_projeto, name='avaliar_projeto'),
     
     # Logout
     path('logout/', views.fazer_logout, name='logout'),

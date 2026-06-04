@@ -201,3 +201,4 @@ class ProjetoUsuario(models.Model):
         elif self.nota >= 7.0: return 'Bom'
         elif self.nota >= 5.0: return 'Suficiente'
         else: return 'Insuficiente'
+

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Avaliar Projeto - {{ projeto.titulo }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f4f6f9; }
+        .eval-card { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="eval-card">
+        <h3 class="mb-4">Avaliar Projeto</h3>
+        <hr>
+        
+        <div class="mb-4">
+            <p><strong>Título:</strong> {{ projeto.titulo }}</p>
+            <p><strong>Aluno:</strong> {{ projeto.usuario.first_name }}</p>
+            <p><strong>Descrição:</strong> {{ projeto.descricao }}</p>
+            <p>
+                <strong>Links:</strong> 
+                {% if projeto.link_repositorio %}<a href="{{ projeto.link_repositorio }}" target="_blank">Repositório</a>{% endif %}
+            </p>
+        </div>
+
+        <form method="post">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="nota" class="form-label">Atribuir Nota (0.0 a 10.0)</label>
+                <input type="number" step="0.1" max="10" min="0" class="form-control" id="nota" name="nota" required>
+            </div>
+            
+            <div class="d-grid gap-2">
+                <button type="submit" class="btn btn-success">Salvar Avaliação</button>
+                <a href="{% url 'painel_avaliacao' %}" class="btn btn-outline-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

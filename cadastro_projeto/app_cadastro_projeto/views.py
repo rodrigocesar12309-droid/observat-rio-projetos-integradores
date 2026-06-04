@@ -236,12 +236,12 @@ def _dados_radar():
 def dashboard(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
 
+    # 1. Painel de Administração
     if perfil and perfil.tipo_usuario == 'administracao':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
         form_cadastro = CadastroForm()
 
-        # ── KPIs ──
         total_projetos   = projetos.count()
         total_alunos     = PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count()
         em_avaliacao     = projetos.filter(status='em_avaliacao').count()
@@ -251,42 +251,39 @@ def dashboard(request):
         media_num = sum(notas) / len(notas) if notas else 0
         conceito_final = obter_conceito(media_num) if notas else '-'
 
-        # ── Dados para gráficos (JSON seguro) ──
-        evolucao_12m = _dados_evolucao_mensal(12)
-        evolucao_6m  = _dados_evolucao_mensal(6)
-        evolucao_3m  = _dados_evolucao_mensal(3)
-
-        graf_status      = _dados_status()
-        graf_categoria   = _dados_por_categoria()
-        graf_semestre    = _dados_por_semestre()
-        graf_radar       = _dados_radar()
-
         contexto = {
             'usuario': request.user,
             'perfil': perfil,
             'projetos': projetos.order_by('-criado_em')[:20],
             'melhores_projetos': melhores_projetos,
             'form': form_cadastro,
-
-            # KPIs
             'total_projetos':  total_projetos,
             'total_alunos':    total_alunos,
             'em_avaliacao':    em_avaliacao,
             'aprovados':       aprovados_count,
             'media_conceito':  conceito_final,
-
-            # Gráficos — passados como JSON para o JS
-            'graf_evolucao_12m': json.dumps(evolucao_12m),
-            'graf_evolucao_6m':  json.dumps(evolucao_6m),
-            'graf_evolucao_3m':  json.dumps(evolucao_3m),
-            'graf_status':       json.dumps(graf_status),
-            'graf_categoria':    json.dumps(graf_categoria),
-            'graf_semestre':     json.dumps(graf_semestre),
-            'graf_radar':        json.dumps(graf_radar),
+            'graf_evolucao_12m': json.dumps(_dados_evolucao_mensal(12)),
+            'graf_evolucao_6m':  json.dumps(_dados_evolucao_mensal(6)),
+            'graf_evolucao_3m':  json.dumps(_dados_evolucao_mensal(3)),
+            'graf_status':       json.dumps(_dados_status()),
+            'graf_categoria':    json.dumps(_dados_por_categoria()),
+            'graf_semestre':     json.dumps(_dados_por_semestre()),
+            'graf_radar':        json.dumps(_dados_radar()),
             'total_doughnut':    total_projetos,
         }
         return render(request, 'usuarios/dashboard_admin.html', contexto)
-
+ # 2.. Painel do professor (Padrão)
+    elif perfil and perfil.tipo_usuario == 'professor':
+        projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
+        contexto = {
+            'projetos': projetos,
+            'total': projetos.count(),
+            'pendentes': projetos.filter(status='em_avaliacao').count(),
+            'avaliados': projetos.exclude(status='em_avaliacao').count(),
+        }
+        return render(request, 'usuarios/dashboard_professor.html', contexto)
+   
+    # 3. Painel do Aluno (Padrão)
     else:
         projetos = ProjetoUsuario.objects.filter(usuario=request.user, ativo=True)
         melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
@@ -396,9 +393,47 @@ def desativar_conta(request):
 
 
 # ─────────────────────────────────────────
+# AVALIAR PROJETO(apenas professores)
+# ─────────────────────────────────────────
+@login_required(login_url='home')
+def painel_avaliacao(request):
+    # Verifica se o usuário é professor (assumindo que você tem essa lógica)
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'professor':
+        messages.error(request, 'Acesso restrito a professores.')
+        return redirect('dashboard')
+
+    projetos = ProjetoUsuario.objects.filter(ativo=True)
+    
+    contexto = {
+        'projetos': projetos,
+        'total': projetos.count(),
+        'pendentes': projetos.filter(status='em_avaliacao').count(),
+        'avaliados': projetos.exclude(status='em_avaliacao').count(),
+    }
+    return render(request, 'usuarios/painel_avaliacao.html', contexto)
+
+
+@login_required(login_url='home')
+def avaliar_projeto(request, projeto_id):
+    projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
+    
+    if request.method == 'POST':
+        nota = float(request.POST.get('nota'))
+        projeto.nota = nota
+        projeto.status = 'aprovado' if nota >= 5.0 else 'reprovado'
+        projeto.save()
+        
+        LogAtividade.registrar(request.user, 'update', f'Projeto {projeto.titulo} avaliado com nota {nota}.')
+        messages.success(request, 'Avaliação salva com sucesso!')
+        return redirect('painel_avaliacao')
+        
+    return render(request, 'usuarios/avaliar_projeto.html', {'projeto': projeto})
+
+
+# ─────────────────────────
 # RELATÓRIO USUÁRIOS
 # ─────────────────────────────────────────
-
 @login_required(login_url='home')
 def relatorio_usuarios(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
