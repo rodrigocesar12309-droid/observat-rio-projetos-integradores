@@ -1,14 +1,12 @@
 import os
 import sys
 
-# 1. Caminho da pasta principal do seu projeto (onde fica o manage.py)
-path = '/home/cesarsilva5/observat-rio-projetos-integradores'
+# Adiciona o caminho do projeto ao Python path
+path = '/home/cesarsilva5/observat-rio-projetos-integradores/cadastro_projeto'
 if path not in sys.path:
-    sys.path.append(path)
+    sys.path.insert(0, path)
 
-# 2. Configuração do ambiente do Django
-# (Aqui dizemos ao Python onde encontrar o seu arquivo settings.py)
-os.environ['DJANGO_SETTINGS_MODULE'] = 'projeto_cadastro.settings'
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'cadastro_projeto.settings')
 
 from django.core.wsgi import get_wsgi_application
 application = get_wsgi_application()

@@ -1,95 +1,83 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import PerfilUsuario
+from .models import PerfilUsuario, Empresa
 
-# Opções de tipo de usuário
+# Opções de tipo de usuário (sem empresa — empresa tem form próprio)
 TIPOS_USUARIO = [
     ('aluno', 'Aluno'),
     ('professor', 'Professor'),
     ('administracao', 'Coordenador'),
 ]
 
+
+class EmpresaForm(forms.ModelForm):
+    """Cadastra apenas os dados da empresa no model Empresa."""
+    class Meta:
+        model = Empresa
+        fields = ['nome', 'cnpj']
+        widgets = {
+            'nome': forms.TextInput(attrs={'placeholder': 'Razão social da empresa'}),
+            'cnpj': forms.TextInput(attrs={'placeholder': '00.000.000/0000-00'}),
+        }
+
+
+class CadastroEmpresaLoginForm(forms.Form):
+    """
+    Formulário que o coordenador usa para criar uma empresa + login de acesso.
+    Cria um User com tipo_usuario='empresa' e vincula ao model Empresa.
+    """
+    nome_empresa = forms.CharField(
+        max_length=200,
+        label='Nome da Empresa',
+        widget=forms.TextInput(attrs={'placeholder': 'Razão social'}),
+    )
+    cnpj = forms.CharField(
+        max_length=18,
+        label='CNPJ',
+        widget=forms.TextInput(attrs={'placeholder': '00.000.000/0000-00'}),
+    )
+    email = forms.EmailField(
+        label='E-mail de acesso',
+        widget=forms.EmailInput(attrs={'placeholder': 'empresa@email.com'}),
+    )
+    password = forms.CharField(
+        label='Senha',
+        widget=forms.PasswordInput(attrs={'placeholder': '••••••••'}),
+    )
+
+    def clean_email(self):
+        email = self.cleaned_data['email'].strip().lower()
+        if User.objects.filter(username=email).exists():
+            raise forms.ValidationError('Este e-mail já está cadastrado.')
+        return email
+
+    def clean_cnpj(self):
+        cnpj = self.cleaned_data['cnpj'].strip()
+        if Empresa.objects.filter(cnpj=cnpj).exists():
+            raise forms.ValidationError('Este CNPJ já está cadastrado.')
+        return cnpj
+
+
 class CadastroForm(forms.ModelForm):
-    nome_completo = forms.CharField(
-        max_length=150,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Digite o nome completo',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none; transition: border 0.2s;'
-        })
-    )
-    matricula = forms.CharField(
-        max_length=50,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Matrícula (se houver)',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
-    telefone = forms.CharField(
-        max_length=20,
-        required=False,
-        widget=forms.TextInput(attrs={
-            'placeholder': '(81) 99999-9999',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
-    tipo_usuario = forms.ChoiceField(
-        choices=TIPOS_USUARIO,
-        label='Tipo de Usuário',
-        widget=forms.Select(attrs={
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
+    nome_completo = forms.CharField(max_length=150)
+    matricula = forms.CharField(max_length=50, required=False)
+    telefone = forms.CharField(max_length=20, required=False)
+    tipo_usuario = forms.ChoiceField(choices=TIPOS_USUARIO, label='Tipo de Usuário')
 
     class Meta:
         model = User
         fields = ['email', 'password']
         widgets = {
-            'email': forms.EmailInput(attrs={
-                'placeholder': 'seu@email.com',
-                'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-            }),
-            'password': forms.PasswordInput(attrs={
-                'placeholder': '••••••',
-                'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-            }),
+            'email': forms.EmailInput(attrs={'placeholder': 'seu@email.com'}),
+            'password': forms.PasswordInput(attrs={'placeholder': '••••••'}),
         }
 
 
 class AtualizarPerfilForm(forms.ModelForm):
-    nome_completo = forms.CharField(
-        max_length=150,
-        label='Nome Completo',
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Digite seu nome completo',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
-    telefone = forms.CharField(
-        max_length=20,
-        required=False,
-        label='Telefone',
-        widget=forms.TextInput(attrs={
-            'placeholder': '(81) 99999-9999',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
-    matricula = forms.CharField(
-        max_length=50,
-        required=False,
-        label='Matrícula',
-        widget=forms.TextInput(attrs={
-            'placeholder': 'Sua matrícula (se houver)',
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
-    tipo_usuario = forms.ChoiceField(
-        choices=PerfilUsuario.OPCOES_PERFIL,
-        label='Tipo de Perfil',
-        widget=forms.Select(attrs={
-            'style': 'padding: 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; outline: none;'
-        })
-    )
+    nome_completo = forms.CharField(max_length=150, label='Nome Completo')
+    telefone = forms.CharField(max_length=20, required=False, label='Telefone')
+    matricula = forms.CharField(max_length=50, required=False, label='Matrícula')
+    tipo_usuario = forms.ChoiceField(choices=PerfilUsuario.OPCOES_PERFIL, label='Tipo de Perfil')
 
     class Meta:
         model = PerfilUsuario

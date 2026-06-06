@@ -2,89 +2,261 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Avaliação de Projetos | Observatório</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliação de Projetos — Professor | Observatório</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Geist:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f8f9fa; font-family: 'Segoe UI', sans-serif; }
-        .header-custom { background: #fff; padding: 20px 0; border-bottom: 1px solid #e9ecef; margin-bottom: 30px; }
-        .brand-text { font-weight: 700; color: #333; }
-        .card-stat { border-radius: 12px; border: none; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .project-card { border-radius: 12px; border: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.2s; }
-        .project-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        :root {
+            --ink:   #0D0D14;
+            --ink-2: #3A3A4A;
+            --muted: #7B7B96;
+            --line:  #EAEAF0;
+            --bg:    #F7F7FB;
+            --card:  #FFFFFF;
+            --v:     #5B47E0;
+            --v-lt:  #EDE9FC;
+            --v-dk:  #3D2DB8;
+            --em:    #10B89A;
+            --em-lt: #D0F5EF;
+            --am:    #F59E0B;
+            --am-lt: #FEF3C7;
+            --ro:    #F43F5E;
+            --ro-lt: #FFE4EA;
+            --r:     12px;
+            --r-lg:  18px;
+            --sh:    0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Geist', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
+
+        header {
+            background: var(--card); border-bottom: 1px solid var(--line);
+            position: sticky; top: 0; z-index: 100;
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 62px;
+            box-shadow: 0 1px 0 var(--line), 0 2px 8px rgba(0,0,0,.04);
+        }
+        .brand { display: flex; align-items: center; gap: .875rem; }
+        .brand-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            background: linear-gradient(135deg, #10B89A, #059669);
+            display: grid; place-items: center; color: #fff; font-size: .95rem;
+            box-shadow: 0 2px 8px rgba(16,184,154,.35);
+        }
+        .brand-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: .95rem; color: var(--ink); line-height: 1.2; }
+        .brand-role { font-size: .65rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--em); }
+        .nav-right { display: flex; align-items: center; gap: 1rem; }
+        .nav-user strong { display: block; font-size: .82rem; font-weight: 600; color: var(--ink); }
+        .nav-user span   { font-size: .72rem; color: var(--muted); }
+        .nav-btn {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .45rem 1rem; border-radius: 50px; border: none;
+            font-family: 'Geist', sans-serif; font-size: .8rem; font-weight: 600;
+            cursor: pointer; text-decoration: none; transition: all .15s;
+        }
+        .btn-green { background: var(--em); color: #fff; box-shadow: 0 2px 8px rgba(16,184,154,.3); }
+        .btn-green:hover { background: #0d9a83; }
+        .nav-logout {
+            width: 34px; height: 34px; border-radius: 8px;
+            border: 1px solid var(--line); background: none; cursor: pointer;
+            display: grid; place-items: center; color: var(--muted);
+            transition: all .15s; text-decoration: none;
+        }
+        .nav-logout:hover { background: var(--ro-lt); border-color: var(--ro); color: var(--ro); }
+
+        /* TOASTS */
+        .toasts { position: fixed; top: 72px; right: 1.25rem; z-index: 200; display: flex; flex-direction: column; gap: .5rem; }
+        .toast { padding: .875rem 1.25rem; border-radius: var(--r); font-size: .82rem; font-weight: 500; border: 1px solid; }
+        .toast.success { background: #F0FDF9; color: #0A7A64; border-color: #A7F3E4; }
+        .toast.error   { background: #FFF1F3; color: #BE1234; border-color: #FECDD8; }
+
+        main { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 5rem; }
+
+        .page-head { margin-bottom: 2rem; }
+        .page-head h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--ink); }
+        .page-head p  { font-size: .85rem; color: var(--muted); margin-top: .3rem; }
+
+        /* KPIs */
+        .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
+        @media (max-width: 640px) { .kpis { grid-template-columns: 1fr; } }
+        .kpi {
+            background: var(--card); border-radius: var(--r-lg); padding: 1.25rem 1.4rem;
+            box-shadow: var(--sh); border: 1px solid var(--line);
+            display: flex; flex-direction: column; gap: .6rem;
+            position: relative; overflow: hidden; animation: fadeUp .4s ease both;
+        }
+        .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+        .kpi:nth-child(1)::before { background: var(--v); }
+        .kpi:nth-child(2)::before { background: var(--am); }
+        .kpi:nth-child(3)::before { background: var(--em); }
+        .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
+        .kpi-icon { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; font-size:.9rem; }
+        .kpi-label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
+        .kpi-val { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:2.1rem; line-height:1; color:var(--ink); }
+
+        /* LISTA DE PROJETOS */
+        .proj-list { display: flex; flex-direction: column; gap: 1rem; }
+        .proj-card {
+            background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+            padding: 1.4rem 1.5rem; box-shadow: var(--sh);
+            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+            animation: fadeUp .4s ease both; transition: box-shadow .2s;
+        }
+        .proj-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,.08); }
+        .proj-info { flex: 1; min-width: 0; }
+        .proj-titulo { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); margin-bottom: .3rem; }
+        .proj-desc { font-size: .8rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: .6rem; }
+        .proj-meta { display: flex; flex-wrap: wrap; gap: .75rem; font-size: .75rem; color: var(--muted); }
+        .proj-meta span { display: flex; align-items: center; gap: .3rem; }
+        .status-pill {
+            display: inline-flex; align-items: center; gap: .35rem;
+            padding: .25rem .75rem; border-radius: 50px; font-size: .7rem; font-weight: 700; white-space: nowrap;
+        }
+        .status-pill::before { content:''; width:6px; height:6px; border-radius:50%; }
+        .pill-green  { background:var(--em-lt); color:#066D5B; } .pill-green::before  { background:var(--em); }
+        .pill-amber  { background:var(--am-lt); color:#92400E; } .pill-amber::before  { background:var(--am); }
+        .pill-rose   { background:var(--ro-lt); color:#9F1239; } .pill-rose::before   { background:var(--ro); }
+
+        .badge-nota {
+            background: var(--v-lt); color: var(--v-dk);
+            font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: .9rem;
+            padding: .4rem .85rem; border-radius: 9px; white-space: nowrap;
+        }
+
+        .btn-avaliar {
+            display: inline-flex; align-items: center; gap: .4rem;
+            padding: .55rem 1.1rem; border-radius: 50px; border: none;
+            background: var(--em); color: #fff;
+            font-family: 'Geist', sans-serif; font-size: .8rem; font-weight: 600;
+            cursor: pointer; text-decoration: none; white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(16,184,154,.3); transition: all .15s;
+        }
+        .btn-avaliar:hover { background: #0d9a83; transform: translateY(-1px); }
+
+        .proj-side { display: flex; align-items: center; gap: .75rem; flex-shrink: 0; }
+
+        .empty { text-align: center; padding: 4rem 1rem; color: var(--muted); }
+        .empty i { font-size: 2.5rem; opacity: .4; display: block; margin-bottom: 1rem; }
+
+        @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     </style>
 </head>
 <body>
 
-<header class="header-custom">
-    <div class="container d-flex justify-content-between align-items-center">
-        <div class="d-flex align-items-center">
-            <div class="bg-primary p-2 rounded text-white me-3">🎓</div>
-            <div>
-                <div class="brand-text">Observatório de Projetos</div>
-                <div class="text-primary small fw-bold">PROFESSOR</div>
-            </div>
-        </div>
+{% if messages %}
+<div class="toasts">
+    {% for message in messages %}
+    <div class="toast {% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
 
-        <div class="d-flex align-items-center gap-3">
-            <a href="{% url 'painel_avaliacao' %}" class="btn btn-primary btn-sm">
-                Avaliar Projetos ({{ pendentes }})
-            </a>
-            <div class="user-info text-end border-start ps-3">
-                <div class="fw-bold">{{ user.first_name }}</div>
-                <a href="{% url 'logout' %}" class="text-danger small text-decoration-none">Sair</a>
-            </div>
+<header>
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-chalkboard-teacher"></i></div>
+        <div>
+            <div class="brand-name">Observatório de Projetos</div>
+            <div class="brand-role">Professor</div>
         </div>
+    </div>
+    <div class="nav-right">
+        <a href="{% url 'painel_avaliacao' %}" class="nav-btn btn-green">
+            <i class="fas fa-star"></i> Painel de Avaliação
+            {% if pendentes > 0 %}
+            <span style="background:#fff;color:var(--em);border-radius:50px;padding:0 .45rem;font-size:.7rem;font-weight:800;">{{ pendentes }}</span>
+            {% endif %}
+        </a>
+        <div class="nav-user" style="text-align:right;">
+            <strong>{{ usuario.first_name|default:usuario.username }}</strong>
+            <span>Professor</span>
+        </div>
+        <a href="{% url 'logout' %}" class="nav-logout" title="Sair">
+            <i class="fas fa-sign-out-alt"></i>
+        </a>
     </div>
 </header>
 
-<div class="container">
-    <div class="mb-4">
-        <h1 class="fw-bold">Avaliação de Projetos</h1>
-        <p class="text-muted">Visão geral dos projetos integradores para avaliação</p>
+<main>
+    <div class="page-head">
+        <h2>Projetos para Avaliar</h2>
+        <p>Acompanhe e avalie os projetos integradores dos alunos</p>
     </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-md-4">
-            <div class="card card-stat p-3">
-                <small class="text-uppercase text-muted">Total de Projetos</small>
-                <div class="fs-4 fw-bold">{{ total }}</div>
+    <!-- KPIs -->
+    <div class="kpis">
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Total</div>
+                <div class="kpi-icon" style="background:var(--v-lt);color:var(--v);"><i class="fas fa-folder-open"></i></div>
             </div>
+            <div class="kpi-val">{{ total }}</div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-stat p-3">
-                <small class="text-uppercase text-muted">Pendentes</small>
-                <div class="fs-4 fw-bold text-warning">{{ pendentes }}</div>
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Pendentes</div>
+                <div class="kpi-icon" style="background:var(--am-lt);color:var(--am);"><i class="fas fa-clock"></i></div>
             </div>
+            <div class="kpi-val">{{ pendentes }}</div>
         </div>
-        <div class="col-md-4">
-            <div class="card card-stat p-3">
-                <small class="text-uppercase text-muted">Avaliados</small>
-                <div class="fs-4 fw-bold text-success">{{ avaliados }}</div>
+        <div class="kpi">
+            <div class="kpi-top">
+                <div class="kpi-label">Avaliados</div>
+                <div class="kpi-icon" style="background:var(--em-lt);color:var(--em);"><i class="fas fa-check-circle"></i></div>
             </div>
+            <div class="kpi-val">{{ avaliados }}</div>
         </div>
     </div>
 
-    {% for p in projetos %}
-    <div class="card project-card p-4 mb-3">
-        <div class="d-flex justify-content-between align-items-center">
-            <div>
-                <h5 class="fw-bold mb-1">{{ p.titulo }}</h5>
-                <p class="text-muted small mb-0">{{ p.descricao|truncatewords:15 }}</p>
-                <div class="mt-2 small text-secondary">
-                    <strong>Aluno:</strong> {{ p.usuario.first_name }}
+    <!-- LISTA -->
+    <div class="proj-list">
+        {% for p in projetos %}
+        <div class="proj-card" style="animation-delay:{{ forloop.counter0 }}0ms">
+            <div class="proj-info">
+                <div class="proj-titulo">{{ p.titulo }}</div>
+                <div class="proj-desc">{{ p.descricao|truncatewords:20 }}</div>
+                <div class="proj-meta">
+                    <span><i class="fas fa-user-graduate"></i> {{ p.usuario.first_name|default:p.usuario.username }}</span>
+                    {% if p.categoria %}<span><i class="fas fa-tag"></i> {{ p.categoria }}</span>{% endif %}
+                    {% if p.semestre %}<span><i class="fas fa-calendar"></i> {{ p.semestre }}</span>{% endif %}
                 </div>
             </div>
-            <div>
+            <div class="proj-side">
                 {% if p.status == 'em_avaliacao' %}
-                    <a href="{% url 'avaliar_projeto' p.id %}" class="btn btn-outline-primary btn-sm">Avaliar Projeto</a>
+                    <span class="status-pill pill-amber">Em Avaliação</span>
+                    <a href="{% url 'avaliar_projeto' p.id %}" class="btn-avaliar">
+                        <i class="fas fa-star"></i> Avaliar
+                    </a>
                 {% else %}
-                    <span class="badge bg-success">Avaliado (Nota: {{ p.nota }})</span>
+                    <span class="status-pill {% if p.status == 'aprovado' %}pill-green{% else %}pill-rose{% endif %}">
+                        {{ p.get_status_display }}
+                    </span>
+                    {% if p.nota %}
+                    <span class="badge-nota">{{ p.nota|floatformat:1 }}</span>
+                    {% endif %}
+                    <a href="{% url 'avaliar_projeto' p.id %}" class="btn-avaliar" style="background:var(--v);">
+                        <i class="fas fa-edit"></i> Reeditar
+                    </a>
                 {% endif %}
             </div>
         </div>
+        {% empty %}
+        <div class="empty">
+            <i class="fas fa-folder-open"></i>
+            <p>Nenhum projeto cadastrado ainda.</p>
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
-</div>
+</main>
 
+<script>
+setTimeout(() => {
+    document.querySelectorAll(".toast").forEach(t => {
+        t.style.opacity = "0"; t.style.transition = "opacity .4s";
+        setTimeout(() => t.remove(), 400);
+    });
+}, 4000);
+</script>
 </body>
 </html>

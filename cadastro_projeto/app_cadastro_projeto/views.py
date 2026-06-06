@@ -9,20 +9,66 @@ from django.utils import timezone
 import json
 import datetime
 
-from .forms import CadastroForm, AtualizarPerfilForm
-from .models import PerfilUsuario, ProjetoUsuario, LogAtividade
+from .forms import CadastroForm, AtualizarPerfilForm, CadastroEmpresaLoginForm
+from .models import PerfilUsuario, ProjetoUsuario, LogAtividade, Empresa
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import UsuarioSerializer, ProjetoSerializer
 
 
+# ─────────────────────────────────────────
+# CADASTRAR EMPRESA COM LOGIN (coordenador)
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def cadastrar_empresa_login(request):
+    """Coordenador cria uma empresa E seu login de acesso ao sistema."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        messages.error(request, 'Acesso negado: apenas coordenadores podem cadastrar empresas.')
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        form = CadastroEmpresaLoginForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            password = form.cleaned_data['password']
+            nome_empresa = form.cleaned_data['nome_empresa']
+            cnpj = form.cleaned_data['cnpj']
+
+            # Cria o User Django
+            user = User.objects.create_user(
+                username=email,
+                email=email,
+                password=password,
+                first_name=nome_empresa,
+            )
+            # Cria o perfil como empresa
+            PerfilUsuario.criar(user=user, tipo_usuario='empresa')
+            # Cria o registro no model Empresa
+            Empresa.objects.create(nome=nome_empresa, cnpj=cnpj)
+
+            LogAtividade.registrar(
+                request.user, 'create',
+                f'Coordenador cadastrou empresa "{nome_empresa}" com login {email}.'
+            )
+            messages.success(request, f'Empresa "{nome_empresa}" cadastrada com login de acesso!')
+            return redirect('dashboard')
+        else:
+            for field, erros in form.errors.items():
+                for erro in erros:
+                    messages.error(request, f'{erro}')
+    else:
+        form = CadastroEmpresaLoginForm()
+
+    return redirect('dashboard')
+
 def obter_conceito(nota):
     if nota >= 9.0: return "Excelente"
     elif nota >= 7.0: return "Bom"
     elif nota >= 5.0: return "Suficiente"
     else: return "Insuficiente"
-
 
 # ─────────────────────────────────────────
 # AUTH
@@ -272,18 +318,48 @@ def dashboard(request):
             'total_doughnut':    total_projetos,
         }
         return render(request, 'usuarios/dashboard_admin.html', contexto)
- # 2.. Painel do professor (Padrão)
+
+    # 2. Painel da Empresa
+    elif perfil and perfil.tipo_usuario == 'empresa':
+        projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
+        categorias = (
+            ProjetoUsuario.objects.filter(ativo=True)
+            .exclude(categoria='')
+            .values_list('categoria', flat=True)
+            .distinct()
+            .order_by('categoria')
+        )
+        cat_filtro = request.GET.get('categoria', '')
+        busca = request.GET.get('busca', '')
+        if cat_filtro:
+            projetos = projetos.filter(categoria=cat_filtro)
+        if busca:
+            projetos = projetos.filter(titulo__icontains=busca)
+        contexto = {
+            'usuario': request.user,
+            'perfil': perfil,
+            'projetos': projetos,
+            'categorias': categorias,
+            'cat_filtro': cat_filtro,
+            'busca': busca,
+            'total': projetos.count(),
+            'aprovados': projetos.filter(status='aprovado').count(),
+        }
+        return render(request, 'usuarios/dashboard_empresa.html', contexto)
+
+    # 3. Painel do professor
     elif perfil and perfil.tipo_usuario == 'professor':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         contexto = {
+            'usuario': request.user,
             'projetos': projetos,
             'total': projetos.count(),
             'pendentes': projetos.filter(status='em_avaliacao').count(),
             'avaliados': projetos.exclude(status='em_avaliacao').count(),
         }
         return render(request, 'usuarios/dashboard_professor.html', contexto)
-   
-    # 3. Painel do Aluno (Padrão)
+
+    # 4. Painel do Aluno (Padrão)
     else:
         projetos = ProjetoUsuario.objects.filter(usuario=request.user, ativo=True)
         melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]

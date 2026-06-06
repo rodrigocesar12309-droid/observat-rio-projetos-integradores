@@ -5,146 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro - Observatório de Projetos</title>
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #eef2f7;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            margin: 0;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .card {
-            background: white;
-            padding: 35px;
-            border-radius: 16px;
-            box-shadow: 0 4px 25px rgba(0,0,0,0.06);
-            width: 100%;
-            max-width: 440px;
-            box-sizing: border-box;
-        }
-        .logo-container {
-            text-align: center;
-            margin-bottom: 25px;
-        }
-        .logo-icon {
-            background-color: #5830f0;
-            color: white;
-            width: 55px;
-            height: 55px;
-            border-radius: 50%;
-            display: inline-flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 22px;
-            margin-bottom: 15px;
-        }
-        .title {
-            text-align: center;
-            color: #0c2340;
-            margin: 0 0 5px 0;
-            font-size: 20px;
-            font-weight: 700;
-        }
-        .subtitle {
-            text-align: center;
-            color: #718096;
-            font-size: 13px;
-            margin-bottom: 25px;
-        }
-        .form-group {
-            margin-bottom: 16px;
-            display: flex;
-            flex-direction: column;
-        }
-        .form-group label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 6px;
-        }
-        .tipo-label {
-            font-size: 13px;
-            font-weight: 600;
-            color: #4a5568;
-            margin-bottom: 8px;
-        }
-        .tipo-container {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 20px;
-        }
-        .btn-tipo {
-            padding: 12px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 13px;
-            color: #4a5568;
-            transition: all 0.2s ease;
-        }
-        .btn-tipo[data-tipo="aluno"].active { border-color: #5830f0; background-color: #f0ecff; color: #5830f0; }
-        .btn-tipo[data-tipo="professor"].active { border-color: #00b074; background-color: #ebfaf2; color: #00b074; }
-        .btn-tipo[data-tipo="administracao"].active { border-color: #9f7aea; background-color: #f7f3ff; color: #9f7aea; }
-        .btn-tipo[data-tipo="empresa"].active { border-color: #ff9f43; background-color: #fff9f3; color: #ff9f43; }
-
-        .btn-submit {
-            width: 100%;
-            padding: 14px;
-            background-color: #5830f0;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: bold;
-            cursor: pointer;
-            font-size: 15px;
-            transition: background 0.2s;
-            margin-top: 10px;
-        }
-        .btn-submit:hover {
-            background-color: #431ecc;
-        }
-        .voltar-link {
-            display: block;
-            text-align: center;
-            margin-top: 15px;
-            color: #718096;
-            text-decoration: none;
-            font-size: 13px;
-            font-weight: 600;
-        }
-        .voltar-link:hover {
-            color: #5830f0;
-        }
-
-        /* Estilos das mensagens */
-        .mensagem-erro {
-            background-color: #fff5f5;
-            border: 1px solid #fc8181;
-            color: #c53030;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-align: center;
-        }
-        .mensagem-sucesso {
-            background-color: #f0fff4;
-            border: 1px solid #68d391;
-            color: #276749;
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            text-align: center;
-        }
+        /* Estilos mantidos conforme sua base */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #eef2f7; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .card { background: white; padding: 35px; border-radius: 16px; box-shadow: 0 4px 25px rgba(0,0,0,0.06); width: 100%; max-width: 440px; box-sizing: border-box; }
+        .logo-container { text-align: center; margin-bottom: 25px; }
+        .logo-icon { background-color: #5830f0; color: white; width: 55px; height: 55px; border-radius: 50%; display: inline-flex; justify-content: center; align-items: center; font-size: 22px; margin-bottom: 15px; }
+        .title { text-align: center; color: #0c2340; margin: 0 0 5px 0; font-size: 20px; font-weight: 700; }
+        .subtitle { text-align: center; color: #718096; font-size: 13px; margin-bottom: 25px; }
+        .form-group { margin-bottom: 16px; display: flex; flex-direction: column; }
+        .form-group label { font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
+        .tipo-container { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+        .btn-tipo { padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; background: white; cursor: pointer; font-weight: 600; font-size: 12px; color: #4a5568; transition: all 0.2s; }
+        .btn-tipo.active { border-color: #5830f0; background-color: #f0ecff; color: #5830f0; }
+        .btn-submit { width: 100%; padding: 14px; background-color: #5830f0; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .hidden-select { display: none; }
     </style>
 </head>
 <body>
@@ -155,76 +29,74 @@
         <h2 class="title">Faça seu Cadastro</h2>
         <div class="subtitle">Insira as suas informações abaixo</div>
     </div>
-
-    <!-- Mensagens de erro ou sucesso -->
-    {% if messages %}
-        {% for message in messages %}
-            {% if message.tags == 'error' %}
-                <div class="mensagem-erro">⚠️ {{ message }}</div>
-            {% else %}
-                <div class="mensagem-sucesso">✅ {{ message }}</div>
-            {% endif %}
-        {% endfor %}
-    {% endif %}
     
     <form method="POST">
         {% csrf_token %}
         
-        {{ form.tipo_usuario }}
+        <div class="hidden-select">
+            {{ form.tipo_usuario }}
+        </div>
 
-        <div class="tipo-label">Escolha seu perfil:</div>
-        <div class="tipo-container">
-            <button type="button" class="btn-tipo active" data-tipo="aluno" onclick="selecionarTipo('aluno', this)">Aluno</button>
+        <div class="tipo-container" id="container-tipos">
+            <button type="button" class="btn-tipo" data-tipo="aluno" onclick="selecionarTipo('aluno', this)">Aluno</button>
             <button type="button" class="btn-tipo" data-tipo="professor" onclick="selecionarTipo('professor', this)">Professor</button>
-            <button type="button" class="btn-tipo" data-tipo="administracao" onclick="selecionarTipo('administracao', this)">Administração</button>
+            <button type="button" class="btn-tipo" data-tipo="administracao" onclick="selecionarTipo('administracao', this)">Coordenador</button>
             <button type="button" class="btn-tipo" data-tipo="empresa" onclick="selecionarTipo('empresa', this)">Empresa</button>
         </div>
 
         <div class="form-group">
-            <label for="id_nome_completo">Nome Completo</label>
+            <label id="label-nome">Nome Completo</label>
             {{ form.nome_completo }}
         </div>
 
         <div class="form-group" id="campo-matricula">
-            <label for="id_matricula">Matrícula</label>
+            <label id="label-matricula">Matrícula</label>
             {{ form.matricula }}
         </div>
 
         <div class="form-group">
-            <label for="id_email">E-mail</label>
+            <label>E-mail</label>
             {{ form.email }}
         </div>
 
         <div class="form-group">
-            <label for="id_telefone">Telefone</label>
+            <label>Telefone</label>
             {{ form.telefone }}
         </div>
 
         <div class="form-group">
-            <label for="id_password">Senha</label>
+            <label>Senha</label>
             {{ form.password }}
         </div>
 
         <button type="submit" class="btn-submit">Finalizar Cadastro</button>
-        
-        <a href="{% url 'home' %}" class="voltar-link">Já tem uma conta? Voltar ao login</a>
     </form>
 </div>
 
 <script>
+    console.log("Script carregado!"); // Verifique na consola do F12 (Abas Network/Console)
+
     function selecionarTipo(tipo, elemento) {
-        document.getElementById('id_tipo_usuario').value = tipo;
+        console.log("Tipo selecionado:", tipo);
         
-        const botoes = document.querySelectorAll('.btn-tipo');
-        botoes.forEach(btn => btn.classList.remove('active'));
-        
+        // 1. Atualizar o select do Django
+        const select = document.getElementById('id_tipo_usuario');
+        if (select) {
+            select.value = tipo;
+        } else {
+            console.error("Erro: elemento 'id_tipo_usuario' não encontrado!");
+        }
+
+        // 2. Estilização visual
+        document.querySelectorAll('.btn-tipo').forEach(btn => btn.classList.remove('active'));
         elemento.classList.add('active');
 
-        const campoMatricula = document.getElementById('campo-matricula');
+        // 3. Mostrar/Esconder campos
+        const campoMat = document.getElementById('campo-matricula');
         if (tipo === 'empresa') {
-            campoMatricula.style.display = 'none';
+            campoMat.style.display = 'none'; // Se preferir esconder
         } else {
-            campoMatricula.style.display = 'flex';
+            campoMat.style.display = 'flex';
         }
     }
 </script>
