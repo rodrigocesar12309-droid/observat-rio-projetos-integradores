@@ -296,10 +296,10 @@
                     <i class="fas fa-external-link-alt"></i> Demo
                 </a>
                 {% endif %}
-                {% if projeto.nota %}
-                <div class="proj-nota" style="margin-left:auto;">
-                    {{ projeto.nota|floatformat:1 }}
-                    <span class="nota-label">{{ projeto.get_conceito }}</span>
+                {% if projeto.conceito %}
+                <div class="proj-nota">
+                    {{ projeto.conceito }}
+                    <span class="nota-label">Conceito</span>
                 </div>
                 {% endif %}
             </div>

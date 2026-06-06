@@ -64,11 +64,19 @@ def cadastrar_empresa_login(request):
 
     return redirect('dashboard')
 
-def obter_conceito(nota):
-    if nota >= 9.0: return "Excelente"
-    elif nota >= 7.0: return "Bom"
-    elif nota >= 5.0: return "Suficiente"
-    else: return "Insuficiente"
+def obter_conceito_predominante(projetos_qs):
+    """Retorna o conceito mais frequente entre os projetos avaliados."""
+    avaliados = projetos_qs.exclude(conceito__isnull=True).exclude(conceito='')
+    if not avaliados.exists():
+        return '-'
+    from django.db.models import Count
+    mais_comum = (
+        avaliados.values('conceito')
+        .annotate(total=Count('id'))
+        .order_by('-total')
+        .first()
+    )
+    return mais_comum['conceito'] if mais_comum else '-'
 
 # ─────────────────────────────────────────
 # AUTH
@@ -257,21 +265,20 @@ def _dados_por_semestre():
 
 
 def _dados_radar():
-    """Médias para o radar: notas globais e por conceito."""
-    qs = ProjetoUsuario.objects.filter(ativo=True, nota__isnull=False)
+    """Contagem por conceito para o gráfico radar."""
+    qs = ProjetoUsuario.objects.filter(ativo=True).exclude(conceito__isnull=True).exclude(conceito='')
     total = qs.count() or 1
 
-    excelente  = qs.filter(nota__gte=9.0).count()
-    bom        = qs.filter(nota__gte=7.0, nota__lt=9.0).count()
-    suficiente = qs.filter(nota__gte=5.0, nota__lt=7.0).count()
-    insuf      = qs.filter(nota__lt=5.0).count()
-    media      = qs.aggregate(m=Avg('nota'))['m'] or 0
-    aprovados  = qs.filter(nota__gte=7.0).count()
+    excelente  = qs.filter(conceito='Excelente').count()
+    bom        = qs.filter(conceito='Bom').count()
+    suficiente = qs.filter(conceito='Suficiente').count()
+    insuf      = qs.filter(conceito='Insuficiente').count()
+    aprovados  = qs.filter(status='aprovado').count()
+    total_proj = ProjetoUsuario.objects.filter(ativo=True).count() or 1
 
-    # normaliza para escala 10
     def pct(v): return round((v / total) * 10, 1)
 
-    return [pct(excelente), pct(bom), pct(suficiente), round(media, 1), pct(aprovados), pct(total - insuf)]
+    return [pct(excelente), pct(bom), pct(suficiente), pct(aprovados), pct(total - insuf), round((aprovados / total_proj) * 10, 1)]
 
 
 # ─────────────────────────────────────────
@@ -285,7 +292,7 @@ def dashboard(request):
     # 1. Painel de Administração
     if perfil and perfil.tipo_usuario == 'administracao':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
-        melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
+        melhores_projetos = projetos.exclude(conceito__isnull=True).exclude(conceito='').order_by('conceito')[:3]
         form_cadastro = CadastroForm()
 
         total_projetos   = projetos.count()
@@ -293,9 +300,7 @@ def dashboard(request):
         em_avaliacao     = projetos.filter(status='em_avaliacao').count()
         aprovados_count  = projetos.filter(status='aprovado').count()
 
-        notas = list(projetos.exclude(nota__isnull=True).values_list('nota', flat=True))
-        media_num = sum(notas) / len(notas) if notas else 0
-        conceito_final = obter_conceito(media_num) if notas else '-'
+        conceito_final = obter_conceito_predominante(projetos)
 
         contexto = {
             'usuario': request.user,
@@ -362,14 +367,12 @@ def dashboard(request):
     # 4. Painel do Aluno (Padrão)
     else:
         projetos = ProjetoUsuario.objects.filter(usuario=request.user, ativo=True)
-        melhores_projetos = projetos.exclude(nota__isnull=True).order_by('-nota')[:3]
+        melhores_projetos = projetos.exclude(conceito__isnull=True).exclude(conceito='').order_by('conceito')[:3]
 
         total        = projetos.count()
         aprovados    = projetos.filter(status='aprovado').count()
         em_avaliacao = projetos.filter(status='em_avaliacao').count()
-        notas        = [p.nota for p in projetos if p.nota is not None]
-        media_num    = sum(notas) / len(notas) if notas else 0
-        conceito_final = obter_conceito(media_num) if notas else '-'
+        conceito_final = obter_conceito_predominante(projetos)
 
         contexto = {
             'usuario': request.user,
@@ -479,9 +482,10 @@ def painel_avaliacao(request):
         messages.error(request, 'Acesso restrito a professores.')
         return redirect('dashboard')
 
-    projetos = ProjetoUsuario.objects.filter(ativo=True)
-    
+    projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
+
     contexto = {
+        'usuario': request.user,
         'projetos': projetos,
         'total': projetos.count(),
         'pendentes': projetos.filter(status='em_avaliacao').count(),
@@ -492,18 +496,33 @@ def painel_avaliacao(request):
 
 @login_required(login_url='home')
 def avaliar_projeto(request, projeto_id):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'professor':
+        messages.error(request, 'Acesso restrito a professores.')
+        return redirect('dashboard')
+
     projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
-    
+
     if request.method == 'POST':
-        nota = float(request.POST.get('nota'))
-        projeto.nota = nota
-        projeto.status = 'aprovado' if nota >= 5.0 else 'reprovado'
+        conceito = request.POST.get('conceito', '').strip()
+        comentario = request.POST.get('comentario_professor', '').strip()
+
+        if conceito not in ['Ótimo', 'Excelente', 'Bom', 'Suficiente', 'Insuficiente']:
+            messages.error(request, 'Selecione um conceito válido.')
+            return render(request, 'usuarios/avaliar_projeto.html', {'projeto': projeto})
+
+        projeto.conceito = conceito
+        projeto.comentario_professor = comentario
+        projeto.status = 'aprovado' if conceito in ['Ótimo', 'Excelente', 'Bom', 'Suficiente'] else 'reprovado'
         projeto.save()
-        
-        LogAtividade.registrar(request.user, 'update', f'Projeto {projeto.titulo} avaliado com nota {nota}.')
+
+        LogAtividade.registrar(
+            request.user, 'update',
+            f'Projeto "{projeto.titulo}" avaliado com conceito {conceito}.'
+        )
         messages.success(request, 'Avaliação salva com sucesso!')
         return redirect('painel_avaliacao')
-        
+
     return render(request, 'usuarios/avaliar_projeto.html', {'projeto': projeto})
 
 

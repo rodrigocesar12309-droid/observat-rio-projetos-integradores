@@ -24,6 +24,6 @@ class ProjetoSerializer(serializers.ModelSerializer):
         model = ProjetoUsuario
         fields = [
             'id', 'titulo', 'descricao', 'categoria',
-            'semestre', 'nota', 'status', 'tags',
-            'link_repositorio', 'link_demo', 'criado_em'
+            'semestre', 'conceito', 'comentario_professor',
+            'status', 'tags', 'link_repositorio', 'link_demo', 'criado_em'
         ]

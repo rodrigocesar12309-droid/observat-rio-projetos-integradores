@@ -2,45 +2,247 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Avaliar Projeto - {{ projeto.titulo }}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avaliar Projeto — {{ projeto.titulo }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { background-color: #f4f6f9; }
-        .eval-card { max-width: 600px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        :root {
+            --v:     #5B47E0; --v-lt: #EDE9FC; --v-dk: #3D2DB8;
+            --em:    #10B89A; --em-lt: #D0F5EF;
+            --am:    #F59E0B; --am-lt: #FEF3C7;
+            --ro:    #F43F5E; --ro-lt: #FFE4EA;
+            --ink:   #0D0D14; --ink-2: #3A3A4A;
+            --muted: #7B7B96; --line: #EAEAF0;
+            --bg:    #F7F7FB; --card: #FFFFFF;
+            --r: 14px; --r-lg: 18px;
+            --sh: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Geist', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
+
+        header {
+            background: var(--card); border-bottom: 1px solid var(--line);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 2rem; height: 62px; position: sticky; top: 0; z-index: 10;
+        }
+        .brand { display: flex; align-items: center; gap: .75rem; }
+        .brand-icon { width:36px; height:36px; border-radius:9px; background:linear-gradient(135deg,var(--v),#8B5CF6); display:grid; place-items:center; color:#fff; font-size:.85rem; }
+        .brand-name { font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:.9rem; color:var(--ink); }
+        .brand-role { font-size:.62rem; font-weight:600; letter-spacing:.1em; text-transform:uppercase; color:var(--v); }
+        .back-link { display:inline-flex; align-items:center; gap:.4rem; font-size:.82rem; font-weight:600; color:var(--muted); text-decoration:none; transition:color .15s; }
+        .back-link:hover { color:var(--ink); }
+
+        main { max-width: 760px; margin: 0 auto; padding: 2.5rem 1.5rem 5rem; }
+
+        .page-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:1.6rem; color:var(--ink); margin-bottom:.3rem; }
+        .page-sub { font-size:.85rem; color:var(--muted); margin-bottom:2rem; }
+
+        /* PROJETO INFO */
+        .proj-info {
+            background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+            padding: 1.5rem; margin-bottom: 1.75rem; box-shadow: var(--sh);
+        }
+        .proj-info-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1.1rem; color:var(--ink); margin-bottom:.5rem; }
+        .proj-info-aluno { font-size:.8rem; color:var(--muted); margin-bottom: 1rem; }
+        .proj-info-aluno strong { color:var(--ink-2); }
+        .proj-desc { font-size:.85rem; color:var(--ink-2); line-height:1.65; margin-bottom:1rem; }
+        .proj-links { display:flex; gap:.6rem; flex-wrap:wrap; }
+        .proj-link {
+            display:inline-flex; align-items:center; gap:.35rem; font-size:.75rem; font-weight:600;
+            padding:.35rem .85rem; border-radius:7px; border:1px solid var(--line);
+            color:var(--ink-2); text-decoration:none; background:var(--bg); transition:all .15s;
+        }
+        .proj-link:hover { border-color:var(--v); color:var(--v); }
+        .tags-row { display:flex; flex-wrap:wrap; gap:.4rem; margin-bottom:1rem; }
+        .tag { background:var(--v-lt); color:var(--v); font-size:.68rem; font-weight:600; padding:.2rem .6rem; border-radius:50px; }
+
+        /* FORM */
+        .form-card {
+            background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
+            padding: 1.75rem; box-shadow: var(--sh);
+        }
+        .form-title { font-family:'Bricolage Grotesque',sans-serif; font-weight:700; font-size:1rem; color:var(--ink); margin-bottom:1.5rem; }
+
+        .field { margin-bottom:1.25rem; }
+        .field label { display:block; font-size:.7rem; font-weight:700; text-transform:uppercase; letter-spacing:.07em; color:var(--muted); margin-bottom:.5rem; }
+
+        /* CONCEITO — botões de seleção visual */
+        .conceito-grid { display:grid; grid-template-columns:repeat(5,1fr); gap:.6rem; }
+        @media (max-width:700px) { .conceito-grid { grid-template-columns:repeat(3,1fr); } }
+        @media (max-width:480px) { .conceito-grid { grid-template-columns:repeat(2,1fr); } }
+
+        .conceito-option input[type="radio"] { display:none; }
+        .conceito-option label {
+            display:flex; flex-direction:column; align-items:center; justify-content:center;
+            gap:.4rem; padding:.9rem .5rem; border-radius:var(--r); border:2px solid var(--line);
+            background:var(--bg); cursor:pointer; transition:all .15s; text-align:center;
+        }
+        .conceito-option label .icon { font-size:1.4rem; }
+        .conceito-option label .name { font-size:.78rem; font-weight:700; color:var(--ink-2); }
+        .conceito-option label .desc { font-size:.65rem; color:var(--muted); }
+        .conceito-option input:checked + label { border-width:2px; }
+        .conceito-option.otimo       input:checked + label { border-color:#7C3AED; background:#F5F3FF; }
+        .conceito-option.excelente   input:checked + label { border-color:var(--v);  background:var(--v-lt);  }
+        .conceito-option.bom         input:checked + label { border-color:var(--em); background:var(--em-lt); }
+        .conceito-option.suficiente  input:checked + label { border-color:var(--am); background:var(--am-lt); }
+        .conceito-option.insuficiente input:checked + label { border-color:var(--ro); background:var(--ro-lt); }
+
+        textarea {
+            width:100%; min-height:110px; padding:.75rem 1rem;
+            border:1.5px solid var(--line); border-radius:var(--r);
+            font-family:'Geist',sans-serif; font-size:.85rem; color:var(--ink);
+            background:var(--bg); outline:none; resize:vertical; transition:border-color .15s;
+        }
+        textarea:focus { border-color:var(--v); }
+
+        .form-footer { display:flex; gap:.75rem; justify-content:flex-end; margin-top:1.5rem; padding-top:1.25rem; border-top:1px solid var(--line); }
+        .btn { display:inline-flex; align-items:center; gap:.4rem; padding:.6rem 1.25rem; border-radius:9px; font-family:'Geist',sans-serif; font-size:.82rem; font-weight:700; cursor:pointer; transition:all .15s; text-decoration:none; border:none; }
+        .btn-ghost { border:1px solid var(--line); background:none; color:var(--ink-2); }
+        .btn-ghost:hover { background:var(--bg); }
+        .btn-salvar { background:var(--v); color:#fff; box-shadow:0 2px 8px rgba(91,71,224,.3); }
+        .btn-salvar:hover { background:var(--v-dk); transform:translateY(-1px); }
+
+        /* Avaliação anterior */
+        .avaliacao-atual {
+            border:1.5px solid var(--am); background:var(--am-lt);
+            border-radius:var(--r); padding:1rem 1.25rem; margin-bottom:1.5rem;
+            font-size:.82rem; color:#78350F;
+        }
+        .avaliacao-atual strong { font-weight:700; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="eval-card">
-        <h3 class="mb-4">Avaliar Projeto</h3>
-        <hr>
-        
-        <div class="mb-4">
-            <p><strong>Título:</strong> {{ projeto.titulo }}</p>
-            <p><strong>Aluno:</strong> {{ projeto.usuario.first_name }}</p>
-            <p><strong>Descrição:</strong> {{ projeto.descricao }}</p>
-            <p>
-                <strong>Links:</strong> 
-                {% if projeto.link_repositorio %}<a href="{{ projeto.link_repositorio }}" target="_blank">Repositório</a>{% endif %}
-            </p>
+<header>
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div>
+            <div class="brand-name">Observatório de Projetos</div>
+            <div class="brand-role">Professor</div>
         </div>
+    </div>
+    <a href="{% url 'painel_avaliacao' %}" class="back-link">
+        <i class="fas fa-arrow-left"></i> Voltar ao painel
+    </a>
+</header>
 
-        <form method="post">
+<main>
+    <p class="page-title">Avaliar Projeto</p>
+    <p class="page-sub">Atribua um conceito e deixe um comentário para o aluno</p>
+
+    <!-- INFO DO PROJETO -->
+    <div class="proj-info">
+        <div class="proj-info-title">{{ projeto.titulo }}</div>
+        <div class="proj-info-aluno">
+            <i class="fas fa-user-graduate"></i>
+            <strong>{{ projeto.usuario.first_name|default:projeto.usuario.username }}</strong>
+            {% if projeto.semestre %} · Semestre {{ projeto.semestre }}{% endif %}
+            {% if projeto.categoria %} · {{ projeto.categoria }}{% endif %}
+        </div>
+        {% if projeto.get_tags_lista %}
+        <div class="tags-row">
+            {% for tag in projeto.get_tags_lista %}<span class="tag">{{ tag }}</span>{% endfor %}
+        </div>
+        {% endif %}
+        <p class="proj-desc">{{ projeto.descricao }}</p>
+        <div class="proj-links">
+            {% if projeto.link_repositorio %}
+            <a href="{{ projeto.link_repositorio }}" target="_blank" class="proj-link">
+                <i class="fab fa-github"></i> Repositório
+            </a>
+            {% endif %}
+            {% if projeto.link_demo %}
+            <a href="{{ projeto.link_demo }}" target="_blank" class="proj-link">
+                <i class="fas fa-external-link-alt"></i> Demo
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- AVALIAÇÃO ANTERIOR -->
+    {% if projeto.conceito %}
+    <div class="avaliacao-atual">
+        <i class="fas fa-info-circle"></i>
+        Avaliação atual: <strong>{{ projeto.conceito }}</strong>
+        {% if projeto.comentario_professor %} — "{{ projeto.comentario_professor|truncatewords:20 }}"{% endif %}
+        <br><small>Você pode alterar abaixo.</small>
+    </div>
+    {% endif %}
+
+    <!-- FORMULÁRIO -->
+    <div class="form-card">
+        <div class="form-title"><i class="fas fa-star" style="color:var(--am);margin-right:.4rem;"></i>Formulário de Avaliação</div>
+
+        <form method="POST">
             {% csrf_token %}
-            <div class="mb-3">
-                <label for="nota" class="form-label">Atribuir Nota (0.0 a 10.0)</label>
-                <input type="number" step="0.1" max="10" min="0" class="form-control" id="nota" name="nota" required>
+
+            <div class="field">
+                <label>Conceito *</label>
+                <div class="conceito-grid">
+                    <div class="conceito-option excelente">
+                        <input type="radio" name="conceito" id="c-excelente" value="Excelente"
+                            {% if projeto.conceito == 'Excelente' %}checked{% endif %} required>
+                        <label for="c-excelente">
+                            <span class="icon">🏆</span>
+                            <span class="name">Excelente</span>
+                            <span class="desc">Superou expectativas</span>
+                        </label>
+                    </div>
+                    <div class="conceito-option otimo">
+                        <input type="radio" name="conceito" id="c-otimo" value="Ótimo"
+                            {% if projeto.conceito == 'Ótimo' %}checked{% endif %}>
+                        <label for="c-otimo">
+                            <span class="icon">🌟</span>
+                            <span class="name">Ótimo</span>
+                            <span class="desc">Excepcional</span>
+                        </label>
+                    </div>
+                    <div class="conceito-option bom">
+                        <input type="radio" name="conceito" id="c-bom" value="Bom"
+                            {% if projeto.conceito == 'Bom' %}checked{% endif %}>
+                        <label for="c-bom">
+                            <span class="icon">👍</span>
+                            <span class="name">Bom</span>
+                            <span class="desc">Atendeu aos objetivos</span>
+                        </label>
+                    </div>
+                    <div class="conceito-option suficiente">
+                        <input type="radio" name="conceito" id="c-suficiente" value="Suficiente"
+                            {% if projeto.conceito == 'Suficiente' %}checked{% endif %}>
+                        <label for="c-suficiente">
+                            <span class="icon">✔️</span>
+                            <span class="name">Suficiente</span>
+                            <span class="desc">Mínimo alcançado</span>
+                        </label>
+                    </div>
+                    <div class="conceito-option insuficiente">
+                        <input type="radio" name="conceito" id="c-insuficiente" value="Insuficiente"
+                            {% if projeto.conceito == 'Insuficiente' %}checked{% endif %}>
+                        <label for="c-insuficiente">
+                            <span class="icon">⚠️</span>
+                            <span class="name">Insuficiente</span>
+                            <span class="desc">Não atingiu requisitos</span>
+                        </label>
+                    </div>
+                </div>
             </div>
-            
-            <div class="d-grid gap-2">
-                <button type="submit" class="btn btn-success">Salvar Avaliação</button>
-                <a href="{% url 'painel_avaliacao' %}" class="btn btn-outline-secondary">Cancelar</a>
+
+            <div class="field">
+                <label>Comentário para o aluno</label>
+                <textarea name="comentario_professor" placeholder="Descreva os pontos fortes, o que pode melhorar e sugestões para o aluno…">{{ projeto.comentario_professor|default:'' }}</textarea>
+            </div>
+
+            <div class="form-footer">
+                <a href="{% url 'painel_avaliacao' %}" class="btn btn-ghost">Cancelar</a>
+                <button type="submit" class="btn btn-salvar">
+                    <i class="fas fa-check"></i> Salvar Avaliação
+                </button>
             </div>
         </form>
     </div>
-</div>
+</main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

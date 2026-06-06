@@ -403,7 +403,7 @@ const GRAF = {
                         <th>Categoria</th>
                         <th>Semestre</th>
                         <th>Status</th>
-                        <th>Nota</th>
+                        <th>Conceito</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -423,7 +423,15 @@ const GRAF = {
                             </span>
                         </td>
                         <td style="font-weight:600;">
-                            {% if projeto.nota %}{{ projeto.nota|floatformat:1 }}{% else %}—{% endif %}
+                            {% if projeto.conceito %}
+                                <span style="padding:2px 9px;border-radius:50px;font-size:.7rem;font-weight:700;
+                                    {% if projeto.conceito == 'Excelente' %}background:#EDE9FC;color:#3D2DB8;
+                                    {% elif projeto.conceito == 'Bom' %}background:#D0F5EF;color:#066D5B;
+                                    {% elif projeto.conceito == 'Suficiente' %}background:#FEF3C7;color:#92400E;
+                                    {% else %}background:#FFE4EA;color:#9F1239;{% endif %}">
+                                    {{ projeto.conceito }}
+                                </span>
+                            {% else %}—{% endif %}
                         </td>
                     </tr>
                     {% empty %}

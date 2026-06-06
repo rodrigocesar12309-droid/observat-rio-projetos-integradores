@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Meus Projetos - Observatório de Projetos</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: #f7fafc; }
@@ -178,8 +179,8 @@
                 <div class="metric-value">{{ em_avaliacao }}</div>
             </div>
             <div class="metric-card">
-                <div class="metric-title">Média do Conceito</div>
-                <div class="metric-value {% if media_conceito == 'Excelente' %}conceito-excelente{% elif media_conceito == 'Bom' %}conceito-bom{% elif media_conceito == 'Suficiente' %}conceito-suficiente{% else %}conceito-insuficiente{% endif %}">
+                <div class="metric-title">Conceito Predominante</div>
+                <div class="metric-value {% if media_conceito == 'Excelente' %}conceito-excelente{% elif media_conceito == 'Bom' %}conceito-bom{% elif media_conceito == 'Suficiente' %}conceito-suficiente{% elif media_conceito == 'Insuficiente' %}conceito-insuficiente{% endif %}">
                     {{ media_conceito }}
                 </div>
             </div>
@@ -209,8 +210,33 @@
                 <div class="meta-row">
                     {% if projeto.categoria %}<span>Categoria: {{ projeto.categoria }}</span>{% endif %}
                     {% if projeto.semestre %}<span>Semestre: {{ projeto.semestre }}</span>{% endif %}
-                    {% if projeto.nota %}<span>Nota: <span class="nota">{{ projeto.nota }}</span></span>{% endif %}
                 </div>
+                {% if projeto.conceito or projeto.comentario_professor %}
+                <div style="margin-top:14px; padding:14px 16px; background:#f8f7ff; border:1px solid #e0daff; border-radius:10px;">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:{% if projeto.comentario_professor %}8px{% else %}0{% endif %};">
+                        <span style="font-size:12px;font-weight:700;color:#7B7B96;text-transform:uppercase;letter-spacing:.05em;">Avaliação do professor</span>
+                        {% if projeto.conceito %}
+                        <span style="padding:2px 10px;border-radius:50px;font-size:11px;font-weight:700;
+                            {% if projeto.conceito == 'Excelente' %}background:#EDE9FC;color:#3D2DB8;
+                            {% elif projeto.conceito == 'Bom' %}background:#D0F5EF;color:#066D5B;
+                            {% elif projeto.conceito == 'Suficiente' %}background:#FEF3C7;color:#92400E;
+                            {% else %}background:#FFE4EA;color:#9F1239;{% endif %}">
+                            {{ projeto.conceito }}
+                        </span>
+                        {% endif %}
+                    </div>
+                    {% if projeto.comentario_professor %}
+                    <p style="font-size:13px;color:#4a5568;line-height:1.6;margin:0;">
+                        <i class="fas fa-comment-dots" style="color:#5B47E0;margin-right:5px;font-size:11px;"></i>
+                        {{ projeto.comentario_professor }}
+                    </p>
+                    {% endif %}
+                </div>
+                {% elif projeto.status == 'em_avaliacao' %}
+                <div style="margin-top:14px;padding:10px 14px;background:#fffbeb;border:1px solid #fde68a;border-radius:8px;font-size:12px;color:#92400E;">
+                    <i class="fas fa-clock"></i> Aguardando avaliação do professor
+                </div>
+                {% endif %}
                 <div class="project-actions">
                     {% if projeto.link_repositorio %}
                         <a href="{{ projeto.link_repositorio }}" target="_blank" class="btn-action">Repositório</a>

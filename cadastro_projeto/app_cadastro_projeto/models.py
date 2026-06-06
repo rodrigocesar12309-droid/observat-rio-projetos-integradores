@@ -179,12 +179,21 @@ class ProjetoUsuario(models.Model):
         ('reprovado', 'Reprovado'),
     ]
 
+    CONCEITO_CHOICES = [
+        ('Excelente', 'Excelente'),
+        ('Ótimo', 'Ótimo'),
+        ('Bom', 'Bom'),
+        ('Suficiente', 'Suficiente'),
+        ('Insuficiente', 'Insuficiente'),
+    ]
+
     usuario = models.ForeignKey(User, on_delete=models.CASCADE, related_name='projetos_usuario')
     titulo = models.CharField(max_length=200)
     descricao = models.TextField()
     categoria = models.CharField(max_length=100, blank=True)
     semestre = models.CharField(max_length=20, blank=True)
-    nota = models.FloatField(blank=True, null=True)
+    conceito = models.CharField(max_length=20, choices=CONCEITO_CHOICES, blank=True, null=True)
+    comentario_professor = models.TextField(blank=True, null=True, verbose_name='Comentário do Professor')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='em_avaliacao')
     tags = models.CharField(max_length=200, blank=True, help_text='Separe por vírgula. Ex: React,Node.js')
     link_repositorio = models.URLField(blank=True, null=True)
@@ -202,11 +211,12 @@ class ProjetoUsuario(models.Model):
     def get_tags_lista(self):
         return [t.strip() for t in self.tags.split(',') if t.strip()]
 
-    def get_conceito(self):
-        if self.nota is None:
-            return '-'
-        if self.nota >= 9.0: return 'Excelente'
-        elif self.nota >= 7.0: return 'Bom'
-        elif self.nota >= 5.0: return 'Suficiente'
-        else: return 'Insuficiente'
+    def get_conceito_display_color(self):
+        cores = {
+            'Excelente':    '#5B47E0',
+            'Bom':          '#10B89A',
+            'Suficiente':   '#F59E0B',
+            'Insuficiente': '#F43F5E',
+        }
+        return cores.get(self.conceito, '#7B7B96')
 
