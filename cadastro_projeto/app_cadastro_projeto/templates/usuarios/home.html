@@ -32,7 +32,6 @@
       align-items: center;
       justify-content: center;
       padding: 1rem;
-      /* subtle grid background */
       background-image:
         radial-gradient(circle at 20% 20%, rgba(91,71,224,.12) 0%, transparent 50%),
         radial-gradient(circle at 80% 80%, rgba(16,184,154,.09) 0%, transparent 50%);
@@ -128,8 +127,6 @@
       box-shadow: 0 6px 20px rgba(91,71,224,.5);
     }
     .btn-login:active { transform: translateY(0); }
-
-
   </style>
 </head>
 <body>
@@ -162,7 +159,8 @@
           <label>E-mail</label>
           <div class="input-wrap">
             <i class="fas fa-envelope"></i>
-            <input type="text" name="username" id="username" placeholder="seu@email.com" required autocomplete="username">
+            <!-- name="email" → views.py lê com request.POST.get('email') -->
+            <input type="email" name="email" id="email" placeholder="seu@email.com" required autocomplete="email">
           </div>
         </div>
         <div class="field">
@@ -176,12 +174,8 @@
           <i class="fas fa-sign-in-alt" style="margin-right:.5rem;"></i>Entrar
         </button>
       </form>
-
-
     </div>
 
   </div>
-
-
 </body>
 </html>

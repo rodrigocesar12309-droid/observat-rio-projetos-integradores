@@ -37,16 +37,13 @@ def cadastrar_empresa_login(request):
             nome_empresa = form.cleaned_data['nome_empresa']
             cnpj = form.cleaned_data['cnpj']
 
-            # Cria o User Django
             user = User.objects.create_user(
                 username=email,
                 email=email,
                 password=password,
                 first_name=nome_empresa,
             )
-            # Cria o perfil como empresa
             PerfilUsuario.criar(user=user, tipo_usuario='empresa')
-            # Cria o registro no model Empresa
             Empresa.objects.create(nome=nome_empresa, cnpj=cnpj)
 
             LogAtividade.registrar(
@@ -64,6 +61,7 @@ def cadastrar_empresa_login(request):
 
     return redirect('dashboard')
 
+
 def obter_conceito_predominante(projetos_qs):
     """Retorna o conceito mais frequente entre os projetos avaliados."""
     avaliados = projetos_qs.exclude(conceito__isnull=True).exclude(conceito='')
@@ -78,6 +76,7 @@ def obter_conceito_predominante(projetos_qs):
     )
     return mais_comum['conceito'] if mais_comum else '-'
 
+
 # ─────────────────────────────────────────
 # AUTH
 # ─────────────────────────────────────────
@@ -86,7 +85,10 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     if request.method == 'POST':
-        user = authenticate(request, username=request.POST.get('username'), password=request.POST.get('password'))
+        # O campo no HTML tem name="email", autenticamos pelo username (que é o email no banco)
+        email = request.POST.get('email', '').strip().lower()
+        password = request.POST.get('password')
+        user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
             LogAtividade.registrar(user, 'login', f'{user.email} fez login.')
@@ -176,10 +178,6 @@ def desativar_usuario(request, usuario_id):
 # ─────────────────────────────────────────
 
 def _dados_evolucao_mensal(meses=12):
-    """
-    Retorna labels e séries de projetos criados por mês
-    nos últimos `meses` meses, separados por status.
-    """
     hoje = timezone.now().date()
     inicio = hoje.replace(day=1) - datetime.timedelta(days=30 * (meses - 1))
 
@@ -192,12 +190,10 @@ def _dados_evolucao_mensal(meses=12):
         .order_by('mes')
     )
 
-    # monta mapa {mes: {status: count}}
     mapa = {}
     cursor = inicio.replace(day=1)
     while cursor <= hoje.replace(day=1):
         mapa[cursor] = {'em_avaliacao': 0, 'aprovado': 0, 'reprovado': 0}
-        # avança um mês
         if cursor.month == 12:
             cursor = cursor.replace(year=cursor.year + 1, month=1)
         else:
@@ -210,16 +206,15 @@ def _dados_evolucao_mensal(meses=12):
 
     meses_ord = sorted(mapa.keys())
     MESES_PT = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez']
-    labels      = [f"{MESES_PT[m.month-1]}/{str(m.year)[2:]}" for m in meses_ord]
-    submetidos  = [mapa[m]['em_avaliacao'] + mapa[m]['aprovado'] + mapa[m].get('reprovado', 0) for m in meses_ord]
-    aprovados   = [mapa[m]['aprovado']   for m in meses_ord]
-    reprovados  = [mapa[m].get('reprovado', 0) for m in meses_ord]
+    labels     = [f"{MESES_PT[m.month-1]}/{str(m.year)[2:]}" for m in meses_ord]
+    submetidos = [mapa[m]['em_avaliacao'] + mapa[m]['aprovado'] + mapa[m].get('reprovado', 0) for m in meses_ord]
+    aprovados  = [mapa[m]['aprovado'] for m in meses_ord]
+    reprovados = [mapa[m].get('reprovado', 0) for m in meses_ord]
 
     return {'labels': labels, 'submetidos': submetidos, 'aprovados': aprovados, 'reprovados': reprovados}
 
 
 def _dados_status():
-    """Contagem de projetos por status para o doughnut."""
     qs = (
         ProjetoUsuario.objects
         .filter(ativo=True)
@@ -235,7 +230,6 @@ def _dados_status():
 
 
 def _dados_por_categoria():
-    """Top 6 categorias com mais projetos."""
     qs = (
         ProjetoUsuario.objects
         .filter(ativo=True)
@@ -244,13 +238,10 @@ def _dados_por_categoria():
         .annotate(total=Count('id'))
         .order_by('-total')[:6]
     )
-    labels = [r['categoria'] for r in qs]
-    valores = [r['total'] for r in qs]
-    return {'labels': labels, 'valores': valores}
+    return {'labels': [r['categoria'] for r in qs], 'valores': [r['total'] for r in qs]}
 
 
 def _dados_por_semestre():
-    """Projetos agrupados por semestre."""
     qs = (
         ProjetoUsuario.objects
         .filter(ativo=True)
@@ -259,13 +250,10 @@ def _dados_por_semestre():
         .annotate(total=Count('id'))
         .order_by('semestre')[:6]
     )
-    labels = [r['semestre'] for r in qs]
-    valores = [r['total'] for r in qs]
-    return {'labels': labels, 'valores': valores}
+    return {'labels': [r['semestre'] for r in qs], 'valores': [r['total'] for r in qs]}
 
 
 def _dados_radar():
-    """Contagem por conceito para o gráfico radar."""
     qs = ProjetoUsuario.objects.filter(ativo=True).exclude(conceito__isnull=True).exclude(conceito='')
     total = qs.count() or 1
 
@@ -289,18 +277,16 @@ def _dados_radar():
 def dashboard(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
 
-    # 1. Painel de Administração
     if perfil and perfil.tipo_usuario == 'administracao':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         melhores_projetos = projetos.exclude(conceito__isnull=True).exclude(conceito='').order_by('conceito')[:3]
         form_cadastro = CadastroForm()
 
-        total_projetos   = projetos.count()
-        total_alunos     = PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count()
-        em_avaliacao     = projetos.filter(status='em_avaliacao').count()
-        aprovados_count  = projetos.filter(status='aprovado').count()
-
-        conceito_final = obter_conceito_predominante(projetos)
+        total_projetos  = projetos.count()
+        total_alunos    = PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count()
+        em_avaliacao    = projetos.filter(status='em_avaliacao').count()
+        aprovados_count = projetos.filter(status='aprovado').count()
+        conceito_final  = obter_conceito_predominante(projetos)
 
         contexto = {
             'usuario': request.user,
@@ -308,11 +294,11 @@ def dashboard(request):
             'projetos': projetos.order_by('-criado_em')[:20],
             'melhores_projetos': melhores_projetos,
             'form': form_cadastro,
-            'total_projetos':  total_projetos,
-            'total_alunos':    total_alunos,
-            'em_avaliacao':    em_avaliacao,
-            'aprovados':       aprovados_count,
-            'media_conceito':  conceito_final,
+            'total_projetos':    total_projetos,
+            'total_alunos':      total_alunos,
+            'em_avaliacao':      em_avaliacao,
+            'aprovados':         aprovados_count,
+            'media_conceito':    conceito_final,
             'graf_evolucao_12m': json.dumps(_dados_evolucao_mensal(12)),
             'graf_evolucao_6m':  json.dumps(_dados_evolucao_mensal(6)),
             'graf_evolucao_3m':  json.dumps(_dados_evolucao_mensal(3)),
@@ -324,7 +310,6 @@ def dashboard(request):
         }
         return render(request, 'usuarios/dashboard_admin.html', contexto)
 
-    # 2. Painel da Empresa
     elif perfil and perfil.tipo_usuario == 'empresa':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         categorias = (
@@ -352,7 +337,6 @@ def dashboard(request):
         }
         return render(request, 'usuarios/dashboard_empresa.html', contexto)
 
-    # 3. Painel do professor
     elif perfil and perfil.tipo_usuario == 'professor':
         projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
         contexto = {
@@ -364,7 +348,6 @@ def dashboard(request):
         }
         return render(request, 'usuarios/dashboard_professor.html', contexto)
 
-    # 4. Painel do Aluno (Padrão)
     else:
         projetos = ProjetoUsuario.objects.filter(usuario=request.user, ativo=True)
         melhores_projetos = projetos.exclude(conceito__isnull=True).exclude(conceito='').order_by('conceito')[:3]
@@ -472,18 +455,17 @@ def desativar_conta(request):
 
 
 # ─────────────────────────────────────────
-# AVALIAR PROJETO(apenas professores)
+# AVALIAR PROJETO (apenas professores)
 # ─────────────────────────────────────────
+
 @login_required(login_url='home')
 def painel_avaliacao(request):
-    # Verifica se o usuário é professor (assumindo que você tem essa lógica)
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
     if not perfil or perfil.tipo_usuario != 'professor':
         messages.error(request, 'Acesso restrito a professores.')
         return redirect('dashboard')
 
     projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
-
     contexto = {
         'usuario': request.user,
         'projetos': projetos,
@@ -526,9 +508,10 @@ def avaliar_projeto(request, projeto_id):
     return render(request, 'usuarios/avaliar_projeto.html', {'projeto': projeto})
 
 
-# ─────────────────────────
+# ─────────────────────────────────────────
 # RELATÓRIO USUÁRIOS
 # ─────────────────────────────────────────
+
 @login_required(login_url='home')
 def relatorio_usuarios(request):
     perfil = PerfilUsuario.buscar_por_usuario(request.user)
