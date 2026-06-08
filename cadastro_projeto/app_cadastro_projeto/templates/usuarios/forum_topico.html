@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ topico.titulo }} — Fórum</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{--v:#5B47E0;--v-lt:#EDE9FC;--v-dk:#3D2DB8;--em:#10B89A;--em-lt:#D0F5EF;--am:#F59E0B;--am-lt:#FEF3C7;--ro:#F43F5E;--ro-lt:#FFE4EA;--ink:#0D0D14;--ink-2:#3A3A4A;--muted:#7B7B96;--line:#EAEAF0;--bg:#F7F7FB;--card:#FFFFFF;--r:12px;--r-lg:18px;--sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05)}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Geist',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh}
+        header{background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:62px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.04)}
+        .brand{display:flex;align-items:center;gap:.75rem}
+        .brand-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--v),#8B5CF6);display:grid;place-items:center;color:#fff;font-size:.85rem}
+        .brand-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.9rem;color:var(--ink)}
+        .nav-right{display:flex;align-items:center;gap:1rem}
+        .nav-back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none}
+        .nav-back:hover{color:var(--ink)}
+        .nav-logout{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;color:var(--muted);text-decoration:none;transition:all .15s}
+        .nav-logout:hover{background:var(--ro-lt);border-color:var(--ro);color:var(--ro)}
+
+        main{max-width:860px;margin:0 auto;padding:2rem 1.5rem 5rem}
+
+        /* TÓPICO */
+        .topico-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.75rem;box-shadow:var(--sh);margin-bottom:1.5rem}
+        .topico-header{display:flex;align-items:flex-start;justify-content:space-between;gap:1rem;margin-bottom:1rem;flex-wrap:wrap}
+        .topico-titulo{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.3rem;color:var(--ink)}
+        .cat-badge{display:inline-block;padding:.2rem .6rem;border-radius:50px;font-size:.68rem;font-weight:700;margin-left:.5rem}
+        .cat-duvida{background:var(--v-lt);color:var(--v-dk)}
+        .cat-discussao{background:var(--em-lt);color:#066D5B}
+        .cat-aviso{background:var(--am-lt);color:#92400E}
+        .cat-projeto{background:var(--ro-lt);color:#9F1239}
+        .topico-meta{font-size:.78rem;color:var(--muted);display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:1.25rem}
+        .topico-conteudo{font-size:.9rem;color:var(--ink-2);line-height:1.75;white-space:pre-wrap}
+
+        /* AVATAR */
+        .avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0}
+        .av-professor{background:linear-gradient(135deg,#10B89A,#0891b2)}
+        .av-aluno{background:linear-gradient(135deg,var(--v),#8B5CF6)}
+        .av-admin{background:linear-gradient(135deg,#F59E0B,#ea580c)}
+        .av-outro{background:var(--muted)}
+
+        /* RESPOSTAS */
+        .respostas-titulo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:1rem;color:var(--ink);margin-bottom:1rem}
+        .resposta{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.25rem;margin-bottom:.85rem;display:flex;gap:1rem;box-shadow:var(--sh)}
+        .resposta-body{flex:1;min-width:0}
+        .resposta-autor{font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:.2rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
+        .role-tag{font-size:.62rem;font-weight:600;padding:.12rem .45rem;border-radius:50px;text-transform:uppercase;letter-spacing:.06em}
+        .role-professor{background:var(--em-lt);color:#066D5B}
+        .role-aluno{background:var(--v-lt);color:var(--v-dk)}
+        .role-admin{background:var(--am-lt);color:#92400E}
+        .resposta-data{font-size:.72rem;color:var(--muted);margin-left:auto}
+        .resposta-texto{font-size:.85rem;color:var(--ink-2);line-height:1.65;white-space:pre-wrap}
+        .btn-del{font-size:.7rem;color:var(--ro);background:none;border:none;cursor:pointer;margin-top:.5rem;padding:0;font-family:'Geist',sans-serif;display:inline-flex;align-items:center;gap:.3rem}
+        .btn-del:hover{text-decoration:underline}
+
+        /* FORM RESPOSTA */
+        .form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--sh)}
+        .form-titulo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:1rem}
+        textarea{width:100%;min-height:100px;padding:.75rem 1rem;border:1.5px solid var(--line);border-radius:var(--r);font-family:'Geist',sans-serif;font-size:.85rem;color:var(--ink);background:var(--bg);outline:none;resize:vertical;transition:border-color .15s}
+        textarea:focus{border-color:var(--v)}
+        .form-footer{display:flex;justify-content:flex-end;margin-top:.75rem}
+        .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:9px;font-family:'Geist',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;transition:all .15s}
+        .btn-v{background:var(--v);color:#fff;box-shadow:0 2px 8px rgba(91,71,224,.3)}
+        .btn-v:hover{background:var(--v-dk)}
+
+        .toast-wrap{position:fixed;top:72px;right:1.25rem;z-index:200;display:flex;flex-direction:column;gap:.5rem}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid}
+        .toast.success{background:#F0FDF9;color:#0A7A64;border-color:#A7F3E4}
+        .toast.error{background:#FFF1F3;color:#BE1234;border-color:#FECDD8}
+
+        .prof-highlight{border-left:3px solid var(--em)}
+    </style>
+</head>
+<body>
+
+{% if messages %}
+<div class="toast-wrap">
+    {% for m in messages %}
+    <div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<header>
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div><div class="brand-name">Observatório de Projetos</div></div>
+    </div>
+    <div class="nav-right">
+        <a href="{% url 'forum_lista' %}" class="nav-back"><i class="fas fa-arrow-left"></i> Fórum</a>
+        <a href="{% url 'logout' %}" class="nav-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
+    </div>
+</header>
+
+<main>
+    <!-- TÓPICO -->
+    <div class="topico-card">
+        <div class="topico-header">
+            <div>
+                <div class="topico-titulo">
+                    {% if topico.fixado %}<span style="font-size:.75rem">📌</span>{% endif %}
+                    {{ topico.titulo }}
+                    <span class="cat-badge cat-{{ topico.categoria }}">{{ topico.get_categoria_display }}</span>
+                </div>
+            </div>
+            {% if topico.autor == usuario or perfil.tipo_usuario in 'professor,administracao' %}
+            <form method="POST" action="{% url 'forum_deletar_topico' topico.id %}" onsubmit="return confirm('Remover este tópico?')">
+                {% csrf_token %}
+                <button type="submit" class="btn-del"><i class="fas fa-trash"></i> Remover tópico</button>
+            </form>
+            {% endif %}
+        </div>
+        <div class="topico-meta">
+            <span><i class="fas fa-user"></i> {{ topico.autor.first_name|default:topico.autor.username }}</span>
+            <span><i class="fas fa-clock"></i> {{ topico.criado_em|date:"d/m/Y \à\s H:i" }}</span>
+            <span><i class="fas fa-comments"></i> {{ respostas.count }} resposta{{ respostas.count|pluralize }}</span>
+        </div>
+        <div class="topico-conteudo">{{ topico.conteudo }}</div>
+    </div>
+
+    <!-- RESPOSTAS -->
+    {% if respostas %}
+    <div class="respostas-titulo"><i class="fas fa-comments" style="color:var(--v);margin-right:.4rem"></i>{{ respostas.count }} Resposta{{ respostas.count|pluralize }}</div>
+    {% for r in respostas %}
+    {% with rp=r.autor.perfil %}
+    <div class="resposta {% if rp.tipo_usuario == 'professor' %}prof-highlight{% endif %}">
+        <div class="avatar
+            {% if rp.tipo_usuario == 'professor' %}av-professor{% elif rp.tipo_usuario == 'administracao' %}av-admin{% else %}av-aluno{% endif %}">
+            {{ r.autor.first_name|first|upper|default:"?" }}
+        </div>
+        <div class="resposta-body">
+            <div class="resposta-autor">
+                {{ r.autor.first_name|default:r.autor.username }}
+                {% if rp.tipo_usuario == 'professor' %}
+                    <span class="role-tag role-professor">Professor</span>
+                {% elif rp.tipo_usuario == 'administracao' %}
+                    <span class="role-tag role-admin">Coordenador</span>
+                {% else %}
+                    <span class="role-tag role-aluno">Aluno</span>
+                {% endif %}
+                <span class="resposta-data">{{ r.criado_em|date:"d/m H:i" }}</span>
+            </div>
+            <div class="resposta-texto">{{ r.conteudo }}</div>
+            {% if r.autor == usuario or perfil.tipo_usuario in 'professor,administracao' %}
+            <form method="POST" action="{% url 'forum_deletar_resposta' r.id %}" onsubmit="return confirm('Remover resposta?')" style="display:inline">
+                {% csrf_token %}
+                <button type="submit" class="btn-del"><i class="fas fa-times"></i> Remover</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endwith %}
+    {% endfor %}
+    {% endif %}
+
+    <!-- FORM RESPOSTA -->
+    <div class="form-card">
+        <div class="form-titulo"><i class="fas fa-reply" style="color:var(--v);margin-right:.4rem"></i>Sua Resposta</div>
+        <form method="POST">
+            {% csrf_token %}
+            <textarea name="conteudo" placeholder="Escreva sua resposta…" required></textarea>
+            <div class="form-footer">
+                <button type="submit" class="btn btn-v"><i class="fas fa-paper-plane"></i> Enviar Resposta</button>
+            </div>
+        </form>
+    </div>
+</main>
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('.toast').forEach(t => {
+        t.style.opacity='0'; t.style.transition='opacity .4s';
+        setTimeout(()=>t.remove(),400);
+    });
+}, 4000);
+</script>
+</body>
+</html>

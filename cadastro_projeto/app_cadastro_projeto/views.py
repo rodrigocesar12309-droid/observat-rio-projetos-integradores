@@ -10,7 +10,7 @@ import json
 import datetime
 
 from .forms import CadastroForm, AtualizarPerfilForm, CadastroEmpresaLoginForm
-from .models import PerfilUsuario, ProjetoUsuario, LogAtividade, Empresa
+from .models import PerfilUsuario, ProjetoUsuario, LogAtividade, Empresa, TopicoForum, RespostaForum
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -299,6 +299,7 @@ def dashboard(request):
             'em_avaliacao':      em_avaliacao,
             'aprovados':         aprovados_count,
             'media_conceito':    conceito_final,
+            'alunos':            PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).select_related('user'),
             'graf_evolucao_12m': json.dumps(_dados_evolucao_mensal(12)),
             'graf_evolucao_6m':  json.dumps(_dados_evolucao_mensal(6)),
             'graf_evolucao_3m':  json.dumps(_dados_evolucao_mensal(3)),
@@ -578,3 +579,254 @@ def api_projeto_detalhe(request, projeto_id):
     projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
     serializer = ProjetoSerializer(projeto)
     return Response(serializer.data)
+
+
+# ─────────────────────────────────────────
+# FÓRUM
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def forum_lista(request):
+    """Lista todos os tópicos do fórum."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    # Empresa não acessa o fórum
+    if perfil and perfil.tipo_usuario == 'empresa':
+        messages.error(request, 'Acesso não permitido.')
+        return redirect('dashboard')
+
+    categoria = request.GET.get('categoria', '')
+    busca = request.GET.get('busca', '')
+
+    topicos = TopicoForum.objects.filter(ativo=True).select_related('autor').prefetch_related('respostas')
+    if categoria:
+        topicos = topicos.filter(categoria=categoria)
+    if busca:
+        topicos = topicos.filter(titulo__icontains=busca)
+
+    return render(request, 'usuarios/forum_lista.html', {
+        'topicos': topicos,
+        'perfil': perfil,
+        'usuario': request.user,
+        'categoria': categoria,
+        'busca': busca,
+        'total': topicos.count(),
+    })
+
+
+@login_required(login_url='home')
+def forum_topico(request, topico_id):
+    """Exibe um tópico e suas respostas."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if perfil and perfil.tipo_usuario == 'empresa':
+        return redirect('dashboard')
+
+    topico = get_object_or_404(TopicoForum, id=topico_id, ativo=True)
+    respostas = topico.respostas.filter(ativo=True).select_related('autor')
+
+    if request.method == 'POST':
+        conteudo = request.POST.get('conteudo', '').strip()
+        if conteudo:
+            RespostaForum.objects.create(
+                topico=topico,
+                autor=request.user,
+                conteudo=conteudo,
+            )
+            messages.success(request, 'Resposta enviada!')
+            return redirect('forum_topico', topico_id=topico_id)
+        else:
+            messages.error(request, 'Escreva algo antes de enviar.')
+
+    return render(request, 'usuarios/forum_topico.html', {
+        'topico': topico,
+        'respostas': respostas,
+        'perfil': perfil,
+        'usuario': request.user,
+    })
+
+
+@login_required(login_url='home')
+def forum_novo_topico(request):
+    """Cria um novo tópico."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if perfil and perfil.tipo_usuario == 'empresa':
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        titulo = request.POST.get('titulo', '').strip()
+        conteudo = request.POST.get('conteudo', '').strip()
+        categoria = request.POST.get('categoria', 'duvida')
+        fixado = request.POST.get('fixado') == 'on'
+
+        # Só professor/admin pode fixar
+        pode_fixar = perfil and perfil.tipo_usuario in ['professor', 'administracao']
+
+        if titulo and conteudo:
+            topico = TopicoForum.objects.create(
+                autor=request.user,
+                titulo=titulo,
+                conteudo=conteudo,
+                categoria=categoria,
+                fixado=fixado if pode_fixar else False,
+            )
+            messages.success(request, 'Tópico criado com sucesso!')
+            return redirect('forum_topico', topico_id=topico.id)
+        else:
+            messages.error(request, 'Preencha o título e o conteúdo.')
+
+    return render(request, 'usuarios/forum_novo_topico.html', {
+        'perfil': perfil,
+        'usuario': request.user,
+    })
+
+
+@login_required(login_url='home')
+def forum_deletar_topico(request, topico_id):
+    """Deleta (desativa) um tópico — apenas autor ou admin/professor."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    topico = get_object_or_404(TopicoForum, id=topico_id)
+    pode = (topico.autor == request.user or
+            (perfil and perfil.tipo_usuario in ['professor', 'administracao']))
+    if pode and request.method == 'POST':
+        topico.ativo = False
+        topico.save()
+        messages.success(request, 'Tópico removido.')
+    return redirect('forum_lista')
+
+
+@login_required(login_url='home')
+def forum_deletar_resposta(request, resposta_id):
+    """Deleta uma resposta — apenas autor ou admin/professor."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    resposta = get_object_or_404(RespostaForum, id=resposta_id)
+    pode = (resposta.autor == request.user or
+            (perfil and perfil.tipo_usuario in ['professor', 'administracao']))
+    if pode and request.method == 'POST':
+        resposta.ativo = False
+        resposta.save()
+        messages.success(request, 'Resposta removida.')
+    return redirect('forum_topico', topico_id=resposta.topico_id)
+
+
+# ─────────────────────────────────────────
+# ENCERRAR PROJETO (apenas admin)
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def encerrar_projeto(request, projeto_id):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        messages.error(request, 'Acesso negado.')
+        return redirect('dashboard')
+
+    projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
+
+    # Só pode encerrar projetos já avaliados
+    if projeto.status == 'em_avaliacao':
+        messages.error(request, 'Não é possível encerrar um projeto que ainda não foi avaliado.')
+        return redirect('dashboard')
+
+    if request.method == 'POST':
+        projeto.encerrado = True
+        projeto.encerrado_em = timezone.now()
+        projeto.save()
+        LogAtividade.registrar(
+            request.user, 'update',
+            f'Admin encerrou o projeto "{projeto.titulo}" do aluno {projeto.usuario.first_name}.'
+        )
+        messages.success(request, f'Projeto "{projeto.titulo}" encerrado com sucesso.')
+
+    return redirect('dashboard')
+
+
+@login_required(login_url='home')
+def reabrir_projeto(request, projeto_id):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        messages.error(request, 'Acesso negado.')
+        return redirect('dashboard')
+
+    projeto = get_object_or_404(ProjetoUsuario, id=projeto_id)
+    if request.method == 'POST':
+        projeto.encerrado = False
+        projeto.encerrado_em = None
+        projeto.save()
+        messages.success(request, f'Projeto "{projeto.titulo}" reaberto.')
+
+    return redirect('dashboard')
+
+
+# ─────────────────────────────────────────
+# CURRÍCULO DO ALUNO (salvar + ver pela empresa)
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def salvar_curriculo(request):
+    """Aluno salva seu currículo no banco."""
+    if request.method == 'POST':
+        perfil = get_object_or_404(PerfilUsuario, user=request.user)
+        perfil.user.first_name = request.POST.get('nome', perfil.user.first_name)
+        perfil.user.save()
+        perfil.cargo       = request.POST.get('cargo', '')
+        perfil.bio         = request.POST.get('bio', '')
+        perfil.telefone    = request.POST.get('telefone', '')
+        perfil.linkedin    = request.POST.get('linkedin', '') or None
+        perfil.github      = request.POST.get('github', '') or None
+        perfil.habilidades = request.POST.get('habilidades', '')
+        perfil.experiencia = request.POST.get('experiencia', '')
+        perfil.formacao    = request.POST.get('formacao', '')
+        perfil.save()
+        messages.success(request, 'Currículo salvo com sucesso!')
+    return redirect('dashboard')
+
+
+@login_required(login_url='home')
+def ver_curriculo_aluno(request, usuario_id):
+    """Empresa visualiza o currículo de um aluno vinculado a um projeto."""
+    perfil_empresa = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil_empresa or perfil_empresa.tipo_usuario not in ['empresa', 'administracao']:
+        messages.error(request, 'Acesso restrito.')
+        return redirect('dashboard')
+
+    aluno = get_object_or_404(User, id=usuario_id)
+
+    # Verifica se o aluno tem ao menos um projeto ativo/encerrado
+    tem_projeto = ProjetoUsuario.objects.filter(usuario=aluno, ativo=True).exists()
+    if not tem_projeto:
+        messages.error(request, 'Este aluno não possui projetos cadastrados.')
+        return redirect('dashboard')
+
+    try:
+        perfil_aluno = aluno.perfil
+    except Exception:
+        messages.error(request, 'Perfil do aluno não encontrado.')
+        return redirect('dashboard')
+
+    projetos = ProjetoUsuario.objects.filter(usuario=aluno, ativo=True)
+
+    # Processa habilidades e experiência na view (template não suporta .split())
+    habilidades_lista = []
+    if perfil_aluno.habilidades:
+        habilidades_lista = [h.strip() for h in perfil_aluno.habilidades.split(',') if h.strip()]
+
+    experiencia_lista = []
+    if perfil_aluno.experiencia:
+        for linha in perfil_aluno.experiencia.splitlines():
+            if linha.strip():
+                partes = [p.strip() for p in linha.split('|')]
+                experiencia_lista.append(partes)
+
+    formacao_lista = []
+    if perfil_aluno.formacao:
+        for linha in perfil_aluno.formacao.splitlines():
+            if linha.strip():
+                partes = [p.strip() for p in linha.split('|')]
+                formacao_lista.append(partes)
+
+    return render(request, 'usuarios/curriculo_aluno.html', {
+        'aluno': aluno,
+        'perfil': perfil_aluno,
+        'projetos': projetos,
+        'habilidades_lista': habilidades_lista,
+        'experiencia_lista': experiencia_lista,
+        'formacao_lista': formacao_lista,
+    })

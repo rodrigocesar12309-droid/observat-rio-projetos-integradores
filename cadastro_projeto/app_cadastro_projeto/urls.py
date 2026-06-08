@@ -38,4 +38,19 @@ urlpatterns = [
     path('api/usuarios/', views.api_usuarios, name='api_usuarios'),
     path('api/projetos/', views.api_projetos, name='api_projetos'),
     path('api/projetos/<int:projeto_id>/', views.api_projeto_detalhe, name='api_projeto_detalhe'),
+
+    # Fórum
+    path('forum/', views.forum_lista, name='forum_lista'),
+    path('forum/novo/', views.forum_novo_topico, name='forum_novo_topico'),
+    path('forum/topico/<int:topico_id>/', views.forum_topico, name='forum_topico'),
+    path('forum/topico/<int:topico_id>/deletar/', views.forum_deletar_topico, name='forum_deletar_topico'),
+    path('forum/resposta/<int:resposta_id>/deletar/', views.forum_deletar_resposta, name='forum_deletar_resposta'),
+
+    # Encerrar / reabrir projeto (admin)
+    path('projetos/encerrar/<int:projeto_id>/', views.encerrar_projeto, name='encerrar_projeto'),
+    path('projetos/reabrir/<int:projeto_id>/', views.reabrir_projeto, name='reabrir_projeto'),
+
+    # Currículo
+    path('curriculo/salvar/', views.salvar_curriculo, name='salvar_curriculo'),
+    path('curriculo/aluno/<int:usuario_id>/', views.ver_curriculo_aluno, name='ver_curriculo_aluno'),
 ]

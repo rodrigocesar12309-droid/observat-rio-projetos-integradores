@@ -3,29 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login — Observatório de Projetos</title>
+  <title>Login — Faculdade SENAC | Observatório de PI</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;800&family=Geist:wght@300;400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --v:     #5B47E0;
-      --v-lt:  #EDE9FC;
-      --v-dk:  #3D2DB8;
-      --em:    #10B89A;
-      --ro:    #F43F5E;
-      --ink:   #0D0D14;
-      --ink-2: #3A3A4A;
-      --muted: #7B7B96;
-      --line:  #EAEAF0;
-      --bg:    #F0EFFA;
-      --card:  #FFFFFF;
-      --r:     14px;
-      --sh:    0 4px 6px rgba(0,0,0,.04), 0 16px 48px rgba(91,71,224,.12);
+      --azul:     #1B3A6B;
+      --azul-dk:  #122850;
+      --azul-lt:  #E8EEF7;
+      --laranja:  #F5A623;
+      --laranja-dk:#D4891A;
+      --laranja-lt:#FEF3DC;
+      --ink:      #1a1a2e;
+      --ink-2:    #374151;
+      --muted:    #6B7280;
+      --line:     #E5E7EB;
+      --bg:       #F3F6FB;
+      --card:     #FFFFFF;
+      --sh:       0 4px 6px rgba(0,0,0,.04), 0 20px 50px rgba(27,58,107,.14);
     }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: 'Geist', sans-serif;
+      font-family: 'Open Sans', sans-serif;
       background: var(--bg);
       min-height: 100vh;
       display: flex;
@@ -33,47 +33,90 @@
       justify-content: center;
       padding: 1rem;
       background-image:
-        radial-gradient(circle at 20% 20%, rgba(91,71,224,.12) 0%, transparent 50%),
-        radial-gradient(circle at 80% 80%, rgba(16,184,154,.09) 0%, transparent 50%);
+        radial-gradient(circle at 15% 15%, rgba(27,58,107,.1) 0%, transparent 50%),
+        radial-gradient(circle at 85% 85%, rgba(245,166,35,.08) 0%, transparent 50%);
     }
 
-    .login-wrap {
-      width: 100%;
-      max-width: 440px;
-    }
+    .login-wrap { width: 100%; max-width: 440px; }
 
-    /* BRAND */
-    .brand {
-      display: flex; align-items: center; gap: .75rem;
-      justify-content: center; margin-bottom: 2rem;
+    /* LOGO SENAC */
+    .logo-wrap {
+      text-align: center;
+      margin-bottom: 1.75rem;
     }
-    .brand-icon {
-      width: 48px; height: 48px; border-radius: 13px;
-      background: linear-gradient(135deg, var(--v), #8B5CF6);
-      display: grid; place-items: center; color: #fff; font-size: 1.3rem;
-      box-shadow: 0 4px 12px rgba(91,71,224,.4);
+    .logo-senac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .25rem;
     }
-    .brand-text h1 {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800; font-size: 1.15rem; color: var(--ink); line-height: 1.2;
+    /* Ícone estilizado SENAC */
+    .senac-icon {
+      width: 64px; height: 64px;
+      background: var(--azul);
+      border-radius: 16px;
+      display: grid; place-items: center;
+      margin: 0 auto .5rem;
+      box-shadow: 0 4px 16px rgba(27,58,107,.3);
+      position: relative;
+      overflow: hidden;
     }
-    .brand-text span {
-      font-size: .7rem; font-weight: 600; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--v);
+    .senac-icon::before {
+      content: '';
+      position: absolute;
+      bottom: -8px; left: -8px;
+      width: 50px; height: 50px;
+      background: var(--laranja);
+      border-radius: 50%;
+      opacity: .9;
+    }
+    .senac-icon::after {
+      content: '';
+      position: absolute;
+      bottom: 0px; left: 8px;
+      width: 36px; height: 36px;
+      background: var(--azul-dk);
+      border-radius: 50%;
+    }
+    .senac-icon i {
+      position: relative;
+      z-index: 2;
+      color: #fff;
+      font-size: 1.4rem;
+    }
+    .logo-nome {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--azul);
+      letter-spacing: -.01em;
+      line-height: 1;
+    }
+    .logo-nome span { color: var(--laranja); }
+    .logo-sub {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--laranja);
+    }
+    .logo-sistema {
+      font-size: .75rem;
+      color: var(--muted);
+      margin-top: .25rem;
     }
 
     /* CARD */
     .card {
       background: var(--card);
-      border-radius: 20px;
+      border-radius: 18px;
       padding: 2.25rem 2rem;
       box-shadow: var(--sh);
       border: 1px solid var(--line);
+      border-top: 4px solid var(--azul);
     }
     .card-title {
-      font-family: 'Bricolage Grotesque', sans-serif;
-      font-weight: 800; font-size: 1.4rem; color: var(--ink);
-      margin-bottom: .35rem;
+      font-weight: 800; font-size: 1.35rem; color: var(--azul);
+      margin-bottom: .3rem;
     }
     .card-sub { font-size: .82rem; color: var(--muted); margin-bottom: 1.75rem; }
 
@@ -81,17 +124,17 @@
     .alert {
       display: flex; align-items: center; gap: .6rem;
       padding: .75rem 1rem; border-radius: 10px;
-      font-size: .8rem; font-weight: 500; margin-bottom: 1rem;
+      font-size: .8rem; font-weight: 600; margin-bottom: 1rem;
     }
     .alert-error   { background: #FFF1F3; color: #BE1234; border: 1px solid #FECDD8; }
     .alert-success { background: #F0FDF9; color: #0A7A64; border: 1px solid #A7F3E4; }
 
     /* FIELDS */
-    .field { margin-bottom: 1.15rem; }
+    .field { margin-bottom: 1.1rem; }
     .field label {
       display: block; font-size: .72rem; font-weight: 700;
       text-transform: uppercase; letter-spacing: .07em;
-      color: var(--muted); margin-bottom: .45rem;
+      color: var(--muted); margin-bottom: .4rem;
     }
     .input-wrap { position: relative; }
     .input-wrap i {
@@ -101,42 +144,63 @@
     .input-wrap input {
       width: 100%; height: 48px;
       padding: 0 1rem 0 2.4rem;
-      border: 1.5px solid var(--line); border-radius: 11px;
-      font-family: 'Geist', sans-serif; font-size: .9rem; color: var(--ink);
-      background: #FAFAFD; outline: none;
+      border: 1.5px solid var(--line); border-radius: 10px;
+      font-family: 'Open Sans', sans-serif; font-size: .9rem; color: var(--ink);
+      background: var(--bg); outline: none;
       transition: border-color .2s, box-shadow .2s;
     }
     .input-wrap input:focus {
-      border-color: var(--v);
-      box-shadow: 0 0 0 3px rgba(91,71,224,.12);
+      border-color: var(--azul);
+      box-shadow: 0 0 0 3px rgba(27,58,107,.1);
       background: #fff;
     }
 
     /* BUTTON */
     .btn-login {
       width: 100%; height: 50px; margin-top: .5rem;
-      border: none; border-radius: 12px;
-      background: linear-gradient(135deg, var(--v), #7C63F5);
-      color: #fff; font-family: 'Geist', sans-serif;
+      border: none; border-radius: 10px;
+      background: linear-gradient(135deg, var(--azul), #2a5298);
+      color: #fff; font-family: 'Open Sans', sans-serif;
       font-size: .95rem; font-weight: 700; cursor: pointer;
-      box-shadow: 0 4px 14px rgba(91,71,224,.4);
+      box-shadow: 0 4px 14px rgba(27,58,107,.35);
       transition: transform .15s, box-shadow .15s;
     }
     .btn-login:hover {
       transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba(91,71,224,.5);
+      box-shadow: 0 6px 20px rgba(27,58,107,.45);
+      background: linear-gradient(135deg, var(--azul-dk), var(--azul));
     }
-    .btn-login:active { transform: translateY(0); }
+
+    /* RODAPÉ */
+    .footer-login {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: .72rem;
+      color: var(--muted);
+    }
+    .footer-login strong { color: var(--azul); }
+
+    /* DIVIDER laranja */
+    .divider-laranja {
+      height: 3px;
+      background: linear-gradient(90deg, var(--laranja), var(--laranja-dk));
+      border-radius: 2px;
+      margin: 1.5rem 0 0;
+    }
   </style>
 </head>
 <body>
   <div class="login-wrap">
 
-    <div class="brand">
-      <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
-      <div class="brand-text">
-        <h1>Observatório de Projetos</h1>
-        <span>Sistema de Gestão de PI</span>
+    <!-- LOGO -->
+    <div class="logo-wrap">
+      <div class="logo-senac">
+        <div class="senac-icon">
+          <i class="fas fa-graduation-cap"></i>
+        </div>
+        <div class="logo-nome">Senac <span>PI</span></div>
+        <div class="logo-sub">Faculdade Senac</div>
+        <div class="logo-sistema">Observatório de Projetos Integradores</div>
       </div>
     </div>
 
@@ -153,14 +217,13 @@
         {% endfor %}
       {% endif %}
 
-      <form method="POST" id="loginForm">
+      <form method="POST" id="loginForm" autocomplete="on">
         {% csrf_token %}
         <div class="field">
           <label>E-mail</label>
           <div class="input-wrap">
             <i class="fas fa-envelope"></i>
-            <!-- name="email" → views.py lê com request.POST.get('email') -->
-            <input type="email" name="email" id="email" placeholder="seu@email.com" required autocomplete="email">
+          <input type="email" name="email" id="email" placeholder="seu@email.com" required autocomplete="email">
           </div>
         </div>
         <div class="field">
@@ -171,9 +234,15 @@
           </div>
         </div>
         <button type="submit" class="btn-login">
-          <i class="fas fa-sign-in-alt" style="margin-right:.5rem;"></i>Entrar
+          <i class="fas fa-sign-in-alt" style="margin-right:.5rem;"></i>Entrar no Sistema
         </button>
       </form>
+
+      <div class="divider-laranja"></div>
+    </div>
+
+    <div class="footer-login">
+      <strong>Faculdade Senac</strong> · Sistema de Projetos Integradores
     </div>
 
   </div>

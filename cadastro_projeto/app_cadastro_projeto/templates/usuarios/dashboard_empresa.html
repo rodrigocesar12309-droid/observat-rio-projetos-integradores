@@ -3,174 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projetos dos Alunos — Empresa | Observatório</title>
+    <title>Projetos dos Alunos — Empresa | Faculdade Senac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;600;700;800&family=Geist:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
-            --ink:   #0D0D14;
-            --ink-2: #3A3A4A;
-            --muted: #7B7B96;
-            --line:  #EAEAF0;
-            --bg:    #F7F7FB;
-            --card:  #FFFFFF;
-            --v:     #5B47E0;
-            --v-lt:  #EDE9FC;
-            --v-dk:  #3D2DB8;
-            --em:    #10B89A;
-            --em-lt: #D0F5EF;
-            --am:    #F59E0B;
-            --am-lt: #FEF3C7;
-            --ro:    #F43F5E;
-            --ro-lt: #FFE4EA;
-            --r:     12px;
-            --r-lg:  18px;
-            --sh:    0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+            --navy:    #1B3A6B; --navy-dk: #122850; --navy-lt: #E8EEF7;
+            --orange:  #F5A623; --orange-dk: #D4891A; --orange-lt: #FEF3DC;
+            --green:   #38a169; --green-lt: #f0fff4; --green-bd: #c6f6d5;
+            --amber:   #d69e2e; --amber-lt: #fffbeb; --amber-bd: #fefcbf;
+            --red:     #e53e3e; --red-lt: #fff5f5; --red-bd: #fed7d7;
+            --ink:     #1a202c; --ink-2: #2d3748;
+            --muted:   #718096; --line: #e2e8f0;
+            --bg:      #F4F6FA; --card: #FFFFFF;
+            --r: 10px; --r-lg: 14px;
+            --sh: 0 1px 3px rgba(0,0,0,.07), 0 4px 14px rgba(0,0,0,.06);
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Geist', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
+        body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
 
-        /* NAV */
         header {
-            background: var(--card);
-            border-bottom: 1px solid var(--line);
+            background: var(--navy); border-bottom: 4px solid var(--orange);
             position: sticky; top: 0; z-index: 100;
             display: flex; align-items: center; justify-content: space-between;
-            padding: 0 2rem; height: 62px;
-            box-shadow: 0 1px 0 var(--line), 0 2px 8px rgba(0,0,0,.04);
+            padding: 0 2rem; height: 68px;
+            box-shadow: 0 2px 10px rgba(0,0,0,.2);
         }
         .brand { display: flex; align-items: center; gap: .875rem; }
-        .brand-icon {
-            width: 38px; height: 38px; border-radius: 10px;
-            background: linear-gradient(135deg, #F59E0B, #ea580c);
-            display: grid; place-items: center; color: #fff; font-size: .95rem;
-            box-shadow: 0 2px 8px rgba(245,158,11,.35);
-        }
-        .brand-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: .95rem; color: var(--ink); line-height: 1.2; }
-        .brand-role { font-size: .65rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--am); }
-        .nav-right { display: flex; align-items: center; gap: 1rem; }
-        .nav-user strong { display: block; font-size: .82rem; font-weight: 600; color: var(--ink); }
-        .nav-user span   { font-size: .72rem; color: var(--muted); }
-        .nav-logout {
-            width: 34px; height: 34px; border-radius: 8px;
-            border: 1px solid var(--line); background: none; cursor: pointer;
-            display: grid; place-items: center; color: var(--muted);
-            transition: all .15s; text-decoration: none;
-        }
-        .nav-logout:hover { background: var(--ro-lt); border-color: var(--ro); color: var(--ro); }
+        .brand-icon { width: 40px; height: 40px; border-radius: 9px; background: var(--orange); display: grid; place-items: center; color: var(--navy); font-size: 1.1rem; font-weight: 800; }
+        .brand-text h1 { font-size: .97rem; font-weight: 700; color: #fff; margin: 0; }
+        .brand-text span { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.6); }
+        .nav-right { display: flex; align-items: center; gap: .875rem; }
+        .nav-user strong { display: block; font-size: .84rem; font-weight: 700; color: #fff; }
+        .nav-user span { font-size: .7rem; color: rgba(255,255,255,.6); }
+        .nav-logout { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25); background: none; cursor: pointer; display: grid; place-items: center; color: rgba(255,255,255,.65); text-decoration: none; transition: all .15s; }
+        .nav-logout:hover { background: var(--red-lt); border-color: var(--red); color: var(--red); }
 
-        /* TOASTS */
-        .toasts { position: fixed; top: 72px; right: 1.25rem; z-index: 200; display: flex; flex-direction: column; gap: .5rem; }
+        .toasts { position: fixed; top: 78px; right: 1.25rem; z-index: 200; display: flex; flex-direction: column; gap: .5rem; }
         .toast { padding: .875rem 1.25rem; border-radius: var(--r); font-size: .82rem; font-weight: 500; border: 1px solid; }
-        .toast.success { background: #F0FDF9; color: #0A7A64; border-color: #A7F3E4; }
-        .toast.error   { background: #FFF1F3; color: #BE1234; border-color: #FECDD8; }
+        .toast.success { background: var(--green-lt); color: #276749; border-color: var(--green-bd); }
+        .toast.error   { background: var(--red-lt); color: #9b2c2c; border-color: var(--red-bd); }
 
-        /* LAYOUT */
-        main { max-width: 1280px; margin: 0 auto; padding: 2rem 2rem 5rem; }
-
-        /* PAGE HEADER */
+        main { max-width: 1280px; margin: 0 auto; padding: 2.25rem 2rem 5rem; }
         .page-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
-        .page-head h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--ink); }
+        .page-head h2 { font-size: 1.65rem; font-weight: 800; color: var(--navy); }
         .page-head p { font-size: .85rem; color: var(--muted); margin-top: .3rem; }
 
-        /* KPIs */
-        .kpis { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.75rem; }
-        @media (max-width: 640px) { .kpis { grid-template-columns: 1fr; } }
-        .kpi {
-            background: var(--card); border-radius: var(--r-lg); padding: 1.25rem 1.4rem;
-            box-shadow: var(--sh); border: 1px solid var(--line);
-            display: flex; flex-direction: column; gap: .6rem;
-            position: relative; overflow: hidden; animation: fadeUp .4s ease both;
-        }
+        .kpis { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem; margin-bottom: 1.75rem; }
+        @media(max-width:640px){ .kpis { grid-template-columns:1fr; } }
+        .kpi { background: var(--card); border-radius: var(--r-lg); padding: 1.3rem 1.4rem; box-shadow: var(--sh); border: 1px solid var(--line); display: flex; flex-direction: column; gap: .55rem; position: relative; overflow: hidden; animation: fadeUp .4s ease both; }
         .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius: var(--r-lg) var(--r-lg) 0 0; }
-        .kpi:nth-child(1)::before { background: var(--am); }
-        .kpi:nth-child(2)::before { background: var(--em); }
-        .kpi:nth-child(3)::before { background: var(--v); }
+        .kpi:nth-child(1)::before { background: var(--orange); }
+        .kpi:nth-child(2)::before { background: var(--green); }
+        .kpi:nth-child(3)::before { background: var(--navy); }
         .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .kpi-icon { width:40px; height:40px; border-radius:10px; display:grid; place-items:center; font-size:.9rem; }
-        .kpi-label { font-size:.72rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); font-weight:600; }
-        .kpi-val { font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:2.1rem; line-height:1; color:var(--ink); }
+        .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: .9rem; }
+        .kpi-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
+        .kpi-val { font-weight: 800; font-size: 2.1rem; line-height: 1; color: var(--ink); }
 
         /* FILTROS */
-        .filtros-bar {
-            background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
-            padding: 1rem 1.25rem; margin-bottom: 1.5rem;
-            display: flex; align-items: center; gap: 1rem; flex-wrap: wrap;
-        }
+        .filtros-bar { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; box-shadow: var(--sh); }
         .filtros-bar label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
-        .filtros-bar select, .filtros-bar input {
-            padding: .5rem .875rem; border: 1px solid var(--line); border-radius: 9px;
-            background: var(--bg); font-family: 'Geist', sans-serif; font-size: .82rem; color: var(--ink);
-            outline: none; transition: border-color .15s;
-        }
-        .filtros-bar select:focus, .filtros-bar input:focus { border-color: var(--v); }
-        .btn-filtrar {
-            padding: .5rem 1.1rem; border-radius: 9px; border: none;
-            background: var(--v); color: #fff; font-family: 'Geist', sans-serif;
-            font-size: .82rem; font-weight: 600; cursor: pointer;
-        }
-        .btn-limpar {
-            padding: .5rem 1rem; border-radius: 9px; border: 1px solid var(--line);
-            background: none; font-family: 'Geist', sans-serif; font-size: .82rem;
-            font-weight: 600; color: var(--muted); cursor: pointer; text-decoration: none;
-        }
+        .filtros-bar select, .filtros-bar input { padding: .45rem .875rem; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-family: 'Open Sans', sans-serif; font-size: .82rem; color: var(--ink); outline: none; transition: border-color .15s; }
+        .filtros-bar select:focus, .filtros-bar input:focus { border-color: var(--navy); }
+        .filtros-bar input { flex: 1; min-width: 180px; }
+        .btn-filtrar { padding: .45rem 1rem; border-radius: 8px; border: none; background: var(--navy); color: #fff; font-family: 'Open Sans', sans-serif; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .15s; }
+        .btn-filtrar:hover { background: var(--navy-dk); }
+        .btn-limpar { padding: .45rem .9rem; border-radius: 8px; border: 1px solid var(--line); background: none; font-family: 'Open Sans', sans-serif; font-size: .8rem; font-weight: 600; color: var(--muted); cursor: pointer; text-decoration: none; }
 
-        /* GRID DE PROJETOS */
-        .projetos-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
-            gap: 1.25rem;
-        }
+        /* GRID */
+        .projetos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
         .proj-card {
             background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
             padding: 1.5rem; box-shadow: var(--sh);
             display: flex; flex-direction: column; gap: .75rem;
             animation: fadeUp .4s ease both; transition: box-shadow .2s, transform .2s;
+            border-top: 3px solid var(--navy);
         }
         .proj-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
         .proj-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
-        .proj-titulo { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 1rem; color: var(--ink); line-height: 1.3; }
-        .status-pill {
-            display: inline-flex; align-items: center; gap: .35rem;
-            padding: .2rem .65rem; border-radius: 50px; font-size: .68rem; font-weight: 700;
-            white-space: nowrap; flex-shrink: 0;
-        }
+        .proj-titulo { font-weight: 700; font-size: .95rem; color: var(--navy); line-height: 1.3; }
+        .status-pill { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .65rem; border-radius: 50px; font-size: .68rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
         .status-pill::before { content:''; width:6px; height:6px; border-radius:50%; }
-        .pill-green  { background:var(--em-lt); color:#066D5B; } .pill-green::before  { background:var(--em); }
-        .pill-amber  { background:var(--am-lt); color:#92400E; } .pill-amber::before  { background:var(--am); }
-        .pill-rose   { background:var(--ro-lt); color:#9F1239; } .pill-rose::before   { background:var(--ro); }
+        .pill-green  { background: var(--green-lt); color: #276749; } .pill-green::before  { background: var(--green); }
+        .pill-amber  { background: var(--amber-lt); color: #7b5c16; } .pill-amber::before  { background: var(--amber); }
+        .pill-rose   { background: var(--red-lt);   color: #9b2c2c; } .pill-rose::before   { background: var(--red); }
         .proj-desc { font-size: .82rem; color: var(--muted); line-height: 1.6; }
         .proj-meta { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; color: var(--muted); }
         .proj-meta span { display: flex; align-items: center; gap: .3rem; }
         .tags-row { display: flex; flex-wrap: wrap; gap: .4rem; }
-        .tag {
-            background: var(--v-lt); color: var(--v);
-            font-size: .68rem; font-weight: 600; padding: .2rem .6rem; border-radius: 50px;
-        }
-        .proj-footer { display: flex; gap: .6rem; margin-top: auto; padding-top: .5rem; border-top: 1px solid var(--line); }
-        .proj-link {
-            display: inline-flex; align-items: center; gap: .35rem;
-            padding: .4rem .9rem; border-radius: 7px; font-size: .75rem; font-weight: 600;
-            text-decoration: none; border: 1px solid var(--line); color: var(--ink-2);
-            background: var(--bg); transition: all .15s;
-        }
-        .proj-link:hover { border-color: var(--v); color: var(--v); background: var(--v-lt); }
-        .proj-nota {
-            margin-left: auto; font-family: 'Bricolage Grotesque', sans-serif;
-            font-weight: 800; font-size: 1.15rem; color: var(--v);
-        }
-        .nota-label { font-size: .65rem; font-weight: 500; color: var(--muted); display: block; text-align: right; }
+        .tag { background: var(--navy-lt); color: var(--navy); font-size: .68rem; font-weight: 700; padding: .2rem .6rem; border-radius: 50px; }
+        .proj-footer { display: flex; gap: .5rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
+        .proj-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .8rem; border-radius: 7px; font-size: .75rem; font-weight: 600; text-decoration: none; border: 1px solid var(--line); color: var(--ink-2); background: var(--bg); transition: all .15s; }
+        .proj-link:hover { border-color: var(--navy); color: var(--navy); background: var(--navy-lt); }
+        .curriculo-link { border-color: var(--orange-lt); color: var(--navy); background: var(--orange-lt); }
+        .curriculo-link:hover { background: var(--orange); color: var(--navy); }
+        .conceito-badge { font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 50px; margin-left: auto; }
+        .c-Excelente { background: var(--navy-lt); color: var(--navy-dk); }
+        .c-Ótimo { background: #F5F3FF; color: #6D28D9; }
+        .c-Bom { background: var(--green-lt); color: #276749; }
+        .c-Suficiente { background: var(--amber-lt); color: #7b5c16; }
+        .c-Insuficiente { background: var(--red-lt); color: #9b2c2c; }
 
-        /* EMPTY */
-        .empty {
-            grid-column: 1 / -1; text-align: center;
-            padding: 4rem 1rem; color: var(--muted);
-        }
-        .empty i { font-size: 2.5rem; margin-bottom: 1rem; display: block; opacity: .4; }
-        .empty p { font-size: .9rem; }
+        .empty { grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--muted); }
+        .empty i { font-size: 2.5rem; opacity: .35; display: block; margin-bottom: 1rem; color: var(--navy); }
 
-        @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
     </style>
 </head>
 <body>
@@ -178,9 +117,7 @@
 {% if messages %}
 <div class="toasts">
     {% for message in messages %}
-    <div class="toast {% if message.tags == 'success' %}success{% else %}error{% endif %}">
-        {{ message }}
-    </div>
+    <div class="toast {% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</div>
     {% endfor %}
 </div>
 {% endif %}
@@ -188,9 +125,9 @@
 <header>
     <div class="brand">
         <div class="brand-icon"><i class="fas fa-building"></i></div>
-        <div>
-            <div class="brand-name">Observatório de Projetos</div>
-            <div class="brand-role">Empresa Parceira</div>
+        <div class="brand-text">
+            <h1>Faculdade Senac</h1>
+            <span>Empresa Parceira</span>
         </div>
     </div>
     <div class="nav-right">
@@ -198,9 +135,7 @@
             <strong>{{ usuario.first_name|default:usuario.username }}</strong>
             <span>{{ usuario.email }}</span>
         </div>
-        <a href="{% url 'logout' %}" class="nav-logout" title="Sair">
-            <i class="fas fa-sign-out-alt"></i>
-        </a>
+        <a href="{% url 'logout' %}" class="nav-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
     </div>
 </header>
 
@@ -212,32 +147,30 @@
         </div>
     </div>
 
-    <!-- KPIs -->
     <div class="kpis">
         <div class="kpi">
             <div class="kpi-top">
                 <div class="kpi-label">Total de Projetos</div>
-                <div class="kpi-icon" style="background:var(--am-lt);color:var(--am);"><i class="fas fa-folder-open"></i></div>
+                <div class="kpi-icon" style="background:var(--orange-lt);color:var(--orange-dk);"><i class="fas fa-folder-open"></i></div>
             </div>
             <div class="kpi-val">{{ total }}</div>
         </div>
         <div class="kpi">
             <div class="kpi-top">
                 <div class="kpi-label">Aprovados</div>
-                <div class="kpi-icon" style="background:var(--em-lt);color:var(--em);"><i class="fas fa-check-circle"></i></div>
+                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-check-circle"></i></div>
             </div>
             <div class="kpi-val">{{ aprovados }}</div>
         </div>
         <div class="kpi">
             <div class="kpi-top">
                 <div class="kpi-label">Categorias</div>
-                <div class="kpi-icon" style="background:var(--v-lt);color:var(--v);"><i class="fas fa-tags"></i></div>
+                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-tags"></i></div>
             </div>
             <div class="kpi-val">{{ categorias|length }}</div>
         </div>
     </div>
 
-    <!-- FILTROS -->
     <form method="GET" action="">
         <div class="filtros-bar">
             <label>Filtrar:</label>
@@ -255,10 +188,9 @@
         </div>
     </form>
 
-    <!-- GRID DE PROJETOS -->
     <div class="projetos-grid">
         {% for projeto in projetos %}
-        <div class="proj-card" style="animation-delay: {{ forloop.counter0 }}00ms">
+        <div class="proj-card" style="animation-delay:{{ forloop.counter0 }}00ms">
             <div class="proj-top">
                 <div class="proj-titulo">{{ projeto.titulo }}</div>
                 <span class="status-pill
@@ -268,23 +200,17 @@
                     {{ projeto.get_status_display }}
                 </span>
             </div>
-
             <p class="proj-desc">{{ projeto.descricao|truncatewords:30 }}</p>
-
             <div class="proj-meta">
                 <span><i class="fas fa-user-graduate"></i> {{ projeto.usuario.first_name|default:projeto.usuario.username }}</span>
                 {% if projeto.categoria %}<span><i class="fas fa-tag"></i> {{ projeto.categoria }}</span>{% endif %}
                 {% if projeto.semestre %}<span><i class="fas fa-calendar"></i> {{ projeto.semestre }}</span>{% endif %}
             </div>
-
             {% if projeto.get_tags_lista %}
             <div class="tags-row">
-                {% for tag in projeto.get_tags_lista %}
-                    <span class="tag">{{ tag }}</span>
-                {% endfor %}
+                {% for tag in projeto.get_tags_lista %}<span class="tag">{{ tag }}</span>{% endfor %}
             </div>
             {% endif %}
-
             <div class="proj-footer">
                 {% if projeto.link_repositorio %}
                 <a href="{{ projeto.link_repositorio }}" target="_blank" class="proj-link">
@@ -296,11 +222,11 @@
                     <i class="fas fa-external-link-alt"></i> Demo
                 </a>
                 {% endif %}
+                <a href="{% url 'ver_curriculo_aluno' projeto.usuario.id %}" class="proj-link curriculo-link">
+                    <i class="fas fa-id-card"></i> Currículo
+                </a>
                 {% if projeto.conceito %}
-                <div class="proj-nota">
-                    {{ projeto.conceito }}
-                    <span class="nota-label">Conceito</span>
-                </div>
+                <span class="conceito-badge c-{{ projeto.conceito }}">{{ projeto.conceito }}</span>
                 {% endif %}
             </div>
         </div>
@@ -313,5 +239,13 @@
     </div>
 </main>
 
+<script>
+setTimeout(() => {
+    document.querySelectorAll(".toast").forEach(t => {
+        t.style.opacity = "0"; t.style.transition = "opacity .4s";
+        setTimeout(() => t.remove(), 400);
+    });
+}, 4000);
+</script>
 </body>
 </html>

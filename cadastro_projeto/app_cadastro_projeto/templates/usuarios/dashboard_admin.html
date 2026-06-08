@@ -3,35 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Observatório de Projetos — Coordenação</title>
+    <title>Faculdade Senac — Painel de Coordenação</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@400;500;600;700;800&family=Geist:wght@300;400;500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
         :root {
-            --ink:    #0D0D14;
-            --ink-2:  #3A3A4A;
-            --muted:  #7B7B96;
-            --line:   #EAEAF0;
-            --bg:     #F7F7FB;
+            --azul:    #1B3A6B;
+            --azul-dk: #122850;
+            --azul-lt: #E8EEF7;
+            --laranja:  #F5A623;
+            --laranja-dk: #D4891A;
+            --laranja-lt: #FEF3DC;
+            --ink:    #1a1a2e;
+            --ink-2:  #374151;
+            --muted:  #6B7280;
+            --line:   #E5E7EB;
+            --bg:     #F3F6FB;
             --card:   #FFFFFF;
-            --v:      #5B47E0;
-            --v-lt:   #EDE9FC;
-            --v-dk:   #3D2DB8;
             --em:     #10B89A;
             --em-lt:  #D0F5EF;
-            --am:     #F59E0B;
-            --am-lt:  #FEF3C7;
             --ro:     #F43F5E;
             --ro-lt:  #FFE4EA;
-            --r:      12px;
-            --r-lg:   18px;
+            --r:      10px;
+            --r-lg:   16px;
             --sh:     0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
             --sh-lg:  0 4px 6px rgba(0,0,0,.04), 0 12px 40px rgba(0,0,0,.1);
+            /* mapeamentos de compatibilidade */
+            --v:      #1B3A6B;
+            --v-lt:   #E8EEF7;
+            --v-dk:   #122850;
+            --am:     #F5A623;
+            --am-lt:  #FEF3DC;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Geist', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
+        body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
 
         /* TOASTS */
         .toasts { position: fixed; top: 72px; right: 1.25rem; z-index: 200; display: flex; flex-direction: column; gap: .5rem; }
@@ -40,16 +47,16 @@
         .toast.error   { background: #FFF1F3; color: #BE1234; border-color: #FECDD8; }
 
         /* NAV */
-        header { background: var(--card); border-bottom: 1px solid var(--line); position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 62px; box-shadow: 0 1px 0 var(--line), 0 2px 8px rgba(0,0,0,.04); }
+        header { background: var(--azul); border-bottom: 3px solid var(--laranja); position: sticky; top: 0; z-index: 100; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 64px; box-shadow: 0 2px 12px rgba(27,58,107,.3); }
         .brand { display: flex; align-items: center; gap: .875rem; }
-        .brand-icon { width: 38px; height: 38px; border-radius: 10px; background: linear-gradient(135deg, var(--v), #8B5CF6); display: grid; place-items: center; color: #fff; font-size: .95rem; box-shadow: 0 2px 8px rgba(91,71,224,.35); }
-        .brand-name { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: .95rem; color: var(--ink); line-height: 1.2; }
-        .brand-role { font-size: .65rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--v); }
+        .brand-icon { width: 40px; height: 40px; border-radius: 10px; background: var(--laranja); display: grid; place-items: center; color: var(--azul); font-size: 1rem; font-weight: 800; box-shadow: 0 2px 8px rgba(245,166,35,.4); }
+        .brand-name { font-weight: 800; font-size: 1rem; color: #fff; line-height: 1.2; }
+        .brand-role { font-size: .62rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--laranja); }
         .nav-right { display: flex; align-items: center; gap: 1rem; }
         .nav-user { text-align: right; }
-        .nav-user strong { display: block; font-size: .82rem; font-weight: 600; color: var(--ink); }
-        .nav-user span   { font-size: .72rem; color: var(--muted); }
-        .nav-logout { width: 34px; height: 34px; border-radius: 8px; border: 1px solid var(--line); background: none; cursor: pointer; display: grid; place-items: center; color: var(--muted); transition: all .15s; text-decoration: none; }
+        .nav-user strong { display: block; font-size: .82rem; font-weight: 700; color: #fff; }
+        .nav-user span   { font-size: .72rem; color: rgba(255,255,255,.65); }
+        .nav-logout { width: 34px; height: 34px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25); background: none; cursor: pointer; display: grid; place-items: center; color: rgba(255,255,255,.7); transition: all .15s; text-decoration: none; }
         .nav-logout:hover { background: var(--ro-lt); border-color: var(--ro); color: var(--ro); }
 
         /* LAYOUT */
@@ -57,17 +64,17 @@
 
         /* PAGE HEADER */
         .page-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
-        .page-head h2 { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 800; font-size: 1.75rem; color: var(--ink); line-height: 1.15; }
+        .page-head h2 { font-weight: 800; font-size: 1.7rem; color: var(--azul); line-height: 1.15; }
         .page-head p { font-size: .85rem; color: var(--muted); margin-top: .3rem; }
         .actions { display: flex; gap: .75rem; flex-wrap: wrap; }
-        .btn { display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1.15rem; border-radius: 50px; border: none; font-family: 'Geist', sans-serif; font-size: .82rem; font-weight: 600; cursor: pointer; transition: all .16s; text-decoration: none; white-space: nowrap; }
+        .btn { display: inline-flex; align-items: center; gap: .45rem; padding: .6rem 1.15rem; border-radius: 8px; border: none; font-family: 'Open Sans', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; transition: all .16s; text-decoration: none; white-space: nowrap; }
         .btn:hover { transform: translateY(-1px); }
         .btn-em { background: var(--em); color: #fff; box-shadow: 0 2px 8px rgba(16,184,154,.3); }
         .btn-em:hover { background: #0d9a83; }
-        .btn-v  { background: var(--v);  color: #fff; box-shadow: 0 2px 8px rgba(91,71,224,.3); }
-        .btn-v:hover  { background: var(--v-dk); }
-
-        /* KPIs */
+        .btn-v  { background: var(--azul); color: #fff; box-shadow: 0 2px 8px rgba(27,58,107,.3); }
+        .btn-v:hover  { background: var(--azul-dk); }
+        .btn-laranja { background: var(--laranja); color: var(--azul); box-shadow: 0 2px 8px rgba(245,166,35,.3); }
+        .btn-laranja:hover { background: var(--laranja-dk); }
         .kpis { display: grid; grid-template-columns: repeat(4,1fr); gap: 1rem; margin-bottom: 1.5rem; }
         @media (max-width:900px) { .kpis { grid-template-columns: repeat(2,1fr); } }
         @media (max-width:480px) { .kpis { grid-template-columns: 1fr; } }
@@ -234,8 +241,8 @@ const GRAF = {
     <div class="brand">
         <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
         <div>
-            <div class="brand-name">Observatório de Projetos</div>
-            <div class="brand-role">Coordenador</div>
+            <div class="brand-name">Faculdade Senac</div>
+            <div class="brand-role">Coordenação · Projetos Integradores</div>
         </div>
     </div>
     <div class="nav-right">
@@ -255,17 +262,20 @@ const GRAF = {
     <div class="page-head">
         <div>
             <h2>Painel de Coordenação</h2>
-            <p>Visão global dos projetos integradores</p>
+            <p>Observatório de Projetos Integradores — Faculdade Senac</p>
         </div>
         <div class="actions">
             <button onclick="openModal('modalCadastro')" class="btn btn-em">
                 <i class="fas fa-user-plus"></i> Cadastrar Usuário
             </button>
-            <button onclick="openModal('modalEmpresa')" class="btn btn-v" style="background:var(--am);box-shadow:0 2px 8px rgba(245,158,11,.3);">
+            <button onclick="openModal('modalEmpresa')" class="btn btn-laranja">
                 <i class="fas fa-building"></i> Cadastrar Empresa
             </button>
             <a href="{% url 'relatorio_usuarios' %}" class="btn btn-v">
                 <i class="fas fa-users"></i> Relatório de Usuários
+            </a>
+            <a href="{% url 'forum_lista' %}" class="btn btn-v" style="background:#2a5298;">
+                <i class="fas fa-comments"></i> Fórum
             </a>
         </div>
     </div>
@@ -404,6 +414,8 @@ const GRAF = {
                         <th>Semestre</th>
                         <th>Status</th>
                         <th>Conceito</th>
+                        <th>Links</th>
+                        <th>Ação</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -433,12 +445,86 @@ const GRAF = {
                                 </span>
                             {% else %}—{% endif %}
                         </td>
+                        <td style="white-space:nowrap;">
+                            {% if projeto.link_repositorio %}
+                            <a href="{{ projeto.link_repositorio }}" target="_blank"
+                               style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;border-radius:6px;font-size:.7rem;font-weight:600;text-decoration:none;background:#f0f0f0;color:#374151;border:1px solid #e2e8f0;margin-right:.3rem;">
+                                <i class="fab fa-github"></i> Repo
+                            </a>
+                            {% endif %}
+                            {% if projeto.link_demo %}
+                            <a href="{{ projeto.link_demo }}" target="_blank"
+                               style="display:inline-flex;align-items:center;gap:.3rem;padding:.25rem .6rem;border-radius:6px;font-size:.7rem;font-weight:600;text-decoration:none;background:#f0f0f0;color:#374151;border:1px solid #e2e8f0;">
+                                <i class="fas fa-external-link-alt"></i> Demo
+                            </a>
+                            {% endif %}
+                            {% if not projeto.link_repositorio and not projeto.link_demo %}
+                            <span style="color:var(--muted);font-size:.75rem;">—</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'ver_curriculo_aluno' projeto.usuario.id %}"
+                               style="display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:7px;font-size:.72rem;font-weight:700;text-decoration:none;background:var(--azul-lt);color:var(--azul);border:1px solid var(--azul-lt);transition:all .15s;"
+                               title="Ver currículo do aluno">
+                                <i class="fas fa-id-card"></i> Currículo
+                            </a>
+                        </td>
                     </tr>
                     {% empty %}
                     <tr>
-                        <td colspan="6" style="text-align:center;padding:2.5rem;color:var(--muted);">
+                        <td colspan="8" style="text-align:center;padding:2.5rem;color:var(--muted);">
                             <i class="fas fa-folder-open" style="font-size:1.5rem;display:block;margin-bottom:.5rem;"></i>
                             Nenhum projeto cadastrado ainda.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SEÇÃO ALUNOS -->
+    <div class="table-card" style="margin-top:1.5rem;">
+        <div class="table-bar">
+            <div class="table-title"><i class="fas fa-user-graduate" style="color:var(--laranja);margin-right:.5rem;"></i>Alunos Cadastrados</div>
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input type="text" id="filtroAlunos" placeholder="Buscar aluno…">
+            </div>
+        </div>
+        <div style="overflow-x:auto;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Matrícula</th>
+                        <th>Projetos</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-alunos">
+                    {% for aluno_perfil in alunos %}
+                    <tr>
+                        <td style="font-weight:600;color:var(--ink);">{{ aluno_perfil.user.first_name|default:aluno_perfil.user.username }}</td>
+                        <td style="color:var(--muted);">{{ aluno_perfil.user.email }}</td>
+                        <td>{{ aluno_perfil.matricula|default:"—" }}</td>
+                        <td>
+                            <span style="font-weight:700;color:var(--azul);">
+                                {{ aluno_perfil.user.projetos_usuario.count }}
+                            </span> projeto{{ aluno_perfil.user.projetos_usuario.count|pluralize }}
+                        </td>
+                        <td style="display:flex;gap:.5rem;flex-wrap:wrap;">
+                            <a href="{% url 'ver_curriculo_aluno' aluno_perfil.user.id %}"
+                               style="display:inline-flex;align-items:center;gap:.3rem;padding:.3rem .75rem;border-radius:7px;font-size:.72rem;font-weight:700;text-decoration:none;background:var(--azul-lt);color:var(--azul);border:1px solid #c5d4ec;white-space:nowrap;">
+                                <i class="fas fa-id-card"></i> Currículo
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">
+                            Nenhum aluno cadastrado ainda.
                         </td>
                     </tr>
                     {% endfor %}
@@ -714,6 +800,13 @@ document.getElementById("cnpj-input").addEventListener("input", function(e) {
 document.getElementById("filtroTexto").addEventListener("keyup", function() {
     const q = this.value.toLowerCase();
     document.querySelectorAll("tbody tr").forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(q) ? "" : "none";
+    });
+});
+
+document.getElementById("filtroAlunos").addEventListener("keyup", function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll("#tbody-alunos tr").forEach(r => {
         r.style.display = r.textContent.toLowerCase().includes(q) ? "" : "none";
     });
 });

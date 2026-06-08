@@ -25,6 +25,13 @@ class PerfilUsuario(models.Model):
     telefone = models.CharField(max_length=20, blank=True, null=True)
     foto = models.ImageField(upload_to='fotos_perfil/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
+    # Currículo
+    cargo = models.CharField(max_length=100, blank=True, null=True)
+    linkedin = models.URLField(blank=True, null=True)
+    github = models.URLField(blank=True, null=True)
+    habilidades = models.CharField(max_length=500, blank=True, null=True, help_text='Separe por vírgula')
+    experiencia = models.TextField(blank=True, null=True)
+    formacao = models.TextField(blank=True, null=True)
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
@@ -199,6 +206,8 @@ class ProjetoUsuario(models.Model):
     link_repositorio = models.URLField(blank=True, null=True)
     link_demo = models.URLField(blank=True, null=True)
     ativo = models.BooleanField(default=True)
+    encerrado = models.BooleanField(default=False)
+    encerrado_em = models.DateTimeField(blank=True, null=True)
     criado_em = models.DateTimeField(auto_now_add=True, null=True)
     atualizado_em = models.DateTimeField(auto_now=True, null=True)
 
@@ -220,3 +229,45 @@ class ProjetoUsuario(models.Model):
         }
         return cores.get(self.conceito, '#7B7B96')
 
+
+
+class TopicoForum(models.Model):
+    CATEGORIA_CHOICES = [
+        ('duvida', 'Dúvida'),
+        ('discussao', 'Discussão'),
+        ('aviso', 'Aviso'),
+        ('projeto', 'Projeto'),
+    ]
+
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='topicos')
+    titulo = models.CharField(max_length=200)
+    conteudo = models.TextField()
+    categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default='duvida')
+    fixado = models.BooleanField(default=False)
+   
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+    atualizado_em = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-fixado', '-criado_em']
+
+    def __str__(self):
+        return self.titulo
+
+    def total_respostas(self):
+        return self.respostas.filter(ativo=True).count()
+
+
+class RespostaForum(models.Model):
+    topico = models.ForeignKey(TopicoForum, on_delete=models.CASCADE, related_name='respostas')
+    autor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='respostas_forum')
+    conteudo = models.TextField()
+    ativo = models.BooleanField(default=True)
+    criado_em = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['criado_em']
+
+    def __str__(self):
+        return f'Resposta de {self.autor.first_name} em "{self.topico.titulo}"'
