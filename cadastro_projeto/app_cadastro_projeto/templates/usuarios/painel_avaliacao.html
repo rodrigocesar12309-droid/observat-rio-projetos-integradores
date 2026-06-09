@@ -194,13 +194,14 @@
                             <th>Categoria</th>
                             <th>Status</th>
                             <th>Conceito</th>
+                            <th>Links</th>
                             <th>Ação</th>
                         </tr>
                     </thead>
                     <tbody id="tabela-body">
                         {% for p in projetos %}
                         <tr>
-                            <td style="font-weight:600;color:var(--ink);max-width:220px;">{{ p.titulo }}</td>
+                            <td style="font-weight:600;color:var(--ink);max-width:200px;">{{ p.titulo }}</td>
                             <td>{{ p.usuario.first_name|default:p.usuario.username }}</td>
                             <td>{{ p.categoria|default:"—" }}</td>
                             <td>
@@ -218,6 +219,23 @@
                                 <span style="color:var(--muted);font-size:.75rem;">—</span>
                                 {% endif %}
                             </td>
+                            <td style="white-space:nowrap;">
+                                {% if p.link_repositorio %}
+                                <a href="{{ p.link_repositorio }}" target="_blank"
+                                   style="display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;text-decoration:none;background:var(--navy-lt);color:var(--navy);margin-right:.35rem;border:1px solid #c5d4ec;">
+                                    <i class="fab fa-github"></i> Repo
+                                </a>
+                                {% endif %}
+                                {% if p.link_demo %}
+                                <a href="{{ p.link_demo }}" target="_blank"
+                                   style="display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;text-decoration:none;background:var(--bg);color:var(--ink-2);border:1px solid var(--line);">
+                                    <i class="fas fa-external-link-alt"></i> Demo
+                                </a>
+                                {% endif %}
+                                {% if not p.link_repositorio and not p.link_demo %}
+                                <span style="color:var(--muted);font-size:.75rem;">—</span>
+                                {% endif %}
+                            </td>
                             <td>
                                 {% if p.status == 'em_avaliacao' %}
                                 <a href="{% url 'avaliar_projeto' p.id %}" class="btn-avaliar">
@@ -232,7 +250,7 @@
                         </tr>
                         {% empty %}
                         <tr class="empty-row">
-                            <td colspan="6">
+                            <td colspan="7">
                                 <i class="fas fa-folder-open"></i>
                                 Nenhum projeto encontrado.
                             </td>

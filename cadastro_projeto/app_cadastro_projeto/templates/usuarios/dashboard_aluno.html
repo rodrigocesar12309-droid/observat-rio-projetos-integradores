@@ -331,7 +331,7 @@
     <div class="sidebar-section">Menu Principal</div>
     <ul class="sidebar-nav">
         <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-th-large"></i> Dashboard</a></li>
-        <li><a href="#" onclick="document.querySelector('.main-area').scrollTo({top:document.getElementById('section-projetos')?.offsetTop||0,behavior:'smooth'});abrirModal('modalProjeto');return false;"><i class="fas fa-folder-open"></i> Projetos</a></li>
+        <li><a href="{% url 'meus_projetos' %}"><i class="fas fa-folder-open"></i> Projetos</a></li>
         <li><a href="{% url 'forum_lista' %}"><i class="fas fa-comments"></i> Mensagens
             {% if nao_lidas %}<span class="badge-n">{{ nao_lidas }}</span>{% endif %}
         </a></li>
