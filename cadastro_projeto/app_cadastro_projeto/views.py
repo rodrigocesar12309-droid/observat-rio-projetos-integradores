@@ -15,7 +15,20 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .serializers import UsuarioSerializer, ProjetoSerializer
+from django.contrib.auth.backends import ModelBackend
+from django.contrib.auth import get_user_model
 
+UserModel = get_user_model()
+
+class EmailBackend(ModelBackend):
+    def authenticate(self, request, username=None, password=None, **kwargs):
+        try:
+            user = UserModel.objects.get(email__iexact=username)
+        except UserModel.DoesNotExist:
+            return None
+        if user.check_password(password):
+            return user
+        return None
 
 # ─────────────────────────────────────────
 # CADASTRAR EMPRESA COM LOGIN (coordenador)
