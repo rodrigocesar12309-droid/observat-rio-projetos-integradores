@@ -2,72 +2,320 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Relatório de Usuários</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatórios — Coordenação | Faculdade Senac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <style>
+        :root{--navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;--orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;--green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;--amber:#d69e2e;--amber-lt:#fffbeb;--amber-bd:#fefcbf;--red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;--ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;--bg:#F4F6FA;--card:#fff;--sidebar-w:230px;--header-h:58px;--r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;display:flex;}
+        .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;}
+        .sb-logo{display:flex;align-items:center;gap:.75rem;padding:1.2rem 1.1rem .9rem;border-bottom:1px solid rgba(255,255,255,.08);}
+        .sb-logo-icon{width:36px;height:36px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.9rem;font-weight:800;}
+        .sb-logo-text{font-size:.85rem;font-weight:700;color:#fff;}.sb-logo-sub{font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+        .sb-user{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.07);}
+        .sb-av{width:34px;height:34px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.8rem;color:var(--navy);}
+        .sb-uname{font-size:.78rem;font-weight:600;color:#fff;}.sb-urole{font-size:.62rem;color:rgba(255,255,255,.45);}
+        .sb-section{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:.7rem 1.1rem .25rem;}
+        .sb-nav{list-style:none;padding:0 .6rem;}
+        .sb-nav li{margin-bottom:.1rem;}
+        .sb-nav a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.65);text-decoration:none;transition:all .15s;}
+        .sb-nav a:hover{background:rgba(255,255,255,.09);color:#fff;}.sb-nav a.active{background:var(--orange);color:var(--navy);font-weight:700;}
+        .sb-badge{background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .4rem;border-radius:50px;margin-left:auto;}
+        .sb-bottom{padding:.6rem;border-top:1px solid rgba(255,255,255,.07);margin-top:auto;}
+        .sb-bottom a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s;}
+        .sb-bottom a:hover{background:rgba(255,255,255,.09);color:#fff;}
+        .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+        .topbar{background:var(--card);height:var(--header-h);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:40;}
+        .tb-av{width:30px;height:30px;border-radius:50%;background:var(--navy);display:grid;place-items:center;font-weight:700;font-size:.72rem;color:#fff;}
+        .tb-uinfo strong{display:block;font-size:.78rem;font-weight:700;color:var(--ink);}
+        .tb-uinfo span{font-size:.65rem;color:var(--muted);}
+        .content{padding:1.75rem;flex:1;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);}
+        .page-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem;margin-bottom:1.4rem;}
+        .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+        @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+        .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.1rem 1.25rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.875rem;animation:fadeUp .4s ease both;}
+        .kpi-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:1rem;flex-shrink:0;}
+        .kpi-val{font-size:1.5rem;font-weight:800;color:var(--ink);line-height:1;}
+        .kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+        .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;margin-bottom:1.25rem;}
+        .card-head{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.25rem;border-bottom:1px solid var(--line);}
+        .card-title{font-size:.9rem;font-weight:700;color:var(--ink);}
+        .card-sub{font-size:.72rem;color:var(--muted);}
+        .btn-sm{padding:.28rem .7rem;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;font-family:'Open Sans',sans-serif;background:var(--navy);color:#fff;}
+        .status-list{padding:.75rem 1.25rem;}
+        .status-row{display:flex;align-items:center;gap:.75rem;margin-bottom:.7rem;}
+        .status-row:last-child{margin-bottom:0;}
+        .status-label{font-size:.78rem;color:var(--ink-2);min-width:110px;}
+        .status-bar-wrap{flex:1;height:10px;border-radius:5px;background:var(--bg);overflow:hidden;}
+        .status-bar{height:100%;border-radius:5px;}
+        .status-val{font-size:.75rem;font-weight:700;color:var(--ink);min-width:30px;text-align:right;}
+        .two-col{display:grid;grid-template-columns:2fr 1fr;gap:1.25rem;margin-bottom:1.25rem;}
+        @media(max-width:1100px){.two-col{grid-template-columns:1fr;}}
+        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .kpi-card:nth-child(1){animation-delay:.05s}.kpi-card:nth-child(2){animation-delay:.1s}
+        .kpi-card:nth-child(3){animation-delay:.15s}.kpi-card:nth-child(4){animation-delay:.2s}
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen p-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
-        <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
-                <i class="fas fa-users text-indigo-600"></i> Relatório de Usuários
-            </h2>
-            <a href="{% url 'dashboard' %}" class="text-indigo-600 hover:text-indigo-800 font-semibold text-sm">
-                ← Voltar ao Painel
-            </a>
-        </div>
+<body>
 
-        <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-                <thead>
-                    <tr class="border-b-2 border-slate-200">
-                        <th class="px-4 py-2 text-left font-semibold text-slate-600">Nome</th>
-                        <th class="px-4 py-2 text-left font-semibold text-slate-600">E-mail</th>
-                        <th class="px-4 py-2 text-left font-semibold text-slate-600">Tipo</th>
-                        <th class="px-4 py-2 text-left font-semibold text-slate-600">Matrícula</th>
-                        <th class="px-4 py-2 text-left font-semibold text-slate-600">Telefone</th>
-                        <th class="px-4 py-2 text-center font-semibold text-slate-600">Status</th>
-                        <th class="px-4 py-2 text-center font-semibold text-slate-600">Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-slate-100">
-                    {% for perfil in usuarios %}
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="px-4 py-2">{{ perfil.user.first_name }}</td>
-                        <td class="px-4 py-2">{{ perfil.user.email }}</td>
-                        <td class="px-4 py-2 capitalize">{{ perfil.tipo_usuario }}</td>
-                        <td class="px-4 py-2">{{ perfil.matricula|default:"-" }}</td>
-                        <td class="px-4 py-2">{{ perfil.telefone|default:"-" }}</td>
-                        <td class="px-4 py-2 text-center">
-                            {% if perfil.user.is_active %}
-                                <span class="inline-flex items-center bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                                    Ativo
-                                </span>
-                            {% else %}
-                                <span class="inline-flex items-center bg-rose-50 text-rose-700 text-xs font-bold px-3 py-1.5 rounded-lg">
-                                    Inativo
-                                </span>
-                            {% endif %}
-                        </td>
-                        <td class="px-4 py-2 text-center flex gap-2 justify-center">
-                            <a href="{% url 'editar_usuario' perfil.user.id %}" 
-                               class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 px-3 py-1 rounded-lg text-xs font-semibold">
-                               Editar
-                            </a>
-                            <a href="{% url 'desativar_usuario' perfil.user.id %}" 
-                               class="bg-rose-50 hover:bg-rose-100 text-rose-700 px-3 py-1 rounded-lg text-xs font-semibold"
-                               onclick="return confirm('Tem certeza que deseja desativar este usuário?');">
-                               Desativar
-                            </a>
-                        </td>
-                    </tr>
-                    {% empty %}
-                    <tr>
-                        <td colspan="7" class="text-center py-6 text-slate-500">Nenhum usuário encontrado</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+<aside class="sidebar">
+    <div class="sb-logo">
+        <div class="sb-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div><div class="sb-logo-text">Faculdade Senac</div><div class="sb-logo-sub">Coordenação Acadêmica</div></div>
+    </div>
+    <div class="sb-user">
+        <div class="sb-av">{{ usuario.first_name|first|upper|default:"C" }}</div>
+        <div><div class="sb-uname">{{ usuario.first_name|default:usuario.username }}</div><div class="sb-urole">Coordenador do Curso</div></div>
+    </div>
+    <div class="sb-section">Painel</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Painel Geral</a></li>
+        <li><a href="{% url 'coord_todos_projetos' %}"><i class="fas fa-folder-open"></i> Todos os Projetos</a></li>
+        <li><a href="{% url 'coord_corpo_docente' %}"><i class="fas fa-users"></i> Corpo Docente</a></li>
+        <li><a href="{% url 'relatorio_usuarios' %}" class="active"><i class="fas fa-chart-bar"></i> Relatórios</a></li>
+        <li><a href="{% url 'forum_lista' %}"><i class="fas fa-comments"></i> Mensagens</a></li>
+    </ul>
+    <div class="sb-bottom"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+</aside>
+
+<div class="main-area">
+    <div class="topbar">
+        <div style="font-size:.85rem;color:var(--muted);">
+            <a href="{% url 'dashboard' %}" style="color:var(--muted);text-decoration:none;">Início</a> /
+            <strong style="color:var(--ink);">Relatórios</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:.5rem;">
+            <div class="tb-av">{{ usuario.first_name|first|upper|default:"C" }}</div>
+            <div class="tb-uinfo"><strong>{{ usuario.first_name|default:usuario.username }}</strong><span>Coordenador</span></div>
         </div>
     </div>
+
+    <div class="content">
+        <div class="page-title">Relatórios</div>
+        <div class="page-sub">Visão analítica dos projetos e usuários do sistema</div>
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-folder-open"></i></div>
+                <div><div class="kpi-val">{{ total_projetos }}</div><div class="kpi-lbl">Total de Projetos</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-check-circle"></i></div>
+                <div><div class="kpi-val">{{ aprovados }}</div><div class="kpi-lbl">Aprovados</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--amber-lt);color:var(--amber);"><i class="fas fa-clock"></i></div>
+                <div><div class="kpi-val">{{ em_avaliacao }}</div><div class="kpi-lbl">Em Avaliação</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--red-lt);color:var(--red);"><i class="fas fa-times-circle"></i></div>
+                <div><div class="kpi-val">{{ reprovados }}</div><div class="kpi-lbl">Reprovados</div></div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO LINHA + STATUS -->
+        <div class="two-col">
+            <div class="card">
+                <div class="card-head">
+                    <div><div class="card-title">Evolução por Semestre</div><div class="card-sub">Projetos cadastrados e avaliados</div></div>
+                    <div style="display:flex;gap:.4rem;">
+                        <button class="btn-sm" id="btn-12m" onclick="switchLine(this,'12m')">12m</button>
+                        <button class="btn-sm" style="background:var(--bg);color:var(--muted);border:1px solid var(--line);" id="btn-6m" onclick="switchLine(this,'6m')">6m</button>
+                        <button class="btn-sm" style="background:var(--bg);color:var(--muted);border:1px solid var(--line);" id="btn-3m" onclick="switchLine(this,'3m')">3m</button>
+                    </div>
+                </div>
+                <div style="padding:.75rem 1.25rem 1.25rem;">
+                    <canvas id="lineChart" height="130"></canvas>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-head"><div class="card-title">Projetos por Status</div><div class="card-sub">Total atual</div></div>
+                <div class="status-list">
+                    <div class="status-row">
+                        <span class="status-label">Em Avaliação</span>
+                        <div class="status-bar-wrap"><div class="status-bar" style="width:{% if total_projetos %}{% widthratio em_avaliacao total_projetos 100 %}{% else %}0{% endif %}%;background:var(--amber);"></div></div>
+                        <span class="status-val">{{ em_avaliacao }}</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Aprovados</span>
+                        <div class="status-bar-wrap"><div class="status-bar" style="width:{% if total_projetos %}{% widthratio aprovados total_projetos 100 %}{% else %}0{% endif %}%;background:var(--green);"></div></div>
+                        <span class="status-val">{{ aprovados }}</span>
+                    </div>
+                    <div class="status-row">
+                        <span class="status-label">Reprovados</span>
+                        <div class="status-bar-wrap"><div class="status-bar" style="width:{% if total_projetos %}{% widthratio reprovados total_projetos 100 %}{% else %}0{% endif %}%;background:var(--red);"></div></div>
+                        <span class="status-val">{{ reprovados }}</span>
+                    </div>
+                </div>
+                <!-- DONUT MAIOR -->
+                <div style="padding:1rem 1.25rem 1.5rem;display:flex;justify-content:center;">
+                    <div style="width:260px;height:260px;position:relative;">
+                        <canvas id="donutChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- GRÁFICO USUÁRIOS -->
+        <div class="card">
+            <div class="card-head">
+                <div><div class="card-title">Distribuição de Usuários</div><div class="card-sub">Por tipo de perfil</div></div>
+            </div>
+            <div style="padding:.75rem 1.25rem 1.25rem;max-height:280px;">
+                <canvas id="usuariosChart" height="220"></canvas>
+            </div>
+        </div>
+
+        <!-- TABELA USUARIOS -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Todos os Usuários</div>
+                <input type="text" id="filtroTabela" placeholder="Buscar…" style="padding:.4rem .875rem;border:1px solid var(--line);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:.8rem;outline:none;width:220px;">
+            </div>
+            <div style="overflow-x:auto;">
+                <table style="width:100%;border-collapse:collapse;">
+                    <thead>
+                        <tr>
+                            <th style="padding:.65rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);">Nome</th>
+                            <th style="padding:.65rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);">E-mail</th>
+                            <th style="padding:.65rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);">Tipo</th>
+                            <th style="padding:.65rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);">Status</th>
+                            <th style="padding:.65rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-usuarios">
+                        {% for u in usuarios %}
+                        <tr style="border-bottom:1px solid var(--line);transition:background .12s;" onmouseover="this.style.background='#FAFBFF'" onmouseout="this.style.background=''">
+                            <td style="padding:.75rem 1.25rem;font-size:.82rem;font-weight:600;color:var(--ink);">{{ u.user.first_name|default:u.user.username }}</td>
+                            <td style="padding:.75rem 1.25rem;font-size:.82rem;color:var(--muted);">{{ u.user.email }}</td>
+                            <td style="padding:.75rem 1.25rem;font-size:.82rem;">
+                                <span style="padding:.18rem .6rem;border-radius:50px;font-size:.67rem;font-weight:700;
+                                    {% if u.tipo_usuario == 'aluno' %}background:var(--navy-lt);color:var(--navy-dk);
+                                    {% elif u.tipo_usuario == 'professor' %}background:var(--green-lt);color:#276749;
+                                    {% elif u.tipo_usuario == 'administracao' %}background:var(--orange-lt);color:var(--orange-dk);
+                                    {% else %}background:var(--amber-lt);color:#7b5c16;{% endif %}">
+                                    {{ u.get_tipo_usuario_display }}
+                                </span>
+                            </td>
+                            <td style="padding:.75rem 1.25rem;font-size:.82rem;">
+                                {% if u.user.is_active %}
+                                <span style="padding:.18rem .6rem;border-radius:50px;font-size:.67rem;font-weight:700;background:var(--green-lt);color:#276749;">✔ Ativo</span>
+                                {% else %}
+                                <span style="padding:.18rem .6rem;border-radius:50px;font-size:.67rem;font-weight:700;background:var(--red-lt);color:#9b2c2c;">✖ Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td style="padding:.75rem 1.25rem;white-space:nowrap;">
+                                <!-- Editar -->
+                                <a href="{% url 'editar_usuario' u.user.id %}" style="display:inline-flex;align-items:center;gap:.25rem;padding:.28rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;text-decoration:none;background:var(--navy-lt);color:var(--navy);margin-right:.35rem;">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                <!-- Ativar / Desativar -->
+                                {% if u.user.is_active %}
+                                <form method="POST" action="{% url 'desativar_usuario' u.user.id %}" style="display:inline;" onsubmit="return confirm('Desativar {{ u.user.email }}?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="relatorio_usuarios">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:.25rem;padding:.28rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;background:var(--red-lt);color:var(--red);border:1px solid var(--red-bd);cursor:pointer;font-family:'Open Sans',sans-serif;">
+                                        <i class="fas fa-user-slash"></i> Desativar
+                                    </button>
+                                </form>
+                                {% else %}
+                                <form method="POST" action="{% url 'ativar_usuario' u.user.id %}" style="display:inline;" onsubmit="return confirm('Reativar {{ u.user.email }}?')">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="next" value="relatorio_usuarios">
+                                    <button type="submit" style="display:inline-flex;align-items:center;gap:.25rem;padding:.28rem .65rem;border-radius:6px;font-size:.7rem;font-weight:700;background:var(--green-lt);color:var(--green);border:1px solid var(--green-bd);cursor:pointer;font-family:'Open Sans',sans-serif;">
+                                        <i class="fas fa-user-check"></i> Ativar
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="5" style="text-align:center;padding:2rem;color:var(--muted);">Nenhum usuário encontrado</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+Chart.defaults.font.family = "'Open Sans', sans-serif";
+Chart.defaults.color = "#718096";
+
+// Dados de evolução vindos do Django
+const _GRAF = {
+    "12m": {{ graf_evolucao_12m|safe }},
+    "6m":  {{ graf_evolucao_6m|safe }},
+    "3m":  {{ graf_evolucao_3m|safe }},
+};
+const DEMO = {
+    "12m": { labels:['Jun/25','Jul/25','Ago/25','Set/25','Out/25','Nov/25','Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26'], submetidos:[4,6,5,8,7,9,6,7,10,8,6,5], aprovados:[2,4,3,5,4,6,4,5,7,5,4,3] },
+    "6m":  { labels:['Dez/25','Jan/26','Fev/26','Mar/26','Abr/26','Mai/26'], submetidos:[6,7,10,8,6,5], aprovados:[4,5,7,5,4,3] },
+    "3m":  { labels:['Mar/26','Abr/26','Mai/26'], submetidos:[8,6,5], aprovados:[5,4,3] },
+};
+function getGraf(k){ const d=_GRAF[k]; return (d&&d.labels&&d.labels.length)?d:DEMO[k]; }
+function mkLine(k){
+    const d=getGraf(k);
+    return { labels:d.labels, datasets:[
+        {label:'Enviados',data:d.submetidos,borderColor:'#1B3A6B',backgroundColor:'rgba(27,58,107,.07)',tension:.45,fill:true,pointRadius:3,pointBackgroundColor:'#1B3A6B',borderWidth:2.5},
+        {label:'Aprovados',data:d.aprovados,borderColor:'#F5A623',backgroundColor:'rgba(245,166,35,.06)',tension:.45,fill:true,pointRadius:3,pointBackgroundColor:'#F5A623',borderWidth:2},
+    ]};
+}
+const lc = new Chart(document.getElementById('lineChart'),{
+    type:'line', data:mkLine('12m'),
+    options:{responsive:true,interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:true,position:'bottom',labels:{font:{size:10},boxWidth:8,padding:12}},tooltip:{backgroundColor:'#1B3A6B',titleColor:'#fff',bodyColor:'#CBD5E0',cornerRadius:8,padding:8}},
+        scales:{x:{grid:{display:false},border:{display:false}},y:{grid:{color:'#E2E8F0'},border:{display:false},ticks:{precision:0},beginAtZero:true}}
+    }
+});
+function switchLine(btn,k){
+    ['btn-12m','btn-6m','btn-3m'].forEach(id=>{
+        const b=document.getElementById(id);
+        b.style.background='var(--bg)'; b.style.color='var(--muted)'; b.style.border='1px solid var(--line)';
+    });
+    btn.style.background='var(--navy)'; btn.style.color='#fff'; btn.style.border='none';
+    lc.data=mkLine(k); lc.update('active');
+}
+
+// Donut status — maior
+const _STATUS = {{ graf_projetos|safe }};
+const statusData = (_STATUS&&_STATUS.valores&&_STATUS.valores.reduce((a,b)=>a+b,0)>0)
+    ? _STATUS.valores
+    : [{{ em_avaliacao }},{{ aprovados }},{{ reprovados }}];
+new Chart(document.getElementById('donutChart'),{
+    type:'doughnut',
+    data:{labels:['Em Avaliação','Aprovados','Reprovados'],datasets:[{data:statusData,backgroundColor:['#d69e2e','#38a169','#e53e3e'],borderWidth:0,hoverOffset:8}]},
+    options:{cutout:'65%',responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:true,position:'bottom',labels:{font:{size:11},boxWidth:10,padding:14}},
+            tooltip:{callbacks:{label:c=>` ${c.label}: ${c.parsed}`}}}
+    }
+});
+
+// Gráfico de usuários (barras)
+const _USU = {{ graf_usuarios|safe }};
+new Chart(document.getElementById('usuariosChart'),{
+    type:'bar',
+    data:{labels:_USU.labels,datasets:[{data:_USU.valores,borderRadius:8,borderSkipped:false,
+        backgroundColor:['#1B3A6B','#38a169','#F5A623','#7C3AED']}]},
+    options:{responsive:true,maintainAspectRatio:false,
+        plugins:{legend:{display:false},tooltip:{backgroundColor:'#1B3A6B',cornerRadius:8,padding:10,titleColor:'#fff',bodyColor:'#CBD5E0'}},
+        scales:{x:{grid:{display:false},border:{display:false}},y:{grid:{color:'#E2E8F0'},border:{display:false},ticks:{precision:0},beginAtZero:true}}
+    }
+});
+
+// Filtro tabela
+document.getElementById('filtroTabela').addEventListener('keyup',function(){
+    const q=this.value.toLowerCase();
+    document.querySelectorAll('#tbody-usuarios tr').forEach(r=>{ r.style.display=r.textContent.toLowerCase().includes(q)?'':'none'; });
+});
+</script>
 </body>
 </html>

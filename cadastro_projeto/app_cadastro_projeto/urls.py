@@ -17,6 +17,7 @@ urlpatterns = [
     path('relatorio/usuarios/', views.relatorio_usuarios, name='relatorio_usuarios'),
     path('usuarios/editar/<int:usuario_id>/', views.editar_usuario, name='editar_usuario'),
     path('usuarios/desativar/<int:usuario_id>/', views.desativar_usuario, name='desativar_usuario'),
+    path('usuarios/ativar/<int:usuario_id>/', views.ativar_usuario, name='ativar_usuario'),
 
     # Avaliar projetos (professor)
     path('avaliacao/', views.painel_avaliacao, name='painel_avaliacao'),
@@ -53,4 +54,12 @@ urlpatterns = [
     # Currículo
     path('curriculo/salvar/', views.salvar_curriculo, name='salvar_curriculo'),
     path('curriculo/aluno/<int:usuario_id>/', views.ver_curriculo_aluno, name='ver_curriculo_aluno'),
+
+    # Página de projetos do aluno
+    path('meus-projetos/', views.meus_projetos, name='meus_projetos'),
+
+    # Coordenação — páginas do sidebar
+    path('coord/projetos/', views.coord_todos_projetos, name='coord_todos_projetos'),
+    path('coord/corpo-docente/', views.coord_corpo_docente, name='coord_corpo_docente'),
+    path('coord/mensagens/', views.coord_mensagens, name='coord_mensagens'),
 ]

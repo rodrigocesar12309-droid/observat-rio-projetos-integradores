@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Corpo Docente — Coordenação | Faculdade Senac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{--navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;--orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;--green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;--amber:#d69e2e;--amber-lt:#fffbeb;--amber-bd:#fefcbf;--red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;--ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;--bg:#F4F6FA;--card:#fff;--sidebar-w:230px;--header-h:58px;--r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;display:flex;}
+
+        /* ── SIDEBAR (idêntica ao coord_projetos) ── */
+        .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;}
+        .sb-logo{display:flex;align-items:center;gap:.75rem;padding:1.2rem 1.1rem .9rem;border-bottom:1px solid rgba(255,255,255,.08);}
+        .sb-logo-icon{width:36px;height:36px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.9rem;font-weight:800;}
+        .sb-logo-text{font-size:.85rem;font-weight:700;color:#fff;}.sb-logo-sub{font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+        .sb-user{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.07);}
+        .sb-av{width:34px;height:34px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.8rem;color:var(--navy);}
+        .sb-uname{font-size:.78rem;font-weight:600;color:#fff;}.sb-urole{font-size:.62rem;color:rgba(255,255,255,.45);}
+        .sb-section{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:.7rem 1.1rem .25rem;}
+        .sb-nav{list-style:none;padding:0 .6rem;}
+        .sb-nav li{margin-bottom:.1rem;}
+        .sb-nav a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.65);text-decoration:none;transition:all .15s;position:relative;}
+        .sb-nav a:hover{background:rgba(255,255,255,.09);color:#fff;}.sb-nav a.active{background:var(--orange);color:var(--navy);font-weight:700;}
+        .sb-badge{background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .4rem;border-radius:50px;margin-left:auto;}
+        .sb-bottom{padding:.6rem;border-top:1px solid rgba(255,255,255,.07);margin-top:auto;}
+        .sb-bottom a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s;}
+        .sb-bottom a:hover{background:rgba(255,255,255,.09);color:#fff;}
+
+        /* ── MAIN ── */
+        .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+        .topbar{background:var(--card);height:var(--header-h);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:40;}
+        .tb-right{display:flex;align-items:center;gap:.75rem;}
+        .tb-av{width:30px;height:30px;border-radius:50%;background:var(--navy);display:grid;place-items:center;font-weight:700;font-size:.72rem;color:#fff;}
+        .tb-uinfo strong{display:block;font-size:.78rem;font-weight:700;color:var(--ink);}
+        .tb-uinfo span{font-size:.65rem;color:var(--muted);}
+        .btn-act{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .95rem;border-radius:50px;border:none;font-family:'Open Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;}
+        .btn-navy{background:var(--navy);color:#fff;}
+
+        /* ── CONTENT ── */
+        .content{padding:1.75rem;flex:1;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);}
+        .page-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem;margin-bottom:1.4rem;}
+
+        /* ── KPI CARDS ── */
+        .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.5rem;}
+        @media(max-width:900px){.kpi-row{grid-template-columns:1fr;}}
+        .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.875rem;}
+        .kpi-icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:.95rem;flex-shrink:0;}
+        .kpi-val{font-size:1.45rem;font-weight:800;color:var(--ink);line-height:1;}
+        .kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+
+        /* ── FILTRO ── */
+        .filtros{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;box-shadow:var(--sh);}
+        .filtros input,.filtros select{padding:.45rem .875rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-family:'Open Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;transition:border-color .15s;}
+        .filtros input:focus,.filtros select:focus{border-color:var(--navy);}
+        .filtros input{flex:1;min-width:180px;}
+        .btn-filtrar{padding:.45rem 1rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;}
+
+        /* ── TABELA ── */
+        .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;}
+        table{width:100%;border-collapse:collapse;}
+        thead th{padding:.7rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);}
+        tbody tr{border-bottom:1px solid var(--line);transition:background .12s;}
+        tbody tr:last-child{border-bottom:none;}
+        tbody tr:hover{background:#FAFBFF;}
+        tbody td{padding:.875rem 1.25rem;font-size:.82rem;vertical-align:middle;}
+
+        /* Avatar letra */
+        .prof-av{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:.85rem;color:#fff;flex-shrink:0;}
+
+        /* Pill status */
+        .pill{display:inline-flex;align-items:center;gap:.25rem;padding:.18rem .6rem;border-radius:50px;font-size:.67rem;font-weight:700;}
+        .pill-green{background:var(--green-lt);color:#276749;}
+        .pill-red{background:var(--red-lt);color:#9b2c2c;}
+        .pill-navy{background:var(--navy-lt);color:var(--navy-dk);}
+
+        .btn-sm{padding:.28rem .7rem;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;font-family:'Open Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.25rem;}
+
+        .toasts{position:fixed;top:68px;right:1.25rem;z-index:300;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
+
+        /* MODAIS */
+        .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:none;align-items:center;justify-content:center;}
+        .modal-bg.open{display:flex;}
+        .modal{background:var(--card);border-radius:var(--r-lg);padding:1.75rem;width:100%;max-width:480px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+        .modal h3{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+        .field{margin-bottom:1rem;}
+        .field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.4rem;}
+        .field input,.field select{width:100%;padding:.6rem .875rem;border:1.5px solid var(--line);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:.83rem;color:var(--ink);background:var(--bg);outline:none;transition:border-color .15s;}
+        .field input:focus,.field select:focus{border-color:var(--navy);}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+        .modal-footer{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line);}
+        .btn-ghost{padding:.55rem 1.1rem;border-radius:8px;border:1px solid var(--line);background:none;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;}
+    </style>
+</head>
+<body>
+
+{% if messages %}
+<div class="toasts">{% for m in messages %}<div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>{% endfor %}</div>
+{% endif %}
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sb-logo">
+        <div class="sb-logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div><div class="sb-logo-text">Faculdade Senac</div><div class="sb-logo-sub">Coordenação Acadêmica</div></div>
+    </div>
+    <div class="sb-user">
+        <div class="sb-av">{{ usuario.first_name|first|upper|default:"C" }}</div>
+        <div><div class="sb-uname">{{ usuario.first_name|default:usuario.username }}</div><div class="sb-urole">Coordenador do Curso</div></div>
+    </div>
+    <div class="sb-section">Painel</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Painel Geral</a></li>
+        <li><a href="{% url 'coord_todos_projetos' %}"><i class="fas fa-folder-open"></i> Todos os Projetos</a></li>
+        <li><a href="{% url 'coord_corpo_docente' %}" class="active"><i class="fas fa-users"></i> Corpo Docente <span class="sb-badge">{{ total }}</span></a></li>
+        <li><a href="{% url 'relatorio_usuarios' %}"><i class="fas fa-chart-bar"></i> Relatórios</a></li>
+        <li><a href="{% url 'forum_lista' %}"><i class="fas fa-comments"></i> Mensagens</a></li>
+    </ul>
+    <div class="sb-bottom"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-area">
+    <div class="topbar">
+        <div style="font-size:.85rem;color:var(--muted);">
+            <a href="{% url 'dashboard' %}" style="color:var(--muted);text-decoration:none;">Início</a> /
+            <strong style="color:var(--ink);">Corpo Docente</strong>
+        </div>
+        <div class="tb-right">
+            <button onclick="openModal('modalCadastro')" class="btn-act btn-navy">
+                <i class="fas fa-user-plus"></i> Cadastrar Usuário
+            </button>
+            <button onclick="openModal('modalEmpresa')" class="btn-act" style="background:var(--orange);color:var(--navy);font-family:'Open Sans',sans-serif;font-size:.75rem;font-weight:700;border:none;padding:.4rem .95rem;border-radius:50px;cursor:pointer;display:inline-flex;align-items:center;gap:.4rem;">
+                <i class="fas fa-building"></i> Cadastrar Empresa
+            </button>
+            <a href="{% url 'relatorio_usuarios' %}" class="btn-act" style="background:var(--bg);color:var(--navy);border:1px solid var(--line);font-family:'Open Sans',sans-serif;font-size:.75rem;font-weight:700;border-radius:50px;padding:.4rem .95rem;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;">
+                <i class="fas fa-chart-bar"></i> Relatório
+            </a>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+                <div class="tb-av">{{ usuario.first_name|first|upper|default:"C" }}</div>
+                <div class="tb-uinfo">
+                    <strong>{{ usuario.first_name|default:usuario.username }}</strong>
+                    <span>Coordenador</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-title">Corpo Docente</div>
+        <div class="page-sub">Gerencie os professores e orientadores do curso</div>
+
+        <!-- KPIs -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-chalkboard-teacher"></i></div>
+                <div><div class="kpi-val">{{ total }}</div><div class="kpi-lbl">Total de Professores</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-user-check"></i></div>
+                <div><div class="kpi-val">{{ total }}</div><div class="kpi-lbl">Professores Ativos</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--orange-lt);color:var(--orange-dk);"><i class="fas fa-folder-open"></i></div>
+                <div><div class="kpi-val">{{ projetos_count }}</div><div class="kpi-lbl">Projetos Orientados</div></div>
+            </div>
+        </div>
+
+        <!-- FILTRO -->
+        <div class="filtros">
+            <input type="text" id="busca-prof" placeholder="Buscar professor por nome ou e-mail…">
+        </div>
+
+        <!-- TABELA -->
+        <div class="card">
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Professor</th>
+                            <th>E-mail</th>
+                            <th>Matrícula</th>
+                            <th>Projetos Orientados</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-prof">
+                        {% for prof in professores %}
+                        <tr>
+                            <td>
+                                <div style="display:flex;align-items:center;gap:.75rem;">
+                                    <div class="prof-av" style="background:{% cycle '#1B3A6B' '#7C3AED' '#38a169' '#d69e2e' '#e53e3e' '#2a5298' %};">
+                                        {{ prof.user.first_name|first|upper|default:"P" }}
+                                    </div>
+                                    <div>
+                                        <div style="font-weight:600;color:var(--ink);">{{ prof.user.first_name|default:prof.user.username }}</div>
+                                        <div style="font-size:.7rem;color:var(--muted);">Professor</div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td style="color:var(--muted);">{{ prof.user.email }}</td>
+                            <td>{{ prof.matricula|default:"—" }}</td>
+                            <td>
+                                <span style="font-weight:700;color:var(--navy);">{{ prof.user.projetos_usuario.count|default:0 }}</span>
+                                projeto{{ prof.user.projetos_usuario.count|pluralize }}
+                            </td>
+                            <td>
+                                {% if prof.user.is_active %}
+                                <span class="pill pill-green"><i class="fas fa-circle" style="font-size:.5rem;"></i> Ativo</span>
+                                {% else %}
+                                <span class="pill pill-red"><i class="fas fa-circle" style="font-size:.5rem;"></i> Inativo</span>
+                                {% endif %}
+                            </td>
+                            <td style="white-space:nowrap;">
+                                <a href="{% url 'editar_usuario' prof.user.id %}" class="btn-sm" style="background:var(--navy-lt);color:var(--navy);margin-right:.3rem;">
+                                    <i class="fas fa-edit"></i> Editar
+                                </a>
+                                {% if prof.user.is_active %}
+                                <form method="POST" action="{% url 'desativar_usuario' prof.user.id %}" style="display:inline;" onsubmit="return confirm('Desativar este professor?')">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-sm" style="background:var(--red-lt);color:var(--red);border:none;">
+                                        <i class="fas fa-user-slash"></i> Desativar
+                                    </button>
+                                </form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" style="text-align:center;padding:3rem;color:var(--muted);">
+                                <i class="fas fa-chalkboard-teacher" style="display:block;font-size:1.5rem;margin-bottom:.5rem;opacity:.3;"></i>
+                                Nenhum professor cadastrado
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- MODAL CADASTRAR USUÁRIO -->
+<div id="modalCadastro" class="modal-bg">
+    <div class="modal">
+        <h3><i class="fas fa-user-plus" style="color:var(--orange);"></i> Cadastrar Novo Usuário</h3>
+        <form action="{% url 'cadastro' %}" method="POST">
+            {% csrf_token %}
+            <div class="field"><label>Nome Completo</label><input type="text" name="nome_completo" required placeholder="Ex: Maria da Silva"></div>
+            <div class="field"><label>E-mail</label><input type="email" name="email" required placeholder="usuario@email.com"></div>
+            <div class="field-row">
+                <div class="field"><label>Matrícula</label><input type="text" name="matricula" placeholder="Ex: 202610"></div>
+                <div class="field"><label>Telefone</label><input type="text" name="telefone" placeholder="(81) 99999-9999"></div>
+            </div>
+            <div class="field"><label>Senha</label><input type="password" name="password" required placeholder="••••••••"></div>
+            <div class="field">
+                <label>Tipo de Usuário</label>
+                <select name="tipo_usuario" required>
+                    <option value="aluno">Aluno</option>
+                    <option value="professor" selected>Professor</option>
+                    <option value="administracao">Coordenador</option>
+                </select>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" onclick="closeModal('modalCadastro')">Cancelar</button>
+                <button type="submit" class="btn-act btn-navy">Salvar Usuário</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- MODAL CADASTRAR EMPRESA -->
+<div id="modalEmpresa" class="modal-bg">
+    <div class="modal">
+        <h3><i class="fas fa-building" style="color:var(--orange);"></i> Cadastrar Empresa Parceira</h3>
+        <form action="{% url 'cadastrar_empresa_login' %}" method="POST">
+            {% csrf_token %}
+            <div class="field"><label>Nome / Razão Social</label><input type="text" name="nome_empresa" required placeholder="Ex: Tech Solutions Ltda"></div>
+            <div class="field"><label>CNPJ</label><input type="text" name="cnpj" id="cnpj-input" required placeholder="00.000.000/0000-00" maxlength="18"></div>
+            <div class="field"><label>E-mail de Acesso</label><input type="email" name="email" required placeholder="empresa@empresa.com"></div>
+            <div class="field"><label>Senha de Acesso</label><input type="password" name="password" required placeholder="••••••••"></div>
+            <p style="font-size:.72rem;color:var(--muted);margin-top:-.5rem;margin-bottom:.75rem;">
+                <i class="fas fa-info-circle"></i> A empresa poderá fazer login com este e-mail e senha.
+            </p>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" onclick="closeModal('modalEmpresa')">Cancelar</button>
+                <button type="submit" class="btn-act" style="background:var(--orange);color:var(--navy);border:none;padding:.55rem 1.1rem;border-radius:8px;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:700;cursor:pointer;">Cadastrar Empresa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.getElementById('busca-prof').addEventListener('keyup', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('#tbody-prof tr').forEach(r => {
+        r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none';
+    });
+});
+
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-bg').forEach(bg => {
+    bg.addEventListener('click', e => { if(e.target === bg) bg.classList.remove('open'); });
+});
+
+document.getElementById('cnpj-input')?.addEventListener('input', function(e) {
+    let v=e.target.value.replace(/\D/g,'');
+    v=v.replace(/^(\d{2})(\d)/,'$1.$2');v=v.replace(/^(\d{2})\.(\d{3})(\d)/,'$1.$2.$3');
+    v=v.replace(/\.(\d{3})(\d)/,'.$1/$2');v=v.replace(/(\d{4})(\d)/,'$1-$2');
+    e.target.value=v;
+});
+
+setTimeout(() => {
+    document.querySelectorAll('.toast').forEach(t => {
+        t.style.opacity = '0'; t.style.transition = 'opacity .4s';
+        setTimeout(() => t.remove(), 400);
+    });
+}, 4000);
+</script>
+</body>
+</html>

@@ -85,9 +85,9 @@ def home(request):
     if request.user.is_authenticated:
         return redirect('dashboard')
     if request.method == 'POST':
-        # O campo no HTML tem name="email", autenticamos pelo username (que é o email no banco)
-        email = request.POST.get('email', '').strip().lower()
-        password = request.POST.get('password')
+        email = (request.POST.get('email') or request.POST.get('username') or '').strip().lower()
+        password = request.POST.get('password', '')
+        print(f'[LOGIN] email="{email}" password="{password}"')
         user = authenticate(request, username=email, password=password)
         if user is not None:
             login(request, user)
@@ -170,7 +170,25 @@ def desativar_usuario(request, usuario_id):
     usuario.save()
     LogAtividade.registrar(request.user, 'delete', f'Coordenador desativou {usuario.email}.')
     messages.success(request, f'Usuário {usuario.email} desativado com sucesso!')
-    return redirect('gerenciar_usuarios')
+    next_url = request.POST.get('next') or request.GET.get('next') or 'relatorio_usuarios'
+    return redirect(next_url)
+
+
+@login_required(login_url='home')
+def ativar_usuario(request, usuario_id):
+    """Reativa um usuário desativado — apenas coordenador."""
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        messages.error(request, 'Acesso negado.')
+        return redirect('dashboard')
+
+    usuario = get_object_or_404(User, id=usuario_id)
+    usuario.is_active = True
+    usuario.save()
+    LogAtividade.registrar(request.user, 'update', f'Coordenador reativou {usuario.email}.')
+    messages.success(request, f'Usuário {usuario.email} reativado com sucesso!')
+    next_url = request.POST.get('next') or request.GET.get('next') or 'relatorio_usuarios'
+    return redirect(next_url)
 
 
 # ─────────────────────────────────────────
@@ -298,8 +316,11 @@ def dashboard(request):
             'total_alunos':      total_alunos,
             'em_avaliacao':      em_avaliacao,
             'aprovados':         aprovados_count,
+            'reprovados':        projetos.filter(status='reprovado').count(),
             'media_conceito':    conceito_final,
             'alunos':            PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).select_related('user'),
+            'professores':       PerfilUsuario.objects.filter(tipo_usuario='professor', ativo=True).select_related('user')[:6],
+            'professores_count': PerfilUsuario.objects.filter(tipo_usuario='professor', ativo=True).count(),
             'graf_evolucao_12m': json.dumps(_dados_evolucao_mensal(12)),
             'graf_evolucao_6m':  json.dumps(_dados_evolucao_mensal(6)),
             'graf_evolucao_3m':  json.dumps(_dados_evolucao_mensal(3)),
@@ -335,6 +356,9 @@ def dashboard(request):
             'busca': busca,
             'total': projetos.count(),
             'aprovados': projetos.filter(status='aprovado').count(),
+            'alunos': PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).select_related('user'),
+            'alunos_count': PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count(),
+            'graf_categorias': json.dumps(_dados_por_categoria()),
         }
         return render(request, 'usuarios/dashboard_empresa.html', contexto)
 
@@ -346,6 +370,7 @@ def dashboard(request):
             'total': projetos.count(),
             'pendentes': projetos.filter(status='em_avaliacao').count(),
             'avaliados': projetos.exclude(status='em_avaliacao').count(),
+            'topicos_recentes': TopicoForum.objects.filter(ativo=True).select_related('autor').order_by('-criado_em')[:4],
         }
         return render(request, 'usuarios/dashboard_professor.html', contexto)
 
@@ -368,6 +393,8 @@ def dashboard(request):
             'em_avaliacao': em_avaliacao,
             'media_conceito': conceito_final,
             'form': None,
+            'topicos_recentes': TopicoForum.objects.filter(ativo=True).select_related('autor').order_by('-criado_em')[:5],
+            'nao_lidas': TopicoForum.objects.filter(ativo=True).count(),
         }
         return render(request, 'usuarios/dashboard_aluno.html', contexto)
 
@@ -521,7 +548,43 @@ def relatorio_usuarios(request):
         return redirect('dashboard')
 
     usuarios = PerfilUsuario.objects.select_related('user').all()
-    return render(request, 'usuarios/relatorio_usuarios.html', {'usuarios': usuarios})
+    projetos = ProjetoUsuario.objects.filter(ativo=True)
+
+    # Dados para gráficos
+    total_alunos     = PerfilUsuario.objects.filter(tipo_usuario='aluno', ativo=True).count()
+    total_professores= PerfilUsuario.objects.filter(tipo_usuario='professor', ativo=True).count()
+    total_coord      = PerfilUsuario.objects.filter(tipo_usuario='administracao', ativo=True).count()
+    total_empresas   = PerfilUsuario.objects.filter(tipo_usuario='empresa', ativo=True).count()
+    total_projetos   = projetos.count()
+    aprovados        = projetos.filter(status='aprovado').count()
+    em_avaliacao     = projetos.filter(status='em_avaliacao').count()
+    reprovados       = projetos.filter(status='reprovado').count()
+
+    return render(request, 'usuarios/relatorio_usuarios.html', {
+        'usuario': request.user,
+        'usuarios': usuarios,
+        'total_alunos':      total_alunos,
+        'total_professores': total_professores,
+        'total_coord':       total_coord,
+        'total_empresas':    total_empresas,
+        'total_projetos':    total_projetos,
+        'aprovados':         aprovados,
+        'em_avaliacao':      em_avaliacao,
+        'reprovados':        reprovados,
+        'graf_usuarios': json.dumps({
+            'labels': ['Alunos', 'Professores', 'Coordenadores', 'Empresas'],
+            'valores': [total_alunos, total_professores, total_coord, total_empresas],
+        }),
+        'graf_projetos': json.dumps({
+            'labels': ['Aprovados', 'Em Avaliação', 'Reprovados'],
+            'valores': [aprovados, em_avaliacao, reprovados],
+        }),
+        'graf_evolucao_12m': json.dumps(_dados_evolucao_mensal(12)),
+        'graf_evolucao_6m':  json.dumps(_dados_evolucao_mensal(6)),
+        'graf_evolucao_3m':  json.dumps(_dados_evolucao_mensal(3)),
+        'graf_categoria': json.dumps(_dados_por_categoria()),
+        'graf_semestre':  json.dumps(_dados_por_semestre()),
+    })
 
 
 # ─────────────────────────────────────────
@@ -829,4 +892,118 @@ def ver_curriculo_aluno(request, usuario_id):
         'habilidades_lista': habilidades_lista,
         'experiencia_lista': experiencia_lista,
         'formacao_lista': formacao_lista,
+    })
+
+
+# ─────────────────────────────────────────
+# COORDENAÇÃO — SIDEBAR PAGES
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def coord_todos_projetos(request):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        return redirect('dashboard')
+
+    busca     = request.GET.get('busca', '')
+    status_f  = request.GET.get('status', '')
+    cat_f     = request.GET.get('categoria', '')
+
+    projetos = ProjetoUsuario.objects.filter(ativo=True).select_related('usuario')
+    if busca:
+        projetos = projetos.filter(titulo__icontains=busca)
+    if status_f:
+        projetos = projetos.filter(status=status_f)
+    if cat_f:
+        projetos = projetos.filter(categoria=cat_f)
+
+    categorias = (ProjetoUsuario.objects.filter(ativo=True)
+                  .exclude(categoria='').values_list('categoria', flat=True)
+                  .distinct().order_by('categoria'))
+
+    return render(request, 'usuarios/coord_projetos.html', {
+        'usuario': request.user,
+        'projetos': projetos.order_by('-criado_em'),
+        'total': projetos.count(),
+        'busca': busca,
+        'status_f': status_f,
+        'cat_f': cat_f,
+        'categorias': categorias,
+        'em_avaliacao': projetos.filter(status='em_avaliacao').count(),
+        'aprovados': projetos.filter(status='aprovado').count(),
+        'reprovados': projetos.filter(status='reprovado').count(),
+    })
+
+
+@login_required(login_url='home')
+def coord_corpo_docente(request):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        return redirect('dashboard')
+
+    professores = PerfilUsuario.objects.filter(
+        tipo_usuario='professor', ativo=True
+    ).select_related('user')
+
+    return render(request, 'usuarios/coord_corpo_docente.html', {
+        'usuario': request.user,
+        'professores': professores,
+        'total': professores.count(),
+        'projetos_count': ProjetoUsuario.objects.filter(ativo=True).count(),
+    })
+
+
+@login_required(login_url='home')
+def coord_mensagens(request):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+    if not perfil or perfil.tipo_usuario != 'administracao':
+        return redirect('dashboard')
+    # Redireciona para o fórum geral
+    return redirect('forum_lista')
+
+
+# ─────────────────────────────────────────
+# MEUS PROJETOS (página dedicada do aluno)
+# ─────────────────────────────────────────
+
+@login_required(login_url='home')
+def meus_projetos(request):
+    perfil = PerfilUsuario.buscar_por_usuario(request.user)
+
+    projetos = ProjetoUsuario.objects.filter(
+        usuario=request.user, ativo=True
+    ).order_by('-criado_em')
+
+    if request.method == 'POST':
+        # Criar novo projeto via formulário inline
+        titulo = request.POST.get('titulo', '').strip()
+        descricao = request.POST.get('descricao', '').strip()
+        if titulo and descricao:
+            ProjetoUsuario.objects.create(
+                usuario=request.user,
+                titulo=titulo,
+                descricao=descricao,
+                categoria=request.POST.get('categoria', ''),
+                semestre=request.POST.get('semestre', ''),
+                tags=request.POST.get('tags', ''),
+                link_repositorio=request.POST.get('link_repositorio') or None,
+                link_demo=request.POST.get('link_demo') or None,
+            )
+            LogAtividade.registrar(request.user, 'create', 'Projeto criado.')
+            messages.success(request, 'Projeto criado com sucesso!')
+            return redirect('meus_projetos')
+        else:
+            messages.error(request, 'Preencha o título e a descrição.')
+
+    total        = projetos.count()
+    aprovados    = projetos.filter(status='aprovado').count()
+    em_avaliacao = projetos.filter(status='em_avaliacao').count()
+
+    return render(request, 'usuarios/meus_projetos.html', {
+        'usuario': request.user,
+        'perfil': perfil,
+        'projetos': projetos,
+        'total': total,
+        'aprovados': aprovados,
+        'em_avaliacao': em_avaliacao,
     })

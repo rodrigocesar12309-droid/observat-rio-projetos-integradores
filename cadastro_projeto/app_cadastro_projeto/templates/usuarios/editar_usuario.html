@@ -2,26 +2,130 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Editar Usuário</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Usuário — Coordenação | Faculdade Senac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{--navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;--orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;--green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;--red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;--ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;--bg:#F4F6FA;--card:#fff;--r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;}
+
+        header{background:var(--navy);border-bottom:3px solid var(--orange);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(27,58,107,.25);}
+        .brand{display:flex;align-items:center;gap:.75rem;}
+        .brand-icon{width:38px;height:38px;border-radius:9px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.95rem;font-weight:800;}
+        .brand-name{font-weight:700;font-size:.95rem;color:#fff;line-height:1.2;}
+        .brand-role{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);}
+        .nav-back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.75);text-decoration:none;}
+        .nav-back:hover{color:#fff;}
+
+        .toast-wrap{position:fixed;top:74px;right:1.25rem;z-index:200;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
+
+        main{max-width:580px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);margin-bottom:.3rem;}
+        .page-sub{font-size:.82rem;color:var(--muted);margin-bottom:2rem;}
+
+        /* USER CARD */
+        .user-badge{display:flex;align-items:center;gap:.875rem;background:var(--navy);border-radius:var(--r-lg);padding:1.25rem 1.5rem;margin-bottom:1.75rem;color:#fff;}
+        .user-av{width:48px;height:48px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:800;font-size:1.2rem;color:var(--navy);flex-shrink:0;}
+        .user-info-name{font-size:1rem;font-weight:700;}
+        .user-info-email{font-size:.78rem;color:rgba(255,255,255,.65);margin-top:.1rem;}
+
+        /* FORM */
+        .form-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.75rem;box-shadow:var(--sh);}
+        .field{margin-bottom:1.2rem;}
+        .field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.45rem;}
+        .field input,.field select{width:100%;padding:.65rem .9rem;border:1.5px solid var(--line);border-radius:var(--r);font-family:'Open Sans',sans-serif;font-size:.85rem;color:var(--ink);background:var(--bg);outline:none;transition:border-color .15s;}
+        .field input:focus,.field select:focus{border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.08);}
+        .field-row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;}
+        .form-footer{display:flex;gap:.75rem;justify-content:flex-end;padding-top:1.25rem;border-top:1px solid var(--line);margin-top:1.25rem;}
+        .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.25rem;border-radius:8px;font-family:'Open Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;transition:all .15s;}
+        .btn-ghost{border:1px solid var(--line);background:none;color:var(--ink-2);}
+        .btn-ghost:hover{background:var(--bg);}
+        .btn-navy{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(27,58,107,.25);}
+        .btn-navy:hover{background:var(--navy-dk);}
+
+        /* Erros de formulário */
+        .field-error{font-size:.72rem;color:var(--red);margin-top:.3rem;}
+        .field input.is-error,.field select.is-error{border-color:var(--red);}
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-700 min-h-screen p-6">
-    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm max-w-lg mx-auto p-6">
-        <h2 class="text-xl font-bold text-slate-800 mb-4">Editar Usuário</h2>
-        <form method="POST" class="space-y-4">
+<body>
+
+{% if messages %}
+<div class="toast-wrap">{% for m in messages %}<div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>{% endfor %}</div>
+{% endif %}
+
+<header>
+    <div class="brand">
+        <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div><div class="brand-name">Faculdade Senac</div><div class="brand-role">Coordenação Acadêmica</div></div>
+    </div>
+    <a href="{% url 'relatorio_usuarios' %}" class="nav-back">
+        <i class="fas fa-arrow-left"></i> Voltar ao Relatório
+    </a>
+</header>
+
+<main>
+    <div class="page-title">Editar Usuário</div>
+    <div class="page-sub">Atualize os dados do usuário abaixo</div>
+
+    <!-- Info do usuário -->
+    <div class="user-badge">
+        <div class="user-av">{{ usuario.first_name|first|upper|default:"U" }}</div>
+        <div>
+            <div class="user-info-name">{{ usuario.first_name|default:usuario.username }}</div>
+            <div class="user-info-email">{{ usuario.email }}</div>
+        </div>
+    </div>
+
+    <div class="form-card">
+        <form method="POST">
             {% csrf_token %}
-            {{ form.as_p }}
-            <div class="flex gap-3 pt-4 border-t border-slate-100">
-                <a href="{% url 'relatorio_usuarios' %}" 
-                   class="w-1/2 bg-slate-100 hover:bg-slate-200 text-slate-600 font-semibold py-2.5 rounded-xl text-sm text-center">
-                   Cancelar
-                </a>
-                <button type="submit" 
-                        class="w-1/2 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 rounded-xl text-sm">
-                    Salvar
+
+            <div class="field">
+                <label>Nome Completo</label>
+                <input type="text" name="nome_completo" value="{{ form.nome_completo.value|default:'' }}" placeholder="Nome completo do usuário">
+                {% if form.nome_completo.errors %}<div class="field-error">{{ form.nome_completo.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label>Matrícula</label>
+                    <input type="text" name="matricula" value="{{ form.matricula.value|default:'' }}" placeholder="Ex: 202610">
+                </div>
+                <div class="field">
+                    <label>Telefone</label>
+                    <input type="text" name="telefone" value="{{ form.telefone.value|default:'' }}" placeholder="(81) 99999-9999">
+                </div>
+            </div>
+
+            <div class="field">
+                <label>Tipo de Perfil</label>
+                <select name="tipo_usuario">
+                    {% for value, label in form.tipo_usuario.field.choices %}
+                    <option value="{{ value }}" {% if form.tipo_usuario.value == value %}selected{% endif %}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.tipo_usuario.errors %}<div class="field-error">{{ form.tipo_usuario.errors.0 }}</div>{% endif %}
+            </div>
+
+            <div class="form-footer">
+                <a href="{% url 'relatorio_usuarios' %}" class="btn btn-ghost">Cancelar</a>
+                <button type="submit" class="btn btn-navy">
+                    <i class="fas fa-save"></i> Salvar Alterações
                 </button>
             </div>
         </form>
     </div>
+</main>
+
+<script>
+setTimeout(()=>{document.querySelectorAll('.toast').forEach(t=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);});},4000);
+</script>
 </body>
 </html>

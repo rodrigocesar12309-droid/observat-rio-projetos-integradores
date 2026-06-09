@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Todos os Projetos — Coordenação | Faculdade Senac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{--navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;--orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;--green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;--amber:#d69e2e;--amber-lt:#fffbeb;--amber-bd:#fefcbf;--red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;--ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;--bg:#F4F6FA;--card:#fff;--sidebar-w:230px;--header-h:58px;--r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);}
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;display:flex;}
+        .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;}
+        .sb-logo{display:flex;align-items:center;gap:.75rem;padding:1.2rem 1.1rem .9rem;border-bottom:1px solid rgba(255,255,255,.08);}
+        .sb-logo-icon{width:36px;height:36px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.9rem;font-weight:800;}
+        .sb-logo-text{font-size:.85rem;font-weight:700;color:#fff;}.sb-logo-sub{font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+        .sb-user{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.07);}
+        .sb-av{width:34px;height:34px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.8rem;color:var(--navy);}
+        .sb-uname{font-size:.78rem;font-weight:600;color:#fff;}.sb-urole{font-size:.62rem;color:rgba(255,255,255,.45);}
+        .sb-section{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:.7rem 1.1rem .25rem;}
+        .sb-nav{list-style:none;padding:0 .6rem;}
+        .sb-nav li{margin-bottom:.1rem;}
+        .sb-nav a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.65);text-decoration:none;transition:all .15s;position:relative;}
+        .sb-nav a:hover{background:rgba(255,255,255,.09);color:#fff;}.sb-nav a.active{background:var(--orange);color:var(--navy);font-weight:700;}
+        .sb-badge{background:var(--red);color:#fff;font-size:.58rem;font-weight:700;padding:.1rem .4rem;border-radius:50px;margin-left:auto;}
+        .sb-bottom{padding:.6rem;border-top:1px solid rgba(255,255,255,.07);margin-top:auto;}
+        .sb-bottom a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s;}
+        .sb-bottom a:hover{background:rgba(255,255,255,.09);color:#fff;}
+        .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+        .topbar{background:var(--card);height:var(--header-h);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:40;}
+        .tb-right{display:flex;align-items:center;gap:.75rem;}
+        .tb-user{display:flex;align-items:center;gap:.5rem;}
+        .tb-av{width:30px;height:30px;border-radius:50%;background:var(--navy);display:grid;place-items:center;font-weight:700;font-size:.72rem;color:#fff;}
+        .tb-uinfo strong{display:block;font-size:.78rem;font-weight:700;color:var(--ink);}
+        .tb-uinfo span{font-size:.65rem;color:var(--muted);}
+        .btn-act{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .95rem;border-radius:50px;border:none;font-family:'Open Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;}
+        .btn-navy{background:var(--navy);color:#fff;}
+        .content{padding:1.75rem;flex:1;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);}
+        .page-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem;margin-bottom:1.4rem;}
+        .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:1.5rem;}
+        @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+        .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.875rem;}
+        .kpi-icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:.95rem;flex-shrink:0;}
+        .kpi-val{font-size:1.45rem;font-weight:800;color:var(--ink);line-height:1;}
+        .kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+        .filtros{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.25rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;box-shadow:var(--sh);}
+        .filtros input,.filtros select{padding:.45rem .875rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-family:'Open Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;transition:border-color .15s;}
+        .filtros input:focus,.filtros select:focus{border-color:var(--navy);}
+        .filtros input{flex:1;min-width:180px;}
+        .btn-filtrar{padding:.45rem 1rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;}
+        .btn-limpar{padding:.45rem .9rem;border-radius:8px;border:1px solid var(--line);background:none;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;color:var(--muted);cursor:pointer;text-decoration:none;}
+        .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;}
+        table{width:100%;border-collapse:collapse;}
+        thead th{padding:.7rem 1.25rem;text-align:left;font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);background:var(--bg);border-bottom:1px solid var(--line);}
+        tbody tr{border-bottom:1px solid var(--line);transition:background .12s;}
+        tbody tr:last-child{border-bottom:none;}
+        tbody tr:hover{background:#FAFBFF;}
+        tbody td{padding:.875rem 1.25rem;font-size:.82rem;vertical-align:middle;}
+        .pill{display:inline-flex;align-items:center;gap:.25rem;padding:.18rem .6rem;border-radius:50px;font-size:.67rem;font-weight:700;}
+        .pill::before{content:'';width:6px;height:6px;border-radius:50%;}
+        .pill-green{background:var(--green-lt);color:#276749;}.pill-green::before{background:var(--green);}
+        .pill-amber{background:var(--amber-lt);color:#7b5c16;}.pill-amber::before{background:var(--amber);}
+        .pill-red{background:var(--red-lt);color:#9b2c2c;}.pill-red::before{background:var(--red);}
+        .pill-navy{background:var(--navy-lt);color:var(--navy-dk);}
+        .tag{background:var(--navy-lt);color:var(--navy);font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:50px;}
+        .btn-sm{padding:.28rem .7rem;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;font-family:'Open Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.25rem;}
+        .toasts{position:fixed;top:68px;right:1.25rem;z-index:300;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
+    </style>
+</head>
+<body>
+{% if messages %}
+<div class="toasts">{% for m in messages %}<div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>{% endfor %}</div>
+{% endif %}
+
+<aside class="sidebar">
+    <div class="sb-logo"><div class="sb-logo-icon"><i class="fas fa-graduation-cap"></i></div><div><div class="sb-logo-text">Faculdade Senac</div><div class="sb-logo-sub">Coordenação Acadêmica</div></div></div>
+    <div class="sb-user"><div class="sb-av">{{ usuario.first_name|first|upper|default:"C" }}</div><div><div class="sb-uname">{{ usuario.first_name|default:usuario.username }}</div><div class="sb-urole">Coordenador do Curso</div></div></div>
+    <div class="sb-section">Painel</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Painel Geral</a></li>
+        <li><a href="{% url 'coord_todos_projetos' %}" class="active"><i class="fas fa-folder-open"></i> Todos os Projetos <span class="sb-badge">{{ total }}</span></a></li>
+        <li><a href="{% url 'coord_corpo_docente' %}"><i class="fas fa-users"></i> Corpo Docente</a></li>
+        <li><a href="{% url 'relatorio_usuarios' %}"><i class="fas fa-chart-bar"></i> Relatórios</a></li>
+        <li><a href="{% url 'painel_avaliacao' %}"><i class="fas fa-star"></i> Avaliações {% if em_avaliacao > 0 %}<span class="sb-badge">{{ em_avaliacao }}</span>{% endif %}</a></li>
+        <li><a href="{% url 'forum_lista' %}"><i class="fas fa-comments"></i> Mensagens</a></li>
+    </ul>
+    <div class="sb-bottom"><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a></div>
+</aside>
+
+<div class="main-area">
+    <div class="topbar">
+        <div style="font-size:.85rem;color:var(--muted);"><a href="{% url 'dashboard' %}" style="color:var(--muted);text-decoration:none;">Início</a> / <strong style="color:var(--ink);">Todos os Projetos</strong></div>
+        <div class="tb-right">
+            <div class="tb-user">
+                <div class="tb-av">{{ usuario.first_name|first|upper|default:"C" }}</div>
+                <div class="tb-uinfo"><strong>{{ usuario.first_name|default:usuario.username }}</strong><span>Coordenador</span></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-title">Todos os Projetos</div>
+        <div class="page-sub">Gerencie e acompanhe todos os projetos integradores do semestre</div>
+
+        <div class="kpi-row">
+            <div class="kpi-card"><div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-folder-open"></i></div><div><div class="kpi-val">{{ total }}</div><div class="kpi-lbl">Total de Projetos</div></div></div>
+            <div class="kpi-card"><div class="kpi-icon" style="background:var(--amber-lt);color:var(--amber);"><i class="fas fa-clock"></i></div><div><div class="kpi-val">{{ em_avaliacao }}</div><div class="kpi-lbl">Em Avaliação</div></div></div>
+            <div class="kpi-card"><div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-check-circle"></i></div><div><div class="kpi-val">{{ aprovados }}</div><div class="kpi-lbl">Aprovados</div></div></div>
+            <div class="kpi-card"><div class="kpi-icon" style="background:var(--red-lt);color:var(--red);"><i class="fas fa-times-circle"></i></div><div><div class="kpi-val">{{ reprovados }}</div><div class="kpi-lbl">Reprovados</div></div></div>
+        </div>
+
+        <form method="GET">
+            <div class="filtros">
+                <input type="text" name="busca" value="{{ busca }}" placeholder="Buscar por título…">
+                <select name="status">
+                    <option value="">Todos os status</option>
+                    <option value="em_avaliacao" {% if status_f == 'em_avaliacao' %}selected{% endif %}>Em Avaliação</option>
+                    <option value="aprovado" {% if status_f == 'aprovado' %}selected{% endif %}>Aprovado</option>
+                    <option value="reprovado" {% if status_f == 'reprovado' %}selected{% endif %}>Reprovado</option>
+                </select>
+                <select name="categoria">
+                    <option value="">Todas as categorias</option>
+                    {% for cat in categorias %}<option value="{{ cat }}" {% if cat_f == cat %}selected{% endif %}>{{ cat }}</option>{% endfor %}
+                </select>
+                <button type="submit" class="btn-filtrar"><i class="fas fa-search"></i> Filtrar</button>
+                {% if busca or status_f or cat_f %}<a href="{% url 'coord_todos_projetos' %}" class="btn-limpar">✕ Limpar</a>{% endif %}
+            </div>
+        </form>
+
+        <div class="card">
+            <div style="overflow-x:auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Projeto</th><th>Aluno</th><th>Categoria</th><th>Semestre</th><th>Status</th><th>Conceito</th><th>Links</th><th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in projetos %}
+                        <tr>
+                            <td style="font-weight:600;color:var(--ink);max-width:200px;">{{ p.titulo }}</td>
+                            <td>{{ p.usuario.first_name|default:p.usuario.username }}</td>
+                            <td>{{ p.categoria|default:"—" }}</td>
+                            <td>{{ p.semestre|default:"—" }}</td>
+                            <td>
+                                <span class="pill {% if p.status == 'aprovado' %}pill-green{% elif p.status == 'em_avaliacao' %}pill-amber{% else %}pill-red{% endif %}">
+                                    {{ p.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if p.conceito %}
+                                <span class="pill pill-navy">{{ p.conceito }}</span>
+                                {% else %}—{% endif %}
+                            </td>
+                            <td style="white-space:nowrap;">
+                                {% if p.link_repositorio %}<a href="{{ p.link_repositorio }}" target="_blank" class="btn-sm" style="background:var(--bg);color:var(--ink-2);border:1px solid var(--line);margin-right:.3rem;"><i class="fab fa-github"></i> Repo</a>{% endif %}
+                                {% if p.link_demo %}<a href="{{ p.link_demo }}" target="_blank" class="btn-sm" style="background:var(--bg);color:var(--ink-2);border:1px solid var(--line);"><i class="fas fa-external-link-alt"></i> Demo</a>{% endif %}
+                                {% if not p.link_repositorio and not p.link_demo %}<span style="color:var(--muted);font-size:.75rem;">—</span>{% endif %}
+                            </td>
+                            <td style="white-space:nowrap;">
+                                <a href="{% url 'ver_curriculo_aluno' p.usuario.id %}" class="btn-sm" style="background:var(--navy-lt);color:var(--navy);margin-right:.3rem;"><i class="fas fa-id-card"></i> Perfil</a>
+                                {% if p.conceito %}
+                                <form method="POST" action="{% url 'encerrar_projeto' p.id %}" style="display:inline;" onsubmit="return confirm('Encerrar projeto?')">{% csrf_token %}<button type="submit" class="btn-sm" style="background:var(--red-lt);color:var(--red);">{% if p.encerrado %}<i class="fas fa-lock-open"></i> Reabrir{% else %}<i class="fas fa-lock"></i> Encerrar{% endif %}</button></form>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="8" style="text-align:center;padding:3rem;color:var(--muted);"><i class="fas fa-folder-open" style="display:block;font-size:1.5rem;margin-bottom:.5rem;opacity:.3;"></i>Nenhum projeto encontrado</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+<script>setTimeout(()=>{document.querySelectorAll('.toast').forEach(t=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);});},4000);</script>
+</body>
+</html>

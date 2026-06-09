@@ -3,98 +3,79 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Fórum — Observatório de Projetos</title>
+    <title>Fórum da Turma — Faculdade Senac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800&family=Geist:wght@400;500;600&display=swap">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --v:#5B47E0;--v-lt:#EDE9FC;--v-dk:#3D2DB8;
-            --em:#10B89A;--em-lt:#D0F5EF;
-            --am:#F59E0B;--am-lt:#FEF3C7;
-            --ro:#F43F5E;--ro-lt:#FFE4EA;
-            --ink:#0D0D14;--ink-2:#3A3A4A;--muted:#7B7B96;
-            --line:#EAEAF0;--bg:#F7F7FB;--card:#FFFFFF;
-            --r:12px;--r-lg:18px;
-            --sh:0 1px 3px rgba(0,0,0,.06),0 4px 16px rgba(0,0,0,.05);
-        }
+        :root{--navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;--orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;--green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;--amber:#d69e2e;--amber-lt:#fffbeb;--amber-bd:#fefcbf;--red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;--ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;--bg:#F4F6FA;--card:#fff;--r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-        body{font-family:'Geist',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;}
 
-        header{background:var(--card);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:62px;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.04)}
-        .brand{display:flex;align-items:center;gap:.75rem}
-        .brand-icon{width:36px;height:36px;border-radius:9px;background:linear-gradient(135deg,var(--v),#8B5CF6);display:grid;place-items:center;color:#fff;font-size:.85rem}
-        .brand-name{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.9rem;color:var(--ink)}
-        .brand-role{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--v)}
-        .nav-right{display:flex;align-items:center;gap:1rem}
-        .nav-back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:var(--muted);text-decoration:none;transition:color .15s}
-        .nav-back:hover{color:var(--ink)}
-        .nav-logout{width:34px;height:34px;border-radius:8px;border:1px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;color:var(--muted);text-decoration:none;transition:all .15s}
-        .nav-logout:hover{background:var(--ro-lt);border-color:var(--ro);color:var(--ro)}
+        header{background:var(--navy);border-bottom:3px solid var(--orange);display:flex;align-items:center;justify-content:space-between;padding:0 2rem;height:64px;position:sticky;top:0;z-index:10;box-shadow:0 2px 12px rgba(27,58,107,.25);}
+        .brand{display:flex;align-items:center;gap:.75rem;}
+        .brand-icon{width:38px;height:38px;border-radius:9px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.95rem;font-weight:800;}
+        .brand-name{font-weight:700;font-size:.95rem;color:#fff;line-height:1.2;}
+        .brand-role{font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--orange);}
+        .nav-right{display:flex;align-items:center;gap:.875rem;}
+        .nav-back{display:inline-flex;align-items:center;gap:.4rem;font-size:.82rem;font-weight:600;color:rgba(255,255,255,.75);text-decoration:none;}
+        .nav-back:hover{color:#fff;}
+        .nav-logout{width:34px;height:34px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:none;cursor:pointer;display:grid;place-items:center;color:rgba(255,255,255,.65);text-decoration:none;transition:all .15s;}
+        .nav-logout:hover{background:var(--red-lt);border-color:var(--red);color:var(--red);}
 
-        main{max-width:900px;margin:0 auto;padding:2rem 1.5rem 5rem}
+        .toast-wrap{position:fixed;top:74px;right:1.25rem;z-index:200;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
 
-        .page-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.75rem}
-        .page-head h2{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.6rem;color:var(--ink)}
-        .page-head p{font-size:.85rem;color:var(--muted);margin-top:.25rem}
+        main{max-width:900px;margin:0 auto;padding:2rem 1.5rem 5rem;}
+        .page-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:1rem;margin-bottom:1.75rem;}
+        .page-head h2{font-size:1.6rem;font-weight:800;color:var(--navy);}
+        .page-head p{font-size:.85rem;color:var(--muted);margin-top:.25rem;}
 
-        .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:9px;font-family:'Geist',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;border:none;text-decoration:none;transition:all .15s}
-        .btn-v{background:var(--v);color:#fff;box-shadow:0 2px 8px rgba(91,71,224,.3)}
-        .btn-v:hover{background:var(--v-dk);transform:translateY(-1px)}
+        .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.6rem 1.2rem;border-radius:8px;border:none;font-family:'Open Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:all .15s;text-decoration:none;white-space:nowrap;}
+        .btn-navy{background:var(--navy);color:#fff;box-shadow:0 2px 8px rgba(27,58,107,.25);}
+        .btn-navy:hover{background:var(--navy-dk);}
 
-        .filtros{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center}
-        .filtros input,.filtros select{padding:.45rem .875rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-family:'Geist',sans-serif;font-size:.82rem;color:var(--ink);outline:none;transition:border-color .15s}
-        .filtros input:focus,.filtros select:focus{border-color:var(--v)}
-        .filtros input{flex:1;min-width:180px}
-        .btn-filtrar{padding:.45rem 1rem;border-radius:8px;border:none;background:var(--v);color:#fff;font-family:'Geist',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer}
+        .filtros{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1rem 1.25rem;margin-bottom:1.5rem;display:flex;gap:.75rem;flex-wrap:wrap;align-items:center;box-shadow:var(--sh);}
+        .filtros input,.filtros select{padding:.45rem .875rem;border:1px solid var(--line);border-radius:8px;background:var(--bg);font-family:'Open Sans',sans-serif;font-size:.82rem;color:var(--ink);outline:none;transition:border-color .15s;}
+        .filtros input:focus,.filtros select:focus{border-color:var(--navy);}
+        .filtros input{flex:1;min-width:180px;}
+        .btn-filtrar{padding:.45rem 1rem;border-radius:8px;border:none;background:var(--navy);color:#fff;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;}
+        .btn-limpar{font-size:.8rem;color:var(--muted);text-decoration:none;}
 
-        .topico-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.25rem 1.4rem;margin-bottom:.85rem;box-shadow:var(--sh);display:flex;gap:1rem;align-items:flex-start;transition:box-shadow .15s,transform .15s;text-decoration:none;color:inherit}
-        .topico-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.09);transform:translateY(-1px)}
-        .topico-icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:1rem;flex-shrink:0}
-        .topico-body{flex:1;min-width:0}
-        .topico-titulo{font-family:'Bricolage Grotesque',sans-serif;font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap}
-        .pin{font-size:.65rem;background:var(--am-lt);color:#92400E;padding:.15rem .5rem;border-radius:50px;font-weight:700}
-        .topico-meta{font-size:.75rem;color:var(--muted);display:flex;gap:1rem;flex-wrap:wrap}
-        .topico-meta span{display:flex;align-items:center;gap:.3rem}
-        .topico-stats{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;flex-shrink:0}
-        .stat-num{font-family:'Bricolage Grotesque',sans-serif;font-weight:800;font-size:1.2rem;color:var(--ink);line-height:1}
-        .stat-label{font-size:.65rem;color:var(--muted)}
+        .topico-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.25rem 1.4rem;margin-bottom:.85rem;box-shadow:var(--sh);display:flex;gap:1rem;align-items:flex-start;transition:box-shadow .15s,transform .15s;text-decoration:none;color:inherit;border-left:3px solid var(--navy);}
+        .topico-card:hover{box-shadow:0 6px 20px rgba(0,0,0,.09);transform:translateY(-1px);}
+        .topico-icon{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;font-size:1rem;flex-shrink:0;}
+        .topico-body{flex:1;min-width:0;}
+        .topico-titulo{font-weight:700;font-size:.95rem;color:var(--ink);margin-bottom:.3rem;display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;}
+        .pin{font-size:.65rem;background:var(--amber-lt);color:#92400E;padding:.15rem .5rem;border-radius:50px;font-weight:700;}
+        .topico-meta{font-size:.75rem;color:var(--muted);display:flex;gap:1rem;flex-wrap:wrap;}
+        .topico-meta span{display:flex;align-items:center;gap:.3rem;}
+        .topico-stats{display:flex;flex-direction:column;align-items:flex-end;gap:.3rem;flex-shrink:0;}
+        .stat-num{font-weight:800;font-size:1.2rem;color:var(--navy);line-height:1;}
+        .stat-label{font-size:.65rem;color:var(--muted);}
 
-        .cat-badge{display:inline-block;padding:.15rem .55rem;border-radius:50px;font-size:.67rem;font-weight:700}
-        .cat-duvida{background:var(--v-lt);color:var(--v-dk)}
-        .cat-discussao{background:var(--em-lt);color:#066D5B}
-        .cat-aviso{background:var(--am-lt);color:#92400E}
-        .cat-projeto{background:var(--ro-lt);color:#9F1239}
+        .cat-badge{display:inline-block;padding:.15rem .55rem;border-radius:50px;font-size:.67rem;font-weight:700;}
+        .cat-duvida{background:var(--navy-lt);color:var(--navy-dk);}
+        .cat-discussao{background:var(--green-lt);color:#066D5B;}
+        .cat-aviso{background:var(--amber-lt);color:#92400E;}
+        .cat-projeto{background:var(--red-lt);color:#9F1239;}
 
-        .empty{text-align:center;padding:4rem 1rem;color:var(--muted)}
-        .empty i{font-size:2rem;display:block;margin-bottom:.75rem;opacity:.4}
-
-        .toast-wrap{position:fixed;top:72px;right:1.25rem;z-index:200;display:flex;flex-direction:column;gap:.5rem}
-        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid}
-        .toast.success{background:#F0FDF9;color:#0A7A64;border-color:#A7F3E4}
-        .toast.error{background:#FFF1F3;color:#BE1234;border-color:#FECDD8}
-
-        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-        .topico-card{animation:fadeUp .3s ease both}
+        .empty{text-align:center;padding:4rem 1rem;color:var(--muted);}
+        .empty i{font-size:2rem;display:block;margin-bottom:.75rem;opacity:.4;}
     </style>
 </head>
 <body>
 
 {% if messages %}
-<div class="toast-wrap">
-    {% for m in messages %}
-    <div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>
-    {% endfor %}
-</div>
+<div class="toast-wrap">{% for m in messages %}<div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>{% endfor %}</div>
 {% endif %}
 
 <header>
     <div class="brand">
         <div class="brand-icon"><i class="fas fa-graduation-cap"></i></div>
-        <div>
-            <div class="brand-name">Observatório de Projetos</div>
-            <div class="brand-role">Fórum</div>
-        </div>
+        <div><div class="brand-name">Faculdade Senac</div><div class="brand-role">Fórum da Turma</div></div>
     </div>
     <div class="nav-right">
         <a href="{% url 'dashboard' %}" class="nav-back"><i class="fas fa-arrow-left"></i> Dashboard</a>
@@ -108,12 +89,9 @@
             <h2>Fórum da Turma</h2>
             <p>{{ total }} tópico{{ total|pluralize }} · Tire dúvidas, discuta projetos e compartilhe ideias</p>
         </div>
-        <a href="{% url 'forum_novo_topico' %}" class="btn btn-v">
-            <i class="fas fa-plus"></i> Novo Tópico
-        </a>
+        <a href="{% url 'forum_novo_topico' %}" class="btn btn-navy"><i class="fas fa-plus"></i> Novo Tópico</a>
     </div>
 
-    <!-- FILTROS -->
     <form method="GET">
         <div class="filtros">
             <input type="text" name="busca" value="{{ busca }}" placeholder="Buscar tópico…">
@@ -125,22 +103,17 @@
                 <option value="projeto" {% if categoria == 'projeto' %}selected{% endif %}>Projeto</option>
             </select>
             <button type="submit" class="btn-filtrar"><i class="fas fa-search"></i> Filtrar</button>
-            {% if busca or categoria %}
-            <a href="{% url 'forum_lista' %}" style="font-size:.8rem;color:var(--muted);text-decoration:none;">✕ Limpar</a>
-            {% endif %}
+            {% if busca or categoria %}<a href="{% url 'forum_lista' %}" class="btn-limpar">✕ Limpar</a>{% endif %}
         </div>
     </form>
 
-    <!-- TÓPICOS -->
     {% for topico in topicos %}
     {% with nr=topico.total_respostas %}
-    <a href="{% url 'forum_topico' topico.id %}" class="topico-card" style="animation-delay:{{ forloop.counter0 }}0ms">
-        <div class="topico-icon
-            {% if topico.categoria == 'duvida' %}" style="background:var(--v-lt);color:var(--v)"><i class="fas fa-question-circle"></i>
-            {% elif topico.categoria == 'discussao' %}" style="background:var(--em-lt);color:var(--em)"><i class="fas fa-comments"></i>
-            {% elif topico.categoria == 'aviso' %}" style="background:var(--am-lt);color:var(--am)"><i class="fas fa-bullhorn"></i>
-            {% else %}" style="background:var(--ro-lt);color:var(--ro)"><i class="fas fa-folder-open"></i>
-            {% endif %}
+    <a href="{% url 'forum_topico' topico.id %}" class="topico-card">
+        <div class="topico-icon {% if topico.categoria == 'duvida' %}" style="background:var(--navy-lt);color:var(--navy)"><i class="fas fa-question-circle"></i>
+        {% elif topico.categoria == 'discussao' %}" style="background:var(--green-lt);color:var(--green)"><i class="fas fa-comments"></i>
+        {% elif topico.categoria == 'aviso' %}" style="background:var(--amber-lt);color:var(--amber)"><i class="fas fa-bullhorn"></i>
+        {% else %}" style="background:var(--red-lt);color:var(--red)"><i class="fas fa-folder-open"></i>{% endif %}
         </div>
         <div class="topico-body">
             <div class="topico-titulo">
@@ -160,20 +133,12 @@
     </a>
     {% endwith %}
     {% empty %}
-    <div class="empty">
-        <i class="fas fa-comments"></i>
-        <p>Nenhum tópico ainda. Seja o primeiro a criar um!</p>
-    </div>
+    <div class="empty"><i class="fas fa-comments"></i><p>Nenhum tópico ainda. Seja o primeiro a criar um!</p></div>
     {% endfor %}
 </main>
 
 <script>
-setTimeout(() => {
-    document.querySelectorAll('.toast').forEach(t => {
-        t.style.opacity = '0'; t.style.transition = 'opacity .4s';
-        setTimeout(() => t.remove(), 400);
-    });
-}, 4000);
+setTimeout(()=>{document.querySelectorAll('.toast').forEach(t=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);});},4000);
 </script>
 </body>
 </html>

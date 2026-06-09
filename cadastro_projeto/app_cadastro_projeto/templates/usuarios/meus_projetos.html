@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Projetos — Faculdade Senac</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root{
+            --navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;
+            --orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;
+            --green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;
+            --amber:#d69e2e;--amber-lt:#fffbeb;--amber-bd:#fefcbf;
+            --red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;
+            --purple:#7C3AED;--purple-lt:#F5F3FF;
+            --ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;
+            --bg:#F4F6FA;--card:#fff;--sidebar-w:240px;--header-h:60px;
+            --r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);
+        }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;display:flex;}
+
+        /* SIDEBAR (idêntica ao dashboard_aluno) */
+        .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;}
+        .sb-logo{display:flex;align-items:center;gap:.75rem;padding:1.25rem 1.25rem 1rem;border-bottom:1px solid rgba(255,255,255,.1);}
+        .logo-icon{width:38px;height:38px;border-radius:9px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:1rem;font-weight:800;flex-shrink:0;}
+        .logo-text{font-size:.88rem;font-weight:700;color:#fff;line-height:1.3;}
+        .logo-sub{font-size:.62rem;color:rgba(255,255,255,.55);text-transform:uppercase;letter-spacing:.1em;}
+        .sb-user{display:flex;align-items:center;gap:.75rem;padding:1rem 1.25rem;border-bottom:1px solid rgba(255,255,255,.08);margin-bottom:.5rem;}
+        .sb-av{width:36px;height:36px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.85rem;color:var(--navy);}
+        .sb-uname{font-size:.8rem;font-weight:600;color:#fff;}
+        .sb-urole{font-size:.65rem;color:rgba(255,255,255,.5);}
+        .sb-section{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);padding:.75rem 1.25rem .3rem;}
+        .sb-nav{list-style:none;padding:0 .75rem;flex:1;}
+        .sb-nav li{margin-bottom:.15rem;}
+        .sb-nav a{display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:8px;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.7);text-decoration:none;transition:all .15s;position:relative;}
+        .sb-nav a:hover{background:rgba(255,255,255,.1);color:#fff;}
+        .sb-nav a.active{background:var(--orange);color:var(--navy);font-weight:700;}
+        .sb-badge{position:absolute;right:.6rem;background:var(--red);color:#fff;font-size:.62rem;font-weight:700;padding:.1rem .45rem;border-radius:50px;}
+        .sb-nav a.active .sb-badge{background:var(--navy);}
+        .sb-bottom{padding:.75rem;border-top:1px solid rgba(255,255,255,.08);}
+        .sb-bottom a{display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:8px;font-size:.82rem;font-weight:500;color:rgba(255,255,255,.6);text-decoration:none;transition:all .15s;}
+        .sb-bottom a:hover{background:rgba(255,255,255,.1);color:#fff;}
+
+        /* MAIN */
+        .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+        .topbar{background:var(--card);height:var(--header-h);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:40;box-shadow:0 1px 4px rgba(0,0,0,.05);}
+        .tb-right{display:flex;align-items:center;gap:.875rem;}
+        .tb-av{width:32px;height:32px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.78rem;color:var(--navy);}
+        .tb-uinfo strong{display:block;font-size:.78rem;font-weight:700;color:var(--ink);}
+        .tb-uinfo span{font-size:.65rem;color:var(--muted);}
+        .btn-new{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;border-radius:50px;border:none;background:var(--navy);color:#fff;font-family:'Open Sans',sans-serif;font-size:.78rem;font-weight:700;cursor:pointer;text-decoration:none;box-shadow:0 2px 8px rgba(27,58,107,.25);}
+        .btn-new:hover{background:var(--navy-dk);}
+
+        /* CONTENT */
+        .content{padding:1.75rem;flex:1;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);}
+        .page-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem;margin-bottom:1.5rem;}
+
+        /* KPIS */
+        .kpi-row{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.75rem;}
+        @media(max-width:700px){.kpi-row{grid-template-columns:1fr;}}
+        .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.1rem 1.25rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.875rem;}
+        .kpi-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:1rem;flex-shrink:0;}
+        .kpi-val{font-size:1.5rem;font-weight:800;color:var(--ink);line-height:1;}
+        .kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+
+        /* PROJETOS GRID */
+        .projetos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:1.25rem;}
+        .proj-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.5rem;box-shadow:var(--sh);display:flex;flex-direction:column;gap:.85rem;border-top:3px solid var(--navy);transition:box-shadow .2s,transform .2s;}
+        .proj-card:hover{box-shadow:0 8px 24px rgba(0,0,0,.1);transform:translateY(-2px);}
+        .proj-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+        .proj-titulo{font-weight:700;font-size:.95rem;color:var(--navy);line-height:1.35;}
+        .status-pill{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .65rem;border-radius:50px;font-size:.68rem;font-weight:700;white-space:nowrap;flex-shrink:0;}
+        .status-pill::before{content:'';width:6px;height:6px;border-radius:50%;}
+        .pill-green{background:var(--green-lt);color:#276749;}.pill-green::before{background:var(--green);}
+        .pill-amber{background:var(--amber-lt);color:#7b5c16;}.pill-amber::before{background:var(--amber);}
+        .pill-rose{background:var(--red-lt);color:#9b2c2c;}.pill-rose::before{background:var(--red);}
+        .proj-desc{font-size:.82rem;color:var(--muted);line-height:1.6;}
+        .proj-meta{display:flex;flex-wrap:wrap;gap:.4rem;}
+        .meta-tag{display:inline-flex;align-items:center;gap:.25rem;background:var(--navy-lt);color:var(--navy);font-size:.65rem;font-weight:600;padding:.15rem .5rem;border-radius:50px;}
+        .conceito-badge{display:inline-block;padding:.18rem .6rem;border-radius:50px;font-size:.7rem;font-weight:700;}
+        .c-Excelente{background:var(--navy-lt);color:var(--navy-dk);}
+        .c-Ótimo{background:#F5F3FF;color:#6D28D9;}
+        .c-Bom{background:var(--green-lt);color:#276749;}
+        .c-Suficiente{background:var(--amber-lt);color:#92400E;}
+        .c-Insuficiente{background:var(--red-lt);color:#9b2c2c;}
+        .proj-feedback{background:#f8f9ff;border:1px solid var(--navy-lt);border-radius:var(--r);padding:.875rem 1rem;font-size:.8rem;color:var(--ink-2);line-height:1.6;}
+        .proj-feedback .fb-label{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.3rem;}
+        .proj-links{display:flex;gap:.5rem;flex-wrap:wrap;margin-top:auto;padding-top:.75rem;border-top:1px solid var(--line);}
+        .link-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .8rem;border-radius:7px;font-size:.75rem;font-weight:600;text-decoration:none;border:1px solid var(--line);color:var(--ink-2);background:var(--bg);transition:all .15s;}
+        .link-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-lt);}
+        .link-btn.primary{background:var(--navy);color:#fff;border-color:var(--navy);}
+        .link-btn.danger{background:var(--red-lt);color:var(--red);border-color:var(--red-bd);}
+
+        /* EMPTY */
+        .empty{text-align:center;padding:4rem 1rem;color:var(--muted);}
+        .empty i{font-size:2.5rem;display:block;margin-bottom:1rem;opacity:.3;color:var(--navy);}
+
+        /* MODAL */
+        .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center;}
+        .modal-overlay.active{display:flex;}
+        .modal{background:var(--card);border-radius:var(--r-lg);padding:1.75rem;width:100%;max-width:520px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15);}
+        .modal h3{font-size:1rem;font-weight:700;color:var(--navy);margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+        .field{margin-bottom:1rem;}
+        .field label{display:block;font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:.4rem;}
+        .field input,.field textarea{width:100%;padding:.6rem .875rem;border:1.5px solid var(--line);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:.83rem;color:var(--ink);background:var(--bg);outline:none;transition:border-color .15s;}
+        .field textarea{resize:vertical;min-height:80px;}
+        .field input:focus,.field textarea:focus{border-color:var(--navy);}
+        .modal-footer{display:flex;gap:.75rem;justify-content:flex-end;margin-top:1.25rem;padding-top:1rem;border-top:1px solid var(--line);}
+        .btn-ghost{padding:.55rem 1.1rem;border-radius:8px;border:1px solid var(--line);background:none;font-family:'Open Sans',sans-serif;font-size:.8rem;font-weight:600;color:var(--ink-2);cursor:pointer;}
+
+        .toasts{position:fixed;top:68px;right:1.25rem;z-index:300;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
+
+        @keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+        .proj-card{animation:fadeUp .4s ease both;}
+    </style>
+</head>
+<body>
+
+{% if messages %}
+<div class="toasts">
+    {% for m in messages %}<div class="toast {% if m.tags == 'success' %}success{% else %}error{% endif %}">{{ m }}</div>{% endfor %}
+</div>
+{% endif %}
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sb-logo">
+        <div class="logo-icon"><i class="fas fa-graduation-cap"></i></div>
+        <div><div class="logo-text">Faculdade Senac</div><div class="logo-sub">Projetos Integradores</div></div>
+    </div>
+    <div class="sb-user">
+        <div class="sb-av">{{ usuario.first_name|first|upper|default:"A" }}</div>
+        <div><div class="sb-uname">{{ usuario.first_name|default:usuario.username }}</div><div class="sb-urole">{{ perfil.get_tipo_usuario_display|default:"Aluno" }}</div></div>
+    </div>
+    <div class="sb-section">Menu Principal</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-th-large"></i> Dashboard</a></li>
+        <li><a href="{% url 'meus_projetos' %}" class="active"><i class="fas fa-folder-open"></i> Projetos</a></li>
+        <li><a href="{% url 'forum_lista' %}"><i class="fas fa-comments"></i> Mensagens
+            {% if nao_lidas %}<span class="sb-badge">{{ nao_lidas }}</span>{% endif %}
+        </a></li>
+    </ul>
+    <div class="sb-section">Comunidade</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'forum_lista' %}"><i class="fas fa-users"></i> Fórum</a></li>
+    </ul>
+    <div class="sb-bottom">
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main-area">
+    <div class="topbar">
+        <div style="font-size:.85rem;color:var(--muted);">
+            <a href="{% url 'dashboard' %}" style="color:var(--muted);text-decoration:none;">Dashboard</a> /
+            <strong style="color:var(--ink);">Meus Projetos</strong>
+        </div>
+        <div class="tb-right">
+            <a href="#" onclick="abrirModal('modalProjeto');return false;" class="btn-new">
+                <i class="fas fa-plus"></i> Novo Projeto
+            </a>
+            <div style="display:flex;align-items:center;gap:.5rem;">
+                <div class="tb-av">{{ usuario.first_name|first|upper|default:"A" }}</div>
+                <div class="tb-uinfo">
+                    <strong>{{ usuario.first_name|default:usuario.username }}</strong>
+                    <span>{{ perfil.get_tipo_usuario_display|default:"Aluno" }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="page-title">Meus Projetos</div>
+        <div class="page-sub">Gerencie e acompanhe todos os seus projetos integradores</div>
+
+        <!-- KPIS -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-folder-open"></i></div>
+                <div><div class="kpi-val">{{ total }}</div><div class="kpi-lbl">Total de Projetos</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-check-circle"></i></div>
+                <div><div class="kpi-val">{{ aprovados }}</div><div class="kpi-lbl">Aprovados</div></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--amber-lt);color:var(--amber);"><i class="fas fa-clock"></i></div>
+                <div><div class="kpi-val">{{ em_avaliacao }}</div><div class="kpi-lbl">Em Avaliação</div></div>
+            </div>
+        </div>
+
+        <!-- GRID DE PROJETOS -->
+        <div class="projetos-grid">
+            {% for projeto in projetos %}
+            <div class="proj-card" style="animation-delay:{{ forloop.counter0 }}00ms">
+
+                <!-- Topo: título + status -->
+                <div class="proj-top">
+                    <div class="proj-titulo">{{ projeto.titulo }}</div>
+                    <span class="status-pill
+                        {% if projeto.status == 'aprovado' %}pill-green
+                        {% elif projeto.status == 'em_avaliacao' %}pill-amber
+                        {% else %}pill-rose{% endif %}">
+                        {{ projeto.get_status_display }}
+                    </span>
+                </div>
+
+                <!-- Descrição -->
+                <p class="proj-desc">{{ projeto.descricao|truncatewords:25 }}</p>
+
+                <!-- Meta tags -->
+                <div class="proj-meta">
+                    {% if projeto.categoria %}
+                    <span class="meta-tag"><i class="fas fa-tag" style="font-size:.55rem;"></i> {{ projeto.categoria }}</span>
+                    {% endif %}
+                    {% if projeto.semestre %}
+                    <span class="meta-tag"><i class="fas fa-calendar" style="font-size:.55rem;"></i> {{ projeto.semestre }}</span>
+                    {% endif %}
+                    {% if projeto.get_tags_lista %}
+                        {% for tag in projeto.get_tags_lista|slice:":3" %}
+                        <span style="background:#f1f5f9;color:var(--muted);font-size:.65rem;font-weight:500;padding:.15rem .5rem;border-radius:50px;">{{ tag }}</span>
+                        {% endfor %}
+                    {% endif %}
+                    {% if projeto.conceito %}
+                    <span class="conceito-badge c-{{ projeto.conceito }}">{{ projeto.conceito }}</span>
+                    {% endif %}
+                </div>
+
+                <!-- Feedback do professor -->
+                {% if projeto.comentario_professor %}
+                <div class="proj-feedback">
+                    <div class="fb-label"><i class="fas fa-comment-dots" style="color:var(--navy);margin-right:.3rem;"></i>Feedback do Professor</div>
+                    {{ projeto.comentario_professor }}
+                </div>
+                {% elif projeto.status == 'em_avaliacao' %}
+                <div style="background:var(--amber-lt);border:1px solid var(--amber-bd);border-radius:var(--r);padding:.65rem 1rem;font-size:.78rem;color:#7b5c16;">
+                    <i class="fas fa-clock" style="margin-right:.35rem;"></i> Aguardando avaliação do professor
+                </div>
+                {% endif %}
+
+                <!-- Links e ações -->
+                <div class="proj-links">
+                    {% if projeto.link_repositorio %}
+                    <a href="{{ projeto.link_repositorio }}" target="_blank" class="link-btn">
+                        <i class="fab fa-github"></i> Repositório
+                    </a>
+                    {% endif %}
+                    {% if projeto.link_demo %}
+                    <a href="{{ projeto.link_demo }}" target="_blank" class="link-btn">
+                        <i class="fas fa-external-link-alt"></i> Demo
+                    </a>
+                    {% endif %}
+                    <a href="{% url 'editar_projeto' projeto.id %}" class="link-btn primary">
+                        <i class="fas fa-edit"></i> Editar
+                    </a>
+                    <form method="POST" action="{% url 'deletar_projeto' projeto.id %}" style="display:inline;" onsubmit="return confirm('Remover projeto?')">
+                        {% csrf_token %}
+                        <button type="submit" class="link-btn danger">
+                            <i class="fas fa-trash"></i> Remover
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% empty %}
+            <div class="empty" style="grid-column:1/-1;">
+                <i class="fas fa-folder-open"></i>
+                <p>Você ainda não tem projetos.</p>
+                <a href="#" onclick="abrirModal('modalProjeto');return false;" style="display:inline-flex;align-items:center;gap:.4rem;margin-top:1rem;padding:.6rem 1.25rem;border-radius:8px;background:var(--navy);color:#fff;font-size:.82rem;font-weight:700;text-decoration:none;">
+                    <i class="fas fa-plus"></i> Criar primeiro projeto
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- MODAL NOVO PROJETO -->
+<div class="modal-overlay" id="modalProjeto">
+    <div class="modal">
+        <h3><i class="fas fa-plus-circle" style="color:var(--orange);"></i> Novo Projeto</h3>
+        <form method="POST" action="{% url 'meus_projetos' %}">
+            {% csrf_token %}
+            <div class="field"><label>Título *</label><input type="text" name="titulo" placeholder="Nome do projeto" required></div>
+            <div class="field"><label>Descrição *</label><textarea name="descricao" placeholder="Descreva o projeto..." required></textarea></div>
+            <div class="field"><label>Categoria</label><input type="text" name="categoria" placeholder="Ex: Saúde, Tecnologia..."></div>
+            <div class="field"><label>Semestre</label><input type="text" name="semestre" placeholder="Ex: 2026.1"></div>
+            <div class="field"><label>Tags (separe por vírgula)</label><input type="text" name="tags" placeholder="Ex: React, Python, Django"></div>
+            <div class="field"><label>Link do Repositório</label><input type="url" name="link_repositorio" placeholder="https://github.com/..."></div>
+            <div class="field"><label>Link da Demo</label><input type="url" name="link_demo" placeholder="https://..."></div>
+            <div class="modal-footer">
+                <button type="button" class="btn-ghost" onclick="fecharModal('modalProjeto')">Cancelar</button>
+                <button type="submit" class="btn-new" style="border-radius:8px;padding:.55rem 1.1rem;">
+                    <i class="fas fa-save"></i> Salvar Projeto
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function abrirModal(id){ document.getElementById(id).classList.add('active'); }
+function fecharModal(id){ document.getElementById(id).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>{
+    o.addEventListener('click', e=>{ if(e.target===o) fecharModal(o.id); });
+});
+setTimeout(()=>{document.querySelectorAll('.toast').forEach(t=>{t.style.opacity='0';t.style.transition='opacity .4s';setTimeout(()=>t.remove(),400);});},4000);
+</script>
+</body>
+</html>

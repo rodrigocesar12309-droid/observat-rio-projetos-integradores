@@ -3,113 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projetos dos Alunos — Empresa | Faculdade Senac</title>
+    <title>Portal Empresa — Faculdade Senac</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700;800&display=swap">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
     <style>
-        :root {
-            --navy:    #1B3A6B; --navy-dk: #122850; --navy-lt: #E8EEF7;
-            --orange:  #F5A623; --orange-dk: #D4891A; --orange-lt: #FEF3DC;
-            --green:   #38a169; --green-lt: #f0fff4; --green-bd: #c6f6d5;
-            --amber:   #d69e2e; --amber-lt: #fffbeb; --amber-bd: #fefcbf;
-            --red:     #e53e3e; --red-lt: #fff5f5; --red-bd: #fed7d7;
-            --ink:     #1a202c; --ink-2: #2d3748;
-            --muted:   #718096; --line: #e2e8f0;
-            --bg:      #F4F6FA; --card: #FFFFFF;
-            --r: 10px; --r-lg: 14px;
-            --sh: 0 1px 3px rgba(0,0,0,.07), 0 4px 14px rgba(0,0,0,.06);
+        :root{
+            --navy:#1B3A6B;--navy-dk:#122850;--navy-lt:#E8EEF7;
+            --orange:#F5A623;--orange-dk:#D4891A;--orange-lt:#FEF3DC;
+            --green:#38a169;--green-lt:#f0fff4;--green-bd:#c6f6d5;
+            --amber:#d69e2e;--amber-lt:#fffbeb;
+            --red:#e53e3e;--red-lt:#fff5f5;--red-bd:#fed7d7;
+            --purple:#7C3AED;--purple-lt:#F5F3FF;
+            --ink:#1a202c;--ink-2:#2d3748;--muted:#718096;--line:#e2e8f0;
+            --bg:#F4F6FA;--card:#fff;--sidebar-w:230px;--header-h:58px;
+            --r:10px;--r-lg:14px;--sh:0 1px 3px rgba(0,0,0,.07),0 4px 14px rgba(0,0,0,.06);
         }
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Open Sans', sans-serif; background: var(--bg); color: var(--ink-2); min-height: 100vh; }
+        *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+        body{font-family:'Open Sans',sans-serif;background:var(--bg);color:var(--ink-2);min-height:100vh;display:flex;}
 
-        header {
-            background: var(--navy); border-bottom: 4px solid var(--orange);
-            position: sticky; top: 0; z-index: 100;
-            display: flex; align-items: center; justify-content: space-between;
-            padding: 0 2rem; height: 68px;
-            box-shadow: 0 2px 10px rgba(0,0,0,.2);
-        }
-        .brand { display: flex; align-items: center; gap: .875rem; }
-        .brand-icon { width: 40px; height: 40px; border-radius: 9px; background: var(--orange); display: grid; place-items: center; color: var(--navy); font-size: 1.1rem; font-weight: 800; }
-        .brand-text h1 { font-size: .97rem; font-weight: 700; color: #fff; margin: 0; }
-        .brand-text span { font-size: .68rem; font-weight: 600; text-transform: uppercase; letter-spacing: .1em; color: rgba(255,255,255,.6); }
-        .nav-right { display: flex; align-items: center; gap: .875rem; }
-        .nav-user strong { display: block; font-size: .84rem; font-weight: 700; color: #fff; }
-        .nav-user span { font-size: .7rem; color: rgba(255,255,255,.6); }
-        .nav-logout { width: 36px; height: 36px; border-radius: 8px; border: 1px solid rgba(255,255,255,.25); background: none; cursor: pointer; display: grid; place-items: center; color: rgba(255,255,255,.65); text-decoration: none; transition: all .15s; }
-        .nav-logout:hover { background: var(--red-lt); border-color: var(--red); color: var(--red); }
+        .sidebar{width:var(--sidebar-w);background:var(--navy);min-height:100vh;display:flex;flex-direction:column;position:fixed;left:0;top:0;bottom:0;z-index:50;}
+        .sb-logo{display:flex;align-items:center;gap:.75rem;padding:1.2rem 1.1rem .9rem;border-bottom:1px solid rgba(255,255,255,.08);}
+        .sb-logo-icon{width:36px;height:36px;border-radius:8px;background:var(--orange);display:grid;place-items:center;color:var(--navy);font-size:.9rem;font-weight:800;}
+        .sb-logo-text{font-size:.85rem;font-weight:700;color:#fff;}
+        .sb-logo-sub{font-size:.6rem;color:rgba(255,255,255,.5);text-transform:uppercase;letter-spacing:.1em;}
+        .sb-user{display:flex;align-items:center;gap:.65rem;padding:.9rem 1.1rem;border-bottom:1px solid rgba(255,255,255,.07);}
+        .sb-av{width:34px;height:34px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.8rem;color:var(--navy);}
+        .sb-uname{font-size:.78rem;font-weight:600;color:#fff;}
+        .sb-urole{font-size:.62rem;color:rgba(255,255,255,.45);}
+        .sb-section{font-size:.58rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.35);padding:.7rem 1.1rem .25rem;}
+        .sb-nav{list-style:none;padding:0 .6rem;}
+        .sb-nav li{margin-bottom:.1rem;}
+        .sb-nav a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.65);text-decoration:none;transition:all .15s;}
+        .sb-nav a:hover{background:rgba(255,255,255,.09);color:#fff;}
+        .sb-nav a.active{background:var(--orange);color:var(--navy);font-weight:700;}
+        .sb-bottom{padding:.6rem;border-top:1px solid rgba(255,255,255,.07);margin-top:auto;}
+        .sb-bottom a{display:flex;align-items:center;gap:.65rem;padding:.55rem .75rem;border-radius:7px;font-size:.8rem;font-weight:500;color:rgba(255,255,255,.55);text-decoration:none;transition:all .15s;}
+        .sb-bottom a:hover{background:rgba(255,255,255,.09);color:#fff;}
 
-        .toasts { position: fixed; top: 78px; right: 1.25rem; z-index: 200; display: flex; flex-direction: column; gap: .5rem; }
-        .toast { padding: .875rem 1.25rem; border-radius: var(--r); font-size: .82rem; font-weight: 500; border: 1px solid; }
-        .toast.success { background: var(--green-lt); color: #276749; border-color: var(--green-bd); }
-        .toast.error   { background: var(--red-lt); color: #9b2c2c; border-color: var(--red-bd); }
+        .main-area{margin-left:var(--sidebar-w);flex:1;display:flex;flex-direction:column;}
+        .topbar{background:var(--card);height:var(--header-h);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 1.75rem;position:sticky;top:0;z-index:40;}
+        .tb-search{display:flex;align-items:center;gap:.5rem;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:.4rem .875rem;width:240px;}
+        .tb-search i{color:var(--muted);font-size:.78rem;}
+        .tb-search input{border:none;background:none;outline:none;font-family:'Open Sans',sans-serif;font-size:.8rem;color:var(--ink);width:100%;}
+        .tb-right{display:flex;align-items:center;gap:.75rem;}
+        .tb-icon{width:32px;height:32px;border-radius:7px;border:1px solid var(--line);background:none;cursor:pointer;display:grid;place-items:center;color:var(--muted);font-size:.82rem;}
+        .tb-user{display:flex;align-items:center;gap:.5rem;}
+        .tb-av{width:30px;height:30px;border-radius:50%;background:var(--orange);display:grid;place-items:center;font-weight:700;font-size:.72rem;color:var(--navy);}
+        .tb-uinfo strong{display:block;font-size:.78rem;font-weight:700;color:var(--ink);}
+        .tb-uinfo span{font-size:.65rem;color:var(--muted);}
+        .btn-action{display:inline-flex;align-items:center;gap:.4rem;padding:.4rem .95rem;border-radius:50px;border:none;font-family:'Open Sans',sans-serif;font-size:.75rem;font-weight:700;cursor:pointer;text-decoration:none;white-space:nowrap;}
+        .btn-orange{background:var(--orange);color:var(--navy);}
+        .btn-navy{background:var(--navy);color:#fff;}
 
-        main { max-width: 1280px; margin: 0 auto; padding: 2.25rem 2rem 5rem; }
-        .page-head { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; }
-        .page-head h2 { font-size: 1.65rem; font-weight: 800; color: var(--navy); }
-        .page-head p { font-size: .85rem; color: var(--muted); margin-top: .3rem; }
+        .content{padding:1.75rem;flex:1;}
+        .page-title{font-size:1.4rem;font-weight:800;color:var(--navy);}
+        .page-sub{font-size:.78rem;color:var(--muted);margin-top:.2rem;}
 
-        .kpis { display: grid; grid-template-columns: repeat(3,1fr); gap: 1.1rem; margin-bottom: 1.75rem; }
-        @media(max-width:640px){ .kpis { grid-template-columns:1fr; } }
-        .kpi { background: var(--card); border-radius: var(--r-lg); padding: 1.3rem 1.4rem; box-shadow: var(--sh); border: 1px solid var(--line); display: flex; flex-direction: column; gap: .55rem; position: relative; overflow: hidden; animation: fadeUp .4s ease both; }
-        .kpi::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; border-radius: var(--r-lg) var(--r-lg) 0 0; }
-        .kpi:nth-child(1)::before { background: var(--orange); }
-        .kpi:nth-child(2)::before { background: var(--green); }
-        .kpi:nth-child(3)::before { background: var(--navy); }
-        .kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
-        .kpi-icon { width: 40px; height: 40px; border-radius: 10px; display: grid; place-items: center; font-size: .9rem; }
-        .kpi-label { font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); font-weight: 600; }
-        .kpi-val { font-weight: 800; font-size: 2.1rem; line-height: 1; color: var(--ink); }
+        .kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin:1.4rem 0;}
+        @media(max-width:900px){.kpi-row{grid-template-columns:repeat(2,1fr);}}
+        .kpi-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);padding:1.1rem 1.25rem;box-shadow:var(--sh);display:flex;align-items:center;gap:.875rem;}
+        .kpi-icon{width:44px;height:44px;border-radius:11px;display:grid;place-items:center;font-size:1rem;flex-shrink:0;}
+        .kpi-val{font-size:1.5rem;font-weight:800;color:var(--ink);line-height:1;}
+        .kpi-lbl{font-size:.7rem;color:var(--muted);margin-top:.2rem;}
+        .kpi-sub{font-size:.65rem;color:var(--muted);margin-top:.25rem;}
 
-        /* FILTROS */
-        .filtros-bar { background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg); padding: 1rem 1.25rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; box-shadow: var(--sh); }
-        .filtros-bar label { font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--muted); }
-        .filtros-bar select, .filtros-bar input { padding: .45rem .875rem; border: 1px solid var(--line); border-radius: 8px; background: var(--bg); font-family: 'Open Sans', sans-serif; font-size: .82rem; color: var(--ink); outline: none; transition: border-color .15s; }
-        .filtros-bar select:focus, .filtros-bar input:focus { border-color: var(--navy); }
-        .filtros-bar input { flex: 1; min-width: 180px; }
-        .btn-filtrar { padding: .45rem 1rem; border-radius: 8px; border: none; background: var(--navy); color: #fff; font-family: 'Open Sans', sans-serif; font-size: .8rem; font-weight: 600; cursor: pointer; transition: background .15s; }
-        .btn-filtrar:hover { background: var(--navy-dk); }
-        .btn-limpar { padding: .45rem .9rem; border-radius: 8px; border: 1px solid var(--line); background: none; font-family: 'Open Sans', sans-serif; font-size: .8rem; font-weight: 600; color: var(--muted); cursor: pointer; text-decoration: none; }
+        .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r-lg);box-shadow:var(--sh);overflow:hidden;margin-bottom:1.1rem;}
+        .card-head{display:flex;align-items:center;justify-content:space-between;padding:.875rem 1.1rem;border-bottom:1px solid var(--line);}
+        .card-title{font-size:.85rem;font-weight:700;color:var(--ink);}
+        .card-sub{font-size:.7rem;color:var(--muted);}
+        .card-link{font-size:.72rem;font-weight:600;color:var(--navy);text-decoration:none;}
 
-        /* GRID */
-        .projetos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.25rem; }
-        .proj-card {
-            background: var(--card); border: 1px solid var(--line); border-radius: var(--r-lg);
-            padding: 1.5rem; box-shadow: var(--sh);
-            display: flex; flex-direction: column; gap: .75rem;
-            animation: fadeUp .4s ease both; transition: box-shadow .2s, transform .2s;
-            border-top: 3px solid var(--navy);
-        }
-        .proj-card:hover { box-shadow: 0 8px 24px rgba(0,0,0,.1); transform: translateY(-2px); }
-        .proj-top { display: flex; align-items: flex-start; justify-content: space-between; gap: .5rem; }
-        .proj-titulo { font-weight: 700; font-size: .95rem; color: var(--navy); line-height: 1.3; }
-        .status-pill { display: inline-flex; align-items: center; gap: .3rem; padding: .2rem .65rem; border-radius: 50px; font-size: .68rem; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
-        .status-pill::before { content:''; width:6px; height:6px; border-radius:50%; }
-        .pill-green  { background: var(--green-lt); color: #276749; } .pill-green::before  { background: var(--green); }
-        .pill-amber  { background: var(--amber-lt); color: #7b5c16; } .pill-amber::before  { background: var(--amber); }
-        .pill-rose   { background: var(--red-lt);   color: #9b2c2c; } .pill-rose::before   { background: var(--red); }
-        .proj-desc { font-size: .82rem; color: var(--muted); line-height: 1.6; }
-        .proj-meta { display: flex; flex-wrap: wrap; gap: .5rem; font-size: .75rem; color: var(--muted); }
-        .proj-meta span { display: flex; align-items: center; gap: .3rem; }
-        .tags-row { display: flex; flex-wrap: wrap; gap: .4rem; }
-        .tag { background: var(--navy-lt); color: var(--navy); font-size: .68rem; font-weight: 700; padding: .2rem .6rem; border-radius: 50px; }
-        .proj-footer { display: flex; gap: .5rem; margin-top: auto; padding-top: .75rem; border-top: 1px solid var(--line); flex-wrap: wrap; align-items: center; }
-        .proj-link { display: inline-flex; align-items: center; gap: .3rem; padding: .35rem .8rem; border-radius: 7px; font-size: .75rem; font-weight: 600; text-decoration: none; border: 1px solid var(--line); color: var(--ink-2); background: var(--bg); transition: all .15s; }
-        .proj-link:hover { border-color: var(--navy); color: var(--navy); background: var(--navy-lt); }
-        .curriculo-link { border-color: var(--orange-lt); color: var(--navy); background: var(--orange-lt); }
-        .curriculo-link:hover { background: var(--orange); color: var(--navy); }
-        .conceito-badge { font-size: .7rem; font-weight: 700; padding: .2rem .6rem; border-radius: 50px; margin-left: auto; }
-        .c-Excelente { background: var(--navy-lt); color: var(--navy-dk); }
-        .c-Ótimo { background: #F5F3FF; color: #6D28D9; }
-        .c-Bom { background: var(--green-lt); color: #276749; }
-        .c-Suficiente { background: var(--amber-lt); color: #7b5c16; }
-        .c-Insuficiente { background: var(--red-lt); color: #9b2c2c; }
+        /* PROJETOS RECOMENDADOS */
+        .proj-rec-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem;padding:1.1rem;}
+        @media(max-width:800px){.proj-rec-grid{grid-template-columns:1fr;}}
+        .proj-rec-card{border:1px solid var(--line);border-radius:var(--r);padding:1rem;background:var(--bg);border-left:3px solid var(--navy);}
+        .proj-rec-titulo{font-size:.82rem;font-weight:700;color:var(--navy);margin-bottom:.3rem;}
+        .proj-rec-meta{font-size:.7rem;color:var(--muted);display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.6rem;}
+        .proj-rec-desc{font-size:.75rem;color:var(--ink-2);line-height:1.55;margin-bottom:.75rem;}
+        .proj-rec-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-bottom:.75rem;}
+        .tag{background:var(--navy-lt);color:var(--navy);font-size:.62rem;font-weight:700;padding:.15rem .55rem;border-radius:50px;}
+        .proj-rec-footer{display:flex;align-items:center;justify-content:space-between;}
+        .match-badge{font-size:.68rem;font-weight:700;color:var(--green);background:var(--green-lt);padding:.15rem .5rem;border-radius:4px;}
+        .btn-sm{padding:.3rem .75rem;border-radius:6px;font-size:.7rem;font-weight:700;cursor:pointer;border:none;font-family:'Open Sans',sans-serif;text-decoration:none;display:inline-flex;align-items:center;gap:.3rem;}
+        .btn-green{background:var(--green);color:#fff;}
+        .btn-green:hover{background:#2f855a;}
 
-        .empty { grid-column: 1/-1; text-align: center; padding: 4rem 1rem; color: var(--muted); }
-        .empty i { font-size: 2.5rem; opacity: .35; display: block; margin-bottom: 1rem; color: var(--navy); }
+        /* BANCO DE TALENTOS */
+        .talentos-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.875rem;padding:1.1rem;}
+        @media(max-width:900px){.talentos-grid{grid-template-columns:repeat(2,1fr);}}
+        .talento-card{border:1px solid var(--line);border-radius:var(--r);padding:1rem;background:var(--bg);text-align:center;}
+        .talento-av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1rem;color:#fff;margin:0 auto .5rem;}
+        .talento-nome{font-size:.78rem;font-weight:700;color:var(--ink);margin-bottom:.15rem;}
+        .talento-curso{font-size:.65rem;color:var(--muted);margin-bottom:.5rem;}
+        .talento-tags{display:flex;flex-wrap:wrap;justify-content:center;gap:.25rem;margin-bottom:.5rem;}
+        .talento-conceito{font-size:.72rem;font-weight:700;color:var(--navy);margin-bottom:.5rem;}
+        .pill{display:inline-flex;align-items:center;gap:.25rem;padding:.15rem .55rem;border-radius:50px;font-size:.62rem;font-weight:700;}
+        .pill-green{background:var(--green-lt);color:#276749;}
+        .pill-amber{background:var(--amber-lt);color:#7b5c16;}
+        .pill-navy{background:var(--navy-lt);color:var(--navy-dk);}
 
-        @keyframes fadeUp { from{opacity:0;transform:translateY(14px)} to{opacity:1;transform:translateY(0)} }
+        .toasts{position:fixed;top:68px;right:1.25rem;z-index:300;display:flex;flex-direction:column;gap:.5rem;}
+        .toast{padding:.875rem 1.25rem;border-radius:var(--r);font-size:.82rem;font-weight:500;border:1px solid;}
+        .toast.success{background:var(--green-lt);color:#276749;border-color:var(--green-bd);}
+        .toast.error{background:var(--red-lt);color:#9b2c2c;border-color:var(--red-bd);}
+
+        @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .kpi-card{animation:fadeUp .4s ease both;}
+        .kpi-card:nth-child(1){animation-delay:.05s}.kpi-card:nth-child(2){animation-delay:.1s}
+        .kpi-card:nth-child(3){animation-delay:.15s}.kpi-card:nth-child(4){animation-delay:.2s}
     </style>
 </head>
 <body>
@@ -122,130 +125,169 @@
 </div>
 {% endif %}
 
-<header>
-    <div class="brand">
-        <div class="brand-icon"><i class="fas fa-building"></i></div>
-        <div class="brand-text">
-            <h1>Faculdade Senac</h1>
-            <span>Empresa Parceira</span>
-        </div>
+<!-- SIDEBAR -->
+<aside class="sidebar">
+    <div class="sb-logo">
+        <div class="sb-logo-icon"><i class="fas fa-building"></i></div>
+        <div><div class="sb-logo-text">Faculdade Senac</div><div class="sb-logo-sub">Portal Empresa</div></div>
     </div>
-    <div class="nav-right">
-        <div class="nav-user" style="text-align:right;">
-            <strong>{{ usuario.first_name|default:usuario.username }}</strong>
-            <span>{{ usuario.email }}</span>
-        </div>
-        <a href="{% url 'logout' %}" class="nav-logout" title="Sair"><i class="fas fa-sign-out-alt"></i></a>
+    <div class="sb-user">
+        <div class="sb-av">{{ usuario.first_name|first|upper|default:"E" }}</div>
+        <div><div class="sb-uname">{{ usuario.first_name|default:usuario.username }}</div><div class="sb-urole">Empresa Parceira</div></div>
     </div>
-</header>
+    <div class="sb-section">Navegação</div>
+    <ul class="sb-nav">
+        <li><a href="{% url 'dashboard' %}" class="active"><i class="fas fa-th-large"></i> Portal Empresa</a></li>
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-folder-open"></i> Projetos Disponíveis</a></li>
+        <li><a href="{% url 'dashboard' %}"><i class="fas fa-users"></i> Banco de Talentos</a></li>
+    </ul>
+    <div class="sb-bottom">
+        <a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Sair</a>
+    </div>
+</aside>
 
-<main>
-    <div class="page-head">
-        <div>
-            <h2>Projetos dos Alunos</h2>
-            <p>Explore os projetos integradores desenvolvidos pelos estudantes</p>
+<!-- MAIN -->
+<div class="main-area">
+    <div class="topbar">
+        <div class="tb-search"><i class="fas fa-search"></i><input type="text" placeholder="Buscar projetos…" id="busca-top"></div>
+        <div class="tb-right">
+            <button class="tb-icon"><i class="fas fa-bell"></i></button>
+            <div class="tb-user">
+                <div class="tb-av">{{ usuario.first_name|first|upper|default:"E" }}</div>
+                <div class="tb-uinfo"><strong>{{ usuario.first_name|default:usuario.username }}</strong><span>Área Empresa</span></div>
+            </div>
+            <a href="{% url 'logout' %}" class="btn-action btn-navy"><i class="fas fa-sign-out-alt"></i> Sair</a>
+            <a href="#" class="btn-action btn-orange"><i class="fas fa-search"></i> Explorar Projetos</a>
         </div>
     </div>
 
-    <div class="kpis">
-        <div class="kpi">
-            <div class="kpi-top">
-                <div class="kpi-label">Total de Projetos</div>
+    <div class="content">
+        <div class="page-title">Portal {{ usuario.first_name|default:"Empresa" }}</div>
+        <div class="page-sub" id="data-empresa">Empresa parceira com UniProject · Semestre 2026.1</div>
+
+        <!-- KPIS -->
+        <div class="kpi-row">
+            <div class="kpi-card">
                 <div class="kpi-icon" style="background:var(--orange-lt);color:var(--orange-dk);"><i class="fas fa-folder-open"></i></div>
+                <div><div class="kpi-val">{{ total }}</div><div class="kpi-lbl">Projetos Disponíveis</div><div class="kpi-sub">Para recrutamento</div></div>
             </div>
-            <div class="kpi-val">{{ total }}</div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-top">
-                <div class="kpi-label">Aprovados</div>
-                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-check-circle"></i></div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-check-circle"></i></div>
+                <div><div class="kpi-val">{{ aprovados }}</div><div class="kpi-lbl">Projetos Aprovados</div><div class="kpi-sub">Alta qualidade</div></div>
             </div>
-            <div class="kpi-val">{{ aprovados }}</div>
-        </div>
-        <div class="kpi">
-            <div class="kpi-top">
-                <div class="kpi-label">Categorias</div>
-                <div class="kpi-icon" style="background:var(--navy-lt);color:var(--navy);"><i class="fas fa-tags"></i></div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--purple-lt);color:var(--purple);"><i class="fas fa-users"></i></div>
+                <div><div class="kpi-val">{{ alunos_count }}</div><div class="kpi-lbl">Alunos no Banco</div><div class="kpi-sub">Talentos disponíveis</div></div>
             </div>
-            <div class="kpi-val">{{ categorias|length }}</div>
+            <div class="kpi-card">
+                <div class="kpi-icon" style="background:var(--green-lt);color:var(--green);"><i class="fas fa-tags"></i></div>
+                <div><div class="kpi-val">{{ categorias|length }}</div><div class="kpi-lbl">Áreas de Interesse</div><div class="kpi-sub">Categorias</div></div>
+            </div>
         </div>
-    </div>
 
-    <form method="GET" action="">
-        <div class="filtros-bar">
-            <label>Filtrar:</label>
-            <input type="text" name="busca" value="{{ busca }}" placeholder="Buscar por título…">
-            <select name="categoria">
-                <option value="">Todas as categorias</option>
-                {% for cat in categorias %}
-                <option value="{{ cat }}" {% if cat_filtro == cat %}selected{% endif %}>{{ cat }}</option>
+        <!-- GRÁFICO POR ÁREA -->
+        <div class="card">
+            <div class="card-head">
+                <div><div class="card-title">Projetos por Área de Interesse</div><div class="card-sub">Distribuição semestral por categoria</div></div>
+            </div>
+            <div style="padding:.75rem 1.25rem 1.25rem;">
+                <canvas id="areaChart" height="90"></canvas>
+            </div>
+        </div>
+
+        <!-- PROJETOS RECOMENDADOS -->
+        <div class="card">
+            <div class="card-head">
+                <div><div class="card-title">Projetos Recomendados para {{ usuario.first_name|default:"sua empresa" }}</div></div>
+                <a href="#" class="card-link">Ver todos →</a>
+            </div>
+            <div class="proj-rec-grid">
+                {% for projeto in projetos|slice:":4" %}
+                <div class="proj-rec-card">
+                    <div class="proj-rec-titulo">{{ projeto.titulo }}</div>
+                    <div class="proj-rec-meta">
+                        <span><i class="fas fa-user-graduate"></i> {{ projeto.usuario.first_name|default:projeto.usuario.username }}</span>
+                        {% if projeto.categoria %}<span><i class="fas fa-tag"></i> {{ projeto.categoria }}</span>{% endif %}
+                        {% if projeto.semestre %}<span>{{ projeto.semestre }}</span>{% endif %}
+                    </div>
+                    <div class="proj-rec-desc">{{ projeto.descricao|truncatewords:18 }}</div>
+                    {% if projeto.get_tags_lista %}
+                    <div class="proj-rec-tags">
+                        {% for tag in projeto.get_tags_lista|slice:":4" %}<span class="tag">{{ tag }}</span>{% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="proj-rec-footer">
+                        {% if projeto.status == 'aprovado' %}<span class="match-badge">100% match</span>{% elif projeto.status == 'em_avaliacao' %}<span style="font-size:.68rem;color:var(--amber);font-weight:600;">Em avaliação</span>{% else %}<span style="font-size:.68rem;color:var(--muted);">—</span>{% endif %}
+                        <a href="{% url 'ver_curriculo_aluno' projeto.usuario.id %}" class="btn-sm btn-green"><i class="fas fa-id-card"></i> Ver Perfil</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div style="grid-column:1/-1;padding:2.5rem;text-align:center;color:var(--muted);font-size:.82rem;"><i class="fas fa-folder-open" style="display:block;font-size:1.5rem;margin-bottom:.5rem;opacity:.3;"></i>Nenhum projeto disponível</div>
                 {% endfor %}
-            </select>
-            <button type="submit" class="btn-filtrar"><i class="fas fa-search"></i> Filtrar</button>
-            {% if busca or cat_filtro %}
-            <a href="{% url 'dashboard' %}" class="btn-limpar">✕ Limpar</a>
-            {% endif %}
+            </div>
         </div>
-    </form>
 
-    <div class="projetos-grid">
-        {% for projeto in projetos %}
-        <div class="proj-card" style="animation-delay:{{ forloop.counter0 }}00ms">
-            <div class="proj-top">
-                <div class="proj-titulo">{{ projeto.titulo }}</div>
-                <span class="status-pill
-                    {% if projeto.status == 'aprovado' %}pill-green
-                    {% elif projeto.status == 'em_avaliacao' %}pill-amber
-                    {% else %}pill-rose{% endif %}">
-                    {{ projeto.get_status_display }}
-                </span>
+        <!-- BANCO DE TALENTOS -->
+        <div class="card">
+            <div class="card-head">
+                <div class="card-title">Destaques do Banco de Talentos</div>
+                <a href="#" class="card-link">Ver banco completo →</a>
             </div>
-            <p class="proj-desc">{{ projeto.descricao|truncatewords:30 }}</p>
-            <div class="proj-meta">
-                <span><i class="fas fa-user-graduate"></i> {{ projeto.usuario.first_name|default:projeto.usuario.username }}</span>
-                {% if projeto.categoria %}<span><i class="fas fa-tag"></i> {{ projeto.categoria }}</span>{% endif %}
-                {% if projeto.semestre %}<span><i class="fas fa-calendar"></i> {{ projeto.semestre }}</span>{% endif %}
-            </div>
-            {% if projeto.get_tags_lista %}
-            <div class="tags-row">
-                {% for tag in projeto.get_tags_lista %}<span class="tag">{{ tag }}</span>{% endfor %}
-            </div>
-            {% endif %}
-            <div class="proj-footer">
-                {% if projeto.link_repositorio %}
-                <a href="{{ projeto.link_repositorio }}" target="_blank" class="proj-link">
-                    <i class="fab fa-github"></i> Repositório
-                </a>
-                {% endif %}
-                {% if projeto.link_demo %}
-                <a href="{{ projeto.link_demo }}" target="_blank" class="proj-link">
-                    <i class="fas fa-external-link-alt"></i> Demo
-                </a>
-                {% endif %}
-                <a href="{% url 'ver_curriculo_aluno' projeto.usuario.id %}" class="proj-link curriculo-link">
-                    <i class="fas fa-id-card"></i> Currículo
-                </a>
-                {% if projeto.conceito %}
-                <span class="conceito-badge c-{{ projeto.conceito }}">{{ projeto.conceito }}</span>
-                {% endif %}
+            <div class="talentos-grid">
+                {% for aluno_p in alunos|slice:":8" %}
+                <div class="talento-card">
+                    <div class="talento-av" style="background:{% cycle '#1B3A6B' '#7C3AED' '#38a169' '#d69e2e' '#e53e3e' '#2a5298' %};">
+                        {{ aluno_p.user.first_name|first|upper|default:"A" }}
+                    </div>
+                    <div class="talento-nome">{{ aluno_p.user.first_name|default:aluno_p.user.username }}</div>
+                    <div class="talento-curso">{{ aluno_p.matricula|default:"ADS" }}</div>
+                    {% if aluno_p.habilidades %}
+                    <div class="talento-tags">
+                        {% for h in aluno_p.habilidades.split %}{% if forloop.counter <= 3 %}<span class="tag">{{ h|cut:"," }}</span>{% endif %}{% endfor %}
+                    </div>
+                    {% endif %}
+                    <a href="{% url 'ver_curriculo_aluno' aluno_p.user.id %}" class="btn-sm btn-green" style="width:100%;justify-content:center;">
+                        <i class="fas fa-id-card"></i> Disponível
+                    </a>
+                </div>
+                {% empty %}
+                <div style="grid-column:1/-1;padding:2rem;text-align:center;color:var(--muted);font-size:.82rem;">Nenhum aluno no banco de talentos ainda</div>
+                {% endfor %}
             </div>
         </div>
-        {% empty %}
-        <div class="empty">
-            <i class="fas fa-folder-open"></i>
-            <p>Nenhum projeto encontrado com os filtros selecionados.</p>
-        </div>
-        {% endfor %}
     </div>
-</main>
+</div>
 
 <script>
-setTimeout(() => {
-    document.querySelectorAll(".toast").forEach(t => {
-        t.style.opacity = "0"; t.style.transition = "opacity .4s";
-        setTimeout(() => t.remove(), 400);
-    });
-}, 4000);
+Chart.defaults.font.family = "'Open Sans', sans-serif";
+
+const _categorias = {{ graf_categorias|safe }};
+const colors = ['#1B3A6B','#7C3AED','#38a169','#F5A623','#e53e3e','#2a5298','#d69e2e','#0891b2'];
+
+new Chart(document.getElementById('areaChart'), {
+    type: 'bar',
+    data: {
+        labels: _categorias.labels.length ? _categorias.labels : ['Sem dados'],
+        datasets: [{
+            data: _categorias.valores.length ? _categorias.valores : [0],
+            backgroundColor: _categorias.labels.map((_, i) => colors[i % colors.length]),
+            borderRadius: 8, borderSkipped: false
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: { legend: { display: false }, tooltip: { backgroundColor: '#1B3A6B', cornerRadius: 8, padding: 10, titleColor: '#fff', bodyColor: '#CBD5E0' } },
+        scales: { x: { grid: { display: false }, border: { display: false } }, y: { grid: { color: '#E2E8F0' }, border: { display: false }, ticks: { precision: 0 }, beginAtZero: true } }
+    }
+});
+
+document.getElementById('busca-top').addEventListener('keyup', function() {
+    const q = this.value.toLowerCase();
+    document.querySelectorAll('.proj-rec-card').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+    document.querySelectorAll('.talento-card').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+});
+
+setTimeout(() => { document.querySelectorAll('.toast').forEach(t => { t.style.opacity = '0'; t.style.transition = 'opacity .4s'; setTimeout(() => t.remove(), 400); }); }, 4000);
 </script>
 </body>
 </html>

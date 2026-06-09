@@ -244,7 +244,6 @@ class TopicoForum(models.Model):
     conteudo = models.TextField()
     categoria = models.CharField(max_length=20, choices=CATEGORIA_CHOICES, default='duvida')
     fixado = models.BooleanField(default=False)
-   
     ativo = models.BooleanField(default=True)
     criado_em = models.DateTimeField(auto_now_add=True)
     atualizado_em = models.DateTimeField(auto_now=True)
